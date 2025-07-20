@@ -146,7 +146,9 @@
         smoothScrollTransition();
     });
     window.addEventListener('resize', setFreedomHeight);
-
+const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
 })();
 // script.js (添加新函数)
 
