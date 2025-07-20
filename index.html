@@ -1,10 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN" data-theme="light">
 <head>
-    <title>我的网站</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的绝美博客 | 主页</title>
+    <meta name="description" content="一个关于技术、设计与思考的个人空间。">
+
+    <!-- 顶级审美始于字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 链接我们的CSS和JS -->
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>欢迎来到 LSS.WORK.GD！</h1>
-    <p>这是通过 Cloudflare Pages 托管的！</p>
+    <div class="page-container">
+        <header class="site-header">
+            <a href="index.html" class="logo">我的博客</a>
+            <nav class="main-nav">
+                <a href="#">关于</a>
+                <a href="#">归档</a>
+                <button id="theme-toggle" aria-label="切换深色模式">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <section class="hero-section">
+                <h1>思想的火花，设计的角落。</h1>
+                <p>探索代码的健壮之美与设计的精确之道。</p>
+            </section>
+            
+            <div class="post-list">
+                <!-- 文章1 -->
+                <article class="post-preview fade-in">
+                    <div class="post-meta">
+                        <time datetime="2024-10-26">2024年10月26日</time>
+                        <span class="post-tags">#设计 #美学</span>
+                    </div>
+                    <h2><a href="post.html">设计的本质：简约而不简单</a></h2>
+                    <p>在信息过载的时代，如何通过留白、排版和色彩的精确运用，创造出既美观又实用的用户界面？本文将深入探讨...</p>
+                    <a href="post.html" class="read-more">继续阅读 →</a>
+                </article>
+
+                <!-- 文章2 -->
+                <article class="post-preview fade-in">
+                    <div class="post-meta">
+                        <time datetime="2024-10-15">2024年10月15日</time>
+                        <span class="post-tags">#代码 #前端</span>
+                    </div>
+                    <h2><a href="post.html">构建健壮的CSS：变量与架构</a></h2>
+                    <p>停止编写脆弱易碎的样式表！学习如何利用CSS变量（自定义属性）和BEM等架构方法，构建可维护、可扩展的健壮前端代码...</p>
+                    <a href="post.html" class="read-more">继续阅读 →</a>
+                </article>
+
+                <!-- 更多文章... -->
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>© 2024 我的博客。由热爱驱动。</p>
+        </footer>
+    </div>
 </body>
-</html>
+</html>>
