@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计的本质：简约而不简单 | 我的绝美博客</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- 阅读进度条 -->
+    <div id="reading-progress-bar"></div>
+    
+    <div class="page-container">
+        <header class="site-header">
+            <a href="index.html" class="logo">我的博客</a>
+             <nav class="main-nav">
+                <a href="#">关于</a>
+                <a href="#">归档</a>
+                <button id="theme-toggle" aria-label="切换深色模式">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <article class="post-full">
+                <header class="post-header">
+                    <h1 class="post-title">设计的本质：简约而不简单</h1>
+                    <div class="post-meta">
+                        <time datetime="2024-10-26">2024年10月26日</time>
+                        <span>·</span>
+                        <span>作者：你的名字</span>
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>在设计领域，<strong>安东尼·德·圣-埃克苏佩里</strong>的一句话被奉为圭臬：“所谓的完美，不是指无可增添，而是指无可删减。” 这句话精准地概括了简约主义设计的核心。但简约绝非简单，它是一种深思熟虑后的精确表达，是剔除所有无关紧要的元素，让内容本身成为焦点。</p>
+                    
+                    <h2>排版：文字的呼吸</h2>
+                    <p>顶级的设计往往始于顶级的排版。选择一套优雅且易读的字体至关重要。我们为正文选择了衬线字体 "Lora"，它带有古典的书卷气，非常适合长时间阅读。而标题和UI元素则使用无衬线字体 "Poppins"，现代、有力，形成鲜明对比。</p>
+                    
+                    <ul>
+                        <li><strong>行高 (Line Height):</strong> 设定在1.7倍左右，确保行与行之间有足够的呼吸空间。</li>
+                        <li><strong>字间距 (Letter Spacing):</strong> 对标题进行微调，可以增加其设计感。</li>
+                        <li><strong>段落间距 (Paragraph Spacing):</strong> 使用 margin-bottom 代替空行，形成清晰的段落结构。</li>
+                    </ul>
+
+                    <blockquote>“设计是解决问题的艺术。” 这句话提醒我们，所有的美学选择都应服务于功能——在这个场景下，功能就是极致的阅读体验。</blockquote>
+
+                    <h2>代码示例的精确呈现</h2>
+                    <p>对于技术博客，代码块的呈现尤为重要。一个清晰、美观的代码块能极大地提升文章的专业度。</p>
+
+<pre><code class="language-css">/* style.css */
+:root {
+  --font-serif: 'Lora', serif;
+  --font-sans: 'Poppins', sans-serif;
+  --color-text: #222;
+  --color-bg: #fff;
+  --color-primary: #005f73;
+}
+</code></pre>
+
+                    <p>我们不仅要让代码可读，还要提供一键复制等便捷功能。这是功能与美学的完美结合，是健壮代码的直观体现。通过这种方式，我们不仅传达信息，更传达了一种对细节的极致追求。</p>
+
+                    <h3>结论</h3>
+                    <p>最终，一个绝美的博客是形式与内容的和谐统一。它的代码是健壮的，因为每一个选择都有其存在的理由；它的设计是精确的，因为每一像素都服务于用户的阅读心流。这，就是简约而不简单的真正含义。</p>
+                </div>
+            </article>
+        </main>
+
+        <footer class="site-footer">
+            <p>© 2024 我的博客。由热爱驱动。</p>
+        </footer>
+    </div>
+</body>
+</html>
