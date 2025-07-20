@@ -1,17 +1,48 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
-    <!-- ... head内容保持不变 ... -->
+    <!-- 基础 Meta 标签 -->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta 标签 -->
+    <title>LSS.WORK.GD | 我的小世界</title>
+    <meta name="description" content="一个关于代码诗意与设计哲学的个人空间。">
+
+    <!-- 字体 (如有需要，可以取消注释并添加更多字体) -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link href="..." rel="stylesheet"> -->
+
+    <!-- 样式表 -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="custom.css">
+
+    <!-- 脚本 (defer确保HTML解析完再执行) -->
     <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- 容器将使用 CSS Grid 实现全屏布局 -->
+
+    <!-- === 全局置顶的粘性页眉 === -->
+    <header class="sticky-site-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">LSS.WORK.GD</a>
+            <nav class="main-nav">
+                <a href="#">关于</a>
+                <a href="#">归档</a>
+                <button id="theme-toggle" aria-label="切换深色/浅色模式">
+                    <!-- Theme SVG icons -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主滚动容器 -->
     <div class="freedom-container">
 
-        <!-- 第一个全屏区域: 大字跃出 (The 'Hero' Section) -->
+        <!-- 第一个全屏区域: 欢迎大字 -->
         <section class="fullscreen-section hero-section">
             <h1 class="monumental-title">
                 <span>欢迎来到</span>
@@ -25,63 +56,54 @@
             </div>
         </section>
 
-        <!-- 第二个全屏区域: 博客文章列表 -->
-<main class="fullscreen-section content-section" id="main-content-area">
-</main>
-            <!-- 头部导航现在放在这里，随内容滚动 -->
-            <header class="site-header">
-                <a href="index.html" class="logo">LSS.WORK.GD</a>
-                <nav class="main-nav">
-                    <a href="#">关于</a>
-                    <a href="#">归档</a>
-                    <button id="theme-toggle" aria-label="切换深色模式">
-                        <!-- SVG icons -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    </button>
-                </nav>
-            </header>
-
-            <div class="post-list">
-                <!-- 文章1 -->
-                <a href="post.html" class="post-preview">
-                    <article>
-                        <div class="post-meta">
-                            <time datetime="2024-10-26">2024年10月26日</time>
-                            <span>#设计 #创意</span>
-                        </div>
-                        <h2>设计的留白：沉默的语言</h2>
-                        <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
-                    </article>
-                </a>
-                <!-- 文章2 -->
-                <a href="post.html" class="post-preview">
-                    <article>
-                        <div class="post-meta">
-                            <time datetime="2024-10-15">2024年10月15日</time>
-                            <span>#前端 #动画</span>
-                        </div>
-                        <h2>流动的交互：让界面活起来</h2>
-                        <p>通过CSS动画与微交互，赋予网页元素生命力，让用户在不经意间感受到愉悦与惊喜。</p>
-                    </article>
-                </a>
+        <!-- 第二个区域: 博客文章列表 -->
+        <main class="content-section" id="main-content-area">
+            <div class="page-container">
+                <div class="post-list">
+                    <!-- 文章1 -->
+                    <a href="post.html" class="post-preview">
+                        <article>
+                            <div class="post-meta">
+                                <time datetime="2024-10-26">2024年10月26日</time>
+                                <span>#设计 #创意</span>
+                            </div>
+                            <h2>设计的留白：沉默的语言</h2>
+                            <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
+                        </article>
+                    </a>
+                    <!-- 文章2 -->
+                    <a href="post.html" class="post-preview">
+                        <article>
+                            <div class="post-meta">
+                                <time datetime="2024-10-15">2024年10月15日</time>
+                                <span>#前端 #动画</span>
+                            </div>
+                            <h2>流动的交互：让界面活起来</h2>
+                            <p>通过CSS动画与微交互，赋予网页元素生命力，让用户在不经意间感受到愉悦与惊喜。</p>
+                        </article>
+                    </a>
+                </div>
+                
+                <footer class="site-footer">
+                    <p>© 2025 我的博客。由热爱驱动。</p>
+                </footer>
             </div>
-            
-            <footer class="site-footer">
-                <p>© 2025 我的博客。由热爱驱动。</p>
-            </footer>
         </main>
         
     </div>
-    <!-- index.html (</body>前) -->
-    <!-- ...你的 .freedom-container ... -->
+
+    <!-- === 全局功能元素 (放在 freedom-container 外面) === -->
     
-    <!-- === 新增：星光效果画布 === -->
+    <!-- 星光效果画布 (如果启用) -->
     <canvas id="starfield"></canvas>
+
+    <!-- 音乐播放器触发按钮 -->
     <button id="music-player-trigger" aria-label="打开音乐播放器">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
     </button>
-        <div id="music-modal" class="modal">
+    
+    <!-- 音乐播放器弹窗 -->
+    <div id="music-modal" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-container">
             <button class="modal-close-button">×</button>
@@ -99,14 +121,15 @@
                     <div class="now-playing">
                         <span class="status">暂无播放</span>
                         <div class="song-info">
-                            <span id="player-song-title">冬眠2023</span>
-                            <span id="player-song-artist">阿yueyue</span>
+                            <span id="player-song-title">歌曲名</span>
+                            <span id="player-song-artist">歌手</span>
                         </div>
                     </div>
                     <button id="player-play-pause-button" class="play" aria-label="播放/暂停"></button>
                 </div>
             </div>
         </div>
-        </div>
+    </div>
+    
 </body>
 </html>
