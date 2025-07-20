@@ -81,3 +81,99 @@
     });
 
 })();
+// script.js (文件底部)
+// --- 美化功能: 鼠标/触摸追随的星光效果 ---
+(function() {
+    const canvas = document.getElementById('starfield');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let pointer = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+    };
+    
+    let params = {
+        points: 40,
+        connect: false, // 设为true可以看星星连线效果
+        max_distance: 100,
+        stroke: '#80ffea',
+        interactive: {
+            distance: 100,
+            stroke: '#90f1ef'
+        }
+    };
+
+    let stars = [];
+
+    class Star {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.radius = Math.random() * 1.5;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = params.stroke;
+            ctx.fill();
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+    }
+    
+    for (let i = 0; i < params.points; i++) {
+        stars.push(new Star());
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        stars.forEach(star => {
+            star.update();
+            star.draw();
+            
+            // 和鼠标指针的交互
+            let distance = Math.sqrt(Math.pow(pointer.x - star.x, 2) + Math.pow(pointer.y - star.y, 2));
+            if (distance < params.interactive.distance) {
+                 ctx.beginPath();
+                 ctx.moveTo(pointer.x, pointer.y);
+                 ctx.lineTo(star.x, star.y);
+                 ctx.strokeStyle = params.interactive.stroke;
+                 ctx.lineWidth = 0.2;
+                 ctx.stroke();
+            }
+        });
+
+        requestAnimationFrame(animate);
+    }
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        pointer.x = e.touches[0].clientX;
+        pointer.y = e.touches[0].clientY;
+    });
+    
+    animate();
+
+})();
