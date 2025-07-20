@@ -1,117 +1,146 @@
 /*
- * Filename: custom.css
- * Description: All my personal customizations and overrides for the blog.
- * This file is loaded after style.css.
+ * Filename: custom.css (二次元幻想风·最终版)
+ * Description: Transforms the blog into a bright, cheerful, and stylish Anime theme.
+ * Version: 4.0 (Kawaii Edition)
  */
 
+/* -------------------------------------------------------------------------- */
+/*                         Part 1: 二次元风格核心设计体系                     */
+/* -------------------------------------------------------------------------- */
+:root {
+    /* 1.1 - 调整字体，增加二次元特色 */
+    /* 从Google Fonts引入更圆润可爱的字体 "M PLUS Rounded 1c" */
+    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
 
-/* --- 方案一：添加“欢迎动画” --- */
+    /* 主要使用圆体，保留Lora给长篇正文 */
+    --font-sans: 'M PLUS Rounded 1c', 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;
+    --font-serif: 'Lora', 'Georgia', serif;
+
+    /* 1.2 - 全新二次元调色板 */
+    /* 亮色模式：天空与薄荷 */
+    --color-primary-light: #29b6f6; /* 天空蓝 */
+    --color-secondary-light: #4db6ac; /* 薄荷绿 */
+    --color-text-light: #0d47a1; /* 深海蓝文字 */
+    --color-bg-light: #ffffff; /* 纯白背景 */
+    --color-accent-light: #ffcdd2; /* 樱花粉点缀 */
+    --color-border-light: rgba(13, 71, 161, 0.1);
+
+    /* 暗色模式：星空与霓虹 */
+    --color-primary-dark: #f06292; /* 霓虹粉 */
+    --color-secondary-dark: #4dd0e1; /* 赛博青 */
+    --color-text-dark: #e1f5fe; /* 淡蓝色文字 */
+    --color-bg-dark: #1a237e; /* 深邃星空蓝 */
+    --color-accent-dark: #7e57c2; /* 迷幻紫 */
+    --color-border-dark: rgba(240, 98, 146, 0.3);
+
+    /* 1.3 - 调整布局和元素 */
+    --content-width: 960px;
+    --border-radius: 20px; /* 更圆润的边角 */
+}
+
+/* -------------------------------------------------------------------------- */
+/*                 Part 2: 全局美化与二次元风格背景                         */
+/* -------------------------------------------------------------------------- */
+
+body::before {
+    /* === 美化核心 1: 程式化的云层/粒子背景 === */
+    /* 移除之前的极光，改为更简单的气泡/粒子动画 */
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    background: radial-gradient(circle at 15% 25%, var(--color-primary), transparent 25%),
+                radial-gradient(circle at 85% 30%, var(--color-accent), transparent 25%),
+                radial-gradient(circle at 50% 80%, var(--color-secondary), transparent 25%);
+    opacity: 0.3;
+    filter: blur(80px); /* 模糊程度降低，让色块更明显 */
+    z-index: -1;
+    animation: anime-bubbles 25s linear infinite alternate;
+}
+
+@keyframes anime-bubbles {
+    from { transform: translateY(-20px) scale(1) rotate(0deg); }
+    to { transform: translateY(20px) scale(1.1) rotate(360deg); }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         Part 3: 组件二次元化改造                          */
+/* -------------------------------------------------------------------------- */
+
+/* === 美化核心 2: 动漫风格标题 === */
 .hero-section h1 {
-    animation: slideUpFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 0.2s;
+    font-weight: 800; /* 加粗 */
+    font-size: var(--font-size-xxl);
+    color: var(--color-text);
+    /* 模拟日漫Logo的文字描边效果 */
+    text-shadow: 
+        -2px -2px 0 var(--color-bg),  
+         2px -2px 0 var(--color-bg),
+        -2px  2px 0 var(--color-bg),
+         2px  2px 0 var(--color-bg),
+        -3px -3px 0 var(--color-primary),
+         3px -3px 0 var(--color-primary),
+        -3px  3px 0 var(--color-primary),
+         3px  3px 0 var(--color-primary);
+    line-height: 1.2;
 }
-
 .hero-section p {
-    animation: slideUpFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 0.4s;
+    font-size: var(--font-size-md);
+    color: var(--color-secondary);
+    font-weight: 700;
 }
 
-/* 动画关键帧定义 (这个需要放在这里) */
-@keyframes slideUpFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* --- 方案二：为文章卡片添加图片的样式 --- */
-.post-preview-image {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    margin-bottom: var(--spacing-unit);
-    display: block;
-}
-
-
-/* --- 方案三：调整布局宽度 (覆盖 :root 变量) --- */
-:root {
-    /* 这会覆盖 style.css 中定义的 --content-width */
-    --content-width: 960px; 
-}
-
-
-/* 
- * 你未来任何其他的个性化修改，都可以继续添加到这个文件的末尾。
- * 例如，你想改变主页英雄区域的背景色：
- */
-/*
-.hero-section {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: var(--border-radius);
-    padding: 4rem 2rem;
-}
-*/
-/*
- * Filename: custom.css (追加内容)
- * Description: Widescreen experience enhancement.
- * Version: 3.1
- */
-
-/* -------------------------------------------------------------------------- */
-/*             第一部分：放大核心布局和字体比例 (Scaling Up)              */
-/* -------------------------------------------------------------------------- */
-
-:root {
-    /* 
-     * 我们将通过覆盖这些CSS变量来调整比例。
-     * 这样做的好处是，所有使用了这些变量的元素都会按比例放大。
-     */
-
-    /* 1. 加宽主要内容区域，让桌面端更舒展 */
-    --content-width: 900px; /* 从 800px 增加到 900px，你可以尝试更大的值，比如 1100px */
-
-    /* 2. 整体放大字体尺寸，调整 clamp() 的最大值 */
-    /* 我们主要增加 clamp() 的第三个参数（最大值），以提升桌面端字号 */
-    --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.35rem); /* 原最大值为 1.25rem */
-    --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.8rem); /* 原最大值为 1.69rem */
-    --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.5rem); /* 原最大值为 2.25rem */
-    --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 3.25rem); /* 原最大值为 3rem */
-    --font-size-xxl: clamp(2.44rem, 2.38vw + 1.85rem, 4.5rem); /* 原最大值为 4rem */
-
-    /* 3. 增加间距，配合更大的字体和宽度 */
-    --spacing-unit: 1.1rem; /* 从 1rem 略微增加，让所有间距都变大一点 */
-}
-
-
-/* -------------------------------------------------------------------------- */
-/*            第二部分：针对性微调，让放大后的布局更和谐               */
-/* -------------------------------------------------------------------------- */
-
-/* 让标题在放大后更有分量 */
-.hero-section h1, 
-.post-full .post-title {
-    font-weight: 800; /* 增加字重 */
-    letter-spacing: -1.5px; /* 增加负字间距，让大标题更紧凑、更有设计感 */
-}
-
-/* 增加卡片之间的距离，避免加宽后显得拥挤 */
+/* === 美化核心 3: "魔法卡片" 效果 === */
 .post-list .post-preview {
-    margin-bottom: calc(var(--spacing-unit) * 2.5);
+    background: rgba(255, 255, 255, 0.5); /* 提高透明度，增加“水晶感” */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid var(--color-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* 默认阴影 */
 }
 
-/* 调整文章页内容的行宽，提升大屏阅读体验 */
-.post-content {
-    /* 在宽屏上，正文行宽不宜过长，否则眼睛阅读起来很累 */
-    /* 这里我们设定一个最大宽度，确保阅读舒适性 */
-    max-width: 720px;
-    margin-left: auto;
-    margin-right: auto;
+/* 悬停时发光效果 */
+.post-list .post-preview:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 25px 0 var(--color-primary); /* 卡片外发光 */
+    border-color: var(--color-primary);
+}
+
+.post-preview h2 {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.post-meta .post-tags {
+    font-weight: 700;
+    color: var(--color-primary);
+    background-color: var(--color-border);
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+
+/* === 美化核心 4: 文章页风格调整 === */
+.post-full .post-title {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    /* 应用和主页一致的描边效果 */
+     text-shadow: 
+        -2px -2px 0 var(--color-bg),  
+         2px -2px 0 var(--color-bg),
+        -2px  2px 0 var(--color-bg),
+         2px  2px 0 var(--color-bg),
+        -2px -2px 2px var(--color-secondary),
+         2px -2px 2px var(--color-secondary),
+        -2px  2px 2px var(--color-secondary),
+         2px  2px 2px var(--color-secondary);
+}
+
+.post-content pre {
+    /* 移除旧的边框，使用更柔和的阴影 */
+    border: none;
+    box-shadow: 0 2px 10px var(--color-border);
 }
