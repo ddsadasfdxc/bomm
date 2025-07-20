@@ -1,0 +1,61 @@
+/*
+ * Filename: custom.css
+ * Description: All my personal customizations and overrides for the blog.
+ * This file is loaded after style.css.
+ */
+
+
+/* --- 方案一：添加“欢迎动画” --- */
+.hero-section h1 {
+    animation: slideUpFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.2s;
+}
+
+.hero-section p {
+    animation: slideUpFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.4s;
+}
+
+/* 动画关键帧定义 (这个需要放在这里) */
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* --- 方案二：为文章卡片添加图片的样式 --- */
+.post-preview-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-unit);
+    display: block;
+}
+
+
+/* --- 方案三：调整布局宽度 (覆盖 :root 变量) --- */
+:root {
+    /* 这会覆盖 style.css 中定义的 --content-width */
+    --content-width: 960px; 
+}
+
+
+/* 
+ * 你未来任何其他的个性化修改，都可以继续添加到这个文件的末尾。
+ * 例如，你想改变主页英雄区域的背景色：
+ */
+/*
+.hero-section {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: var(--border-radius);
+    padding: 4rem 2rem;
+}
+*/
