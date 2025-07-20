@@ -148,3 +148,22 @@
     window.addEventListener('resize', setFreedomHeight);
 
 })();
+// script.js (添加新函数)
+
+    // ... 已有的 setFreedomHeight, smoothScrollTransition 等函数 ...
+
+    function stickyHeader() {
+        const header = document.querySelector('.sticky-site-header');
+        const mainContainer = document.querySelector('.freedom-container');
+        if (!header || !mainContainer) return;
+
+        mainContainer.addEventListener('scroll', () => {
+            if (mainContainer.scrollTop > 10) { // 向下滚动一点点
+                document.body.classList.add('is-header-scrolled'); // 这个类可以让页眉变化
+            } else {
+                document.body.classList.remove('is-header-scrolled');
+            }
+        });
+    }
+
+// ...
