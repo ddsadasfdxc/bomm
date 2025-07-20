@@ -61,8 +61,8 @@
     // === 功能：音乐播放器 Modal ===
     const playlist = [
         // 在这里添加你的歌曲列表！
-        // { title: "冬眠2023", artist: "阿YueYue.刘兆宇", src: "/music/song1.mp3" },
-        // { title: "唯一", artist: "G.E.M.邓紫棋", src: "/music/song2.mp3" },
+        // { title: "冬眠2023", artist: "阿YueYue.刘兆宇", src: "/music/冬眠.2023-阿YueYue.刘兆宇#2xxFAZ.mp3" },
+        // { title: "唯一", artist: "G.E.M.邓紫棋", src: "/music/唯一-G.E.M.邓紫棋#2x5LXP.mp3" },
         // ...
     ];
 
