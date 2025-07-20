@@ -377,3 +377,54 @@ body.is-scrolled {
     border-right: 4px solid var(--color-text-content);
     box-sizing: border-box;
 }
+/* custom.css (追加) */
+/* --- Feature: 粘性页眉 (Sticky Header) --- */
+
+.sticky-site-header {
+    position: fixed; /* 固定在视口顶部 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* 确保在最顶层 */
+    padding: 1rem 0;
+    
+    /* 玻璃拟态效果，让页眉更精致 */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* 向下滚动时出现阴影，增加层次感 */
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* 当页面开始滚动时（JS会添加.is-scrolled类），页眉样式变化 */
+body.is-scrolled .sticky-site-header {
+    background: rgba(255, 255, 255, 0.3); /* 背景变实一点 */
+    border-bottom-color: var(--color-border);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 2rem; /* 保持和主内容区域一致的内边距 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*
+ * 旧样式覆盖和调整
+ */
+
+/* 移除 .content-section 里的 site-header 样式，因为它已经不存在了 */
+/* (你可以安全地删除旧 .css 文件里所有 .content-section .site-header 相关的规则) */
+
+/* 让滚动区域从页眉下方开始，避免内容被遮挡 */
+.freedom-container {
+    /* (原有的 grid, overflow, scroll-snap-type 等样式保持不变) */
+    
+    /* 让容器本身从顶部开始，但滚动内容将在 JS 的帮助下从页眉下开始 */
+}
