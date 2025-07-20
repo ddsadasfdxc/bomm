@@ -181,7 +181,26 @@
         -2px  2px 2px var(--color-secondary),
          2px  2px 2px var(--color-secondary);
 }
+/* custom.css */
 
+/* --- 美化功能: 动态滚动提示 --- */
+.scroll-down-prompt {
+    /* ...你之前的样式... */
+    animation: fade-in-slow 1s ease 2.5s forwards, bounce-arrow 1.5s infinite 3s; /* 组合动画 */
+}
+
+/* 添加一个新的动画定义 */
+@keyframes bounce-arrow {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
 .post-content pre {
     /* 移除旧的边框，使用更柔和的阴影 */
     border: none;
