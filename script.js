@@ -167,3 +167,13 @@
     }
 
 // ...
+// script.js
+
+    // --- 事件监听与函数执行 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        themeToggle();
+        musicPlayer();
+        stickyHeader(); // <-- 在这里调用新函数
+    });
+
+// ...
