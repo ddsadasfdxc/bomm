@@ -1,25 +1,11 @@
-// =========================================================================
-// SCRIPT.JS - FINAL CLEANED VERSION
-// Description: All features integrated, loading screen removed.
-// Version: 7.0 (Stable Edition)
-// =========================================================================
-
 (function() {
     'use strict';
-
-    // -------------------------------------------------------------------------
-    //  Part 1: 配置区 (Configuration)
-    // -------------------------------------------------------------------------
 
     const playlist = [
         { title: "冬眠2023", artist: "阿YueYue.刘兆宇", src: "/music/dongmian.mp3" },
         { title: "唯一", artist: "G.E.M.邓紫棋", src: "/music/weiyi.mp3" }
     ];
-
-    // -------------------------------------------------------------------------
-    //  Part 2: 核心功能函数定义 (Core Function Definitions)
-    // -------------------------------------------------------------------------
-
+    
     function setFreedomHeight() {
         const freedomContainer = document.querySelector('.freedom-container');
         if (freedomContainer) {
@@ -39,17 +25,13 @@
         observer.observe(contentSection);
     }
     
-    // -------------------------------------------------------------------------
-    //  Part 3: 页面加载完毕后执行的功能 (DOM Ready Functions)
-    // -------------------------------------------------------------------------
-
     document.addEventListener('DOMContentLoaded', () => {
 
         function themeToggle() {
             const toggleButton = document.getElementById('theme-toggle');
             const htmlElement = document.documentElement;
             if (!toggleButton) return;
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             htmlElement.setAttribute('data-theme', savedTheme);
             toggleButton.addEventListener('click', () => {
                 const newTheme = htmlElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -108,4 +90,21 @@
                 audio.play();
             };
 
-            search
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filteredSongs = playlist.filter(song =>
+                    song.title.toLowerCase().includes(query) ||
+                    song.artist.toLowerCase().includes(query)
+                );
+                renderPlaylist(filteredSongs);
+            });
+            
+            playPauseBtn.addEventListener('click', () => audio.paused && audio.src ? audio.play() : audio.pause());
+            audio.addEventListener('play', () => playPauseBtn.classList.replace('play', 'pause'));
+            audio.addEventListener('pause', () => playPauseBtn.classList.replace('pause', 'play'));
+            renderPlaylist(playlist);
+        }
+
+        function stickyHeader() {
+            const mainContainer = document.querySelector('.freedom-container');
+            const header = document.querySelector('.st
