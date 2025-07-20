@@ -1,20 +1,35 @@
-/*
- * Filename: custom.css (自由感·最终版)
- * Description: Implements the 'Monumental Title -> Free Scroll' user experience.
- * Version: 5.0 (Freedom Edition)
- */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
 
-/* -------------------------------------------------------------------------- */
-/* custom.css */
+:root {
+    --font-sans: 'M PLUS Rounded 1c', 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;
+    --font-serif: 'Lora', 'Georgia', serif;
+    --content-width: 960px;
+    --border-radius: 20px;
+    --transition-speed-slow: 1s;
+    --transition-speed-fast: 0.5s;
+    
+    --color-primary-hero: #4dd0e1;
+    --color-bg-hero: #0f2027;
 
-/* -------------------------------------------------------------------------- */
-/*             Part 1: 全屏滚动布局核心 (JS动态高度增强版)                 */
-/* -------------------------------------------------------------------------- */
+    --color-primary-content: #29b6f6;
+    --color-bg-content: #ffffff;
+    --color-text-content: #0d47a1;
+    --color-secondary-content: #78909c;
+    --color-border-content: rgba(13, 71, 161, 0.1);
+}
+
+body {
+    background-color: var(--color-bg-hero);
+    transition: background-color var(--transition-speed-slow) ease-in-out;
+}
+
+body.is-scrolled {
+    background-color: var(--color-bg-content);
+}
 
 .freedom-container {
     display: grid;
-    grid-template-rows: 100% auto; /* 第一行高度为容器的100% */
-    /* height: 100vh; */ /* 这一行被JS动态设置取代了！ */
+    grid-template-rows: 100% auto;
     overflow-y: auto;
     overflow-x: hidden;
     scroll-snap-type: y mandatory;
@@ -22,7 +37,6 @@
 
 .fullscreen-section {
     width: 100%;
-    /* height: 100vh; */ /* 这里不再需要，它会继承父容器的高度 */
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
@@ -32,57 +46,37 @@
     position: relative;
 }
 
-/* 强制让第一屏（大字屏）占满100%的高度 */
 .hero-section {
     height: 100%;
-}
-
-
-/* -------------------------------------------------------------------------- */
-/*                      Part 2: 大字跃出动画 (Hero Section)                    */
-/* -------------------------------------------------------------------------- */
-
-/* .hero-section 本身的样式 */
-.hero-section {
-    background-color: var(--color-bg-dark); /* 强制使用深色背景以突出文字 */
-    color: var(--color-text-dark);
+    color: #e1f5fe;
 }
 
 .monumental-title {
-    font-size: clamp(2.5rem, 10vw, 8rem); /* 巨大且自适应的字体 */
+    font-size: clamp(2.5rem, 10vw, 8rem);
     font-weight: 900;
-    text-transform: uppercase; /* 字母大写更有冲击力 */
+    text-transform: uppercase;
     text-align: center;
     line-height: 1.1;
     display: flex;
-    flex-direction: column; /* 让每个span垂直排列 */
+    flex-direction: column;
 }
 
-/* === 核心技术: Staggered Animation (交错动画) === */
-/* 让每个span依次“跃出” */
 .monumental-title span {
     display: block;
     opacity: 0;
-    transform: translateY(50px) rotate(5deg);
+    transform: translateY(50px);
     animation: title-jump-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-/* 通过 animation-delay 为每个span设置不同的延迟时间 */
 .monumental-title span:nth-child(1) { animation-delay: 0.2s; }
 .monumental-title span:nth-child(2) { animation-delay: 0.3s; }
 .monumental-title span:nth-child(3) { animation-delay: 0.4s; }
 .monumental-title span:nth-child(4) { animation-delay: 0.5s; }
 
-
 @keyframes title-jump-in {
-    to {
-        opacity: 1;
-        transform: translateY(0) rotate(0);
-    }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-
-/* “向下滚动”提示的样式和动画 */
 .scroll-down-prompt {
     position: absolute;
     bottom: 3rem;
@@ -90,28 +84,27 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    color: var(--color-primary-dark);
+    color: var(--color-primary-hero);
     font-weight: 600;
     opacity: 0;
-    animation: fade-in-slow 1s ease 1.5s forwards; /* 在标题动画结束后淡入 */
+    animation: fade-in-slow 1s ease 1.5s forwards, bounce-arrow 1.5s infinite 2.5s;
 }
 
-@keyframes fade-in-slow {
-    to { opacity: 0.7; }
+@keyframes fade-in-slow { to { opacity: 0.7; } }
+@keyframes bounce-arrow {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
 }
 
-/* -------------------------------------------------------------------------- */
-/*                   Part 3: 博文区域样式调整 (Content Section)                 */
-/* -------------------------------------------------------------------------- */
 .content-section {
-    height: auto; /* 高度不再是100vh，而是由内容决定 */
-    min-height: 100vh; /* 保证即使内容少也至少占一屏 */
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    padding: 0; /* 内边距由内部的 .page-container 控制 */
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+    position: relative;
+    z-index: 1;
 }
 
-/* 将 header, post-list, footer 放在一个容器里 */
 .content-section .page-container {
     width: 100%;
     max-width: var(--content-width);
@@ -119,102 +112,80 @@
     margin-right: auto;
     padding: 0 2rem;
 }
+
 .content-section .site-header {
     width: 100%;
     padding: 2.5rem 0;
-    margin: 0; /* 移除之前的外边距 */
+    margin: 0;
 }
 
-/* 对 .post-preview 保持之前的二次元风格或任何你喜欢的风格 */
-/* (这里的代码是可选的，如果你喜欢之前的卡片样式，可以把它们复制过来) */
+.logo {
+    font-weight: 700;
+    font-size: 1.8rem;
+    text-decoration: none;
+    color: var(--color-text-content);
+}
+
+.main-nav a {
+    color: var(--color-text-content);
+}
+
 .post-list .post-preview {
-    background: rgba(255, 255, 255, 0.5); 
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius, 20px);
+    border: 1px solid var(--color-border-content);
+    border-radius: var(--border-radius);
     margin-bottom: 2rem;
+    padding: 2rem;
+    color: var(--color-text-content);
 }
-.post-list .post-preview:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 0 25px 0 var(--color-primary);
-    border-color: var(--color-primary);
+
+.post-preview h2,
+.post-preview p,
+.post-meta {
+    color: inherit;
+    transition: opacity var(--transition-speed-fast), transform var(--transition-speed-fast);
+}
+
+.post-preview .post-meta { color: var(--color-secondary-content); }
+
+.content-section .site-header,
+.content-section .post-preview,
+.content-section .site-footer {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.content-section.is-visible .site-header {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.2s;
+}
+
+.content-section.is-visible .post-preview:nth-child(1) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.3s;
+}
+.content-section.is-visible .post-preview:nth-child(2) {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s;
+}
+
+.content-section.is-visible .site-footer {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s;
 }
 
 
-/* 响应式调整 */
+.site-footer { color: var(--color-secondary-content); }
+
 @media (max-width: 768px) {
     .freedom-container {
-        /* 在手机上，禁用滚动捕捉，提供更流畅自由的滚动体验 */
         scroll-snap-type: none;
     }
-}    border-color: var(--color-primary);
-}
-
-.post-preview h2 {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    color: var(--color-text);
-}
-
-.post-meta .post-tags {
-    font-weight: 700;
-    color: var(--color-primary);
-    background-color: var(--color-border);
-    padding: 2px 8px;
-    border-radius: 8px;
-}
-
-
-/* === 美化核心 4: 文章页风格调整 === */
-.post-full .post-title {
-    font-size: var(--font-size-xl);
-    font-weight: 800;
-    /* 应用和主页一致的描边效果 */
-     text-shadow: 
-        -2px -2px 0 var(--color-bg),  
-         2px -2px 0 var(--color-bg),
-        -2px  2px 0 var(--color-bg),
-         2px  2px 0 var(--color-bg),
-        -2px -2px 2px var(--color-secondary),
-         2px -2px 2px var(--color-secondary),
-        -2px  2px 2px var(--color-secondary),
-         2px  2px 2px var(--color-secondary);
-}
-/* custom.css */
-
-/* --- 美化功能: 动态滚动提示 --- */
-.scroll-down-prompt {
-    /* ...你之前的样式... */
-    animation: fade-in-slow 1s ease 2.5s forwards, bounce-arrow 1.5s infinite 3s; /* 组合动画 */
-}
-
-/* 添加一个新的动画定义 */
-@keyframes bounce-arrow {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
-}
-.post-content pre {
-    /* 移除旧的边框，使用更柔和的阴影 */
-    border: none;
-    box-shadow: 0 2px 10px var(--color-border);
-}
-/* custom.css */
-
-/* --- 美化功能: 星光背景画布 --- */
-#starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2; /* 确保在最底层，不影响任何内容 */
-    pointer-events: none; /* 不干扰鼠标点击 */
 }
