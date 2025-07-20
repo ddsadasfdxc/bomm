@@ -1,38 +1,26 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
-    <!-- 基础 Meta 标签 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- SEO Meta 标签 -->
     <title>LSS.WORK.GD | 我的小世界</title>
     <meta name="description" content="一个关于代码诗意与设计哲学的个人空间。">
-
-    <!-- 字体 (可以根据需要添加) -->
-    
-    <!-- 样式表 -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="custom.css">
-
-    <!-- 脚本 (defer确保HTML解析完再执行) -->
     <script src="script.js" defer></script>
 </head>
 <body>
-
 
     <!-- === 全局置顶的粘性页眉 === -->
     <header class="sticky-site-header">
         <div class="header-container">
             <a href="index.html" class="logo">
-                <!-- 注意: 请确保 /image/ 路径和你的GitHub文件夹名完全一致！-->
-                <img src="/image/93a3a2ea-2496-4bea-ba21-1f9a76a462ce.webp" alt="博客头像 - 返回主页" class="logo-image">
+                <img src="/images/avatar.png" alt="博客头像 - 返回主页" class="logo-image">
             </a>
             <nav class="main-nav">
                 <a href="#">关于</a>
                 <a href="#">归档</a>
                 <button id="theme-toggle" aria-label="切换深色/浅色模式">
-                    <!-- Theme SVG icons -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
@@ -42,63 +30,58 @@
 
     <!-- 主滚动容器 -->
     <div class="freedom-container">
-        <!-- 第一个全屏区域: 欢迎大字 -->
         <section class="fullscreen-section hero-section">
-            <h1 class="monumental-title">
-                <span>欢迎来到</span>
-                <span>我的</span>
-                <span>小世界</span>
-                <span>₍˄·͈༝·͈˄*₎◞ ̑̑</span>
-            </h1>
+            <h1 class="monumental-title" id="typewriter-title"></h1>
             <div class="scroll-down-prompt">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span>向下滚动</span>
             </div>
         </section>
-
-        <!-- 第二个区域: 博客文章列表 -->
         <main class="content-section" id="main-content-area">
             <div class="page-container">
                 <div class="post-list">
-                    <!-- 文章1 -->
                     <a href="post.html" class="post-preview">
                         <article>
-                            <div class="post-meta">
-                                <time datetime="2024-10-26">2024年10月26日</time>
-                                <span>#设计 #创意</span>
-                            </div>
+                            <div class="post-meta"><time datetime="2024-10-26">2024年10月26日</time><span>#设计 #创意</span></div>
                             <h2>设计的留白：沉默的语言</h2>
                             <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
                         </article>
                     </a>
-                    <!-- 文章2 -->
                     <a href="post.html" class="post-preview">
                         <article>
-                            <div class="post-meta">
-                                <time datetime="2024-10-15">2024年10月15日</time>
-                                <span>#前端 #动画</span>
-                            </div>
+                            <div class="post-meta"><time datetime="2024-10-15">2024年10月15日</time><span>#前端 #动画</span></div>
                             <h2>流动的交互：让界面活起来</h2>
                             <p>通过CSS动画与微交互，赋予网页元素生命力，让用户在不经意间感受到愉悦与惊喜。</p>
                         </article>
                     </a>
                 </div>
-                
-                <footer class="site-footer">
-                    <p>© 2024 我的博客。由热爱驱动。</p> <!-- 年份修正 -->
-                </footer>
+                <footer class="site-footer"><p>© 2024 我的博客。由热爱驱动。</p></footer>
             </div>
         </main>
     </div>
 
-    <!-- === 全局功能元素 (放在 freedom-container 外面) === -->
-    <canvas id="starfield"></canvas>
+    <!-- 全局功能元素 -->
     <button id="music-player-trigger" aria-label="打开音乐播放器">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
     </button>
     <div id="music-modal" class="modal">
-        <!-- ... modal 内部结构保持不变 ... -->
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close-button">×</button>
+            <div class="modal-header"><h2>点播一首 BGM</h2><p>为此刻的浏览体验配上心动的旋律</p></div>
+            <div class="modal-content">
+                <div class="song-search-area"><input type="text" id="song-search-input" placeholder="输入歌曲名或歌手..."><ul id="song-results-list"></ul></div>
+                <div class="music-player">
+                    <audio id="audio-player"></audio>
+                    <div class="now-playing">
+                        <span class="status">暂无播放</span>
+                        <div class="song-info"><span id="player-song-title">歌曲名</span><span id="player-song-artist">歌手</span></div>
+                    </div>
+                    <button id="player-play-pause-button" class="play" aria-label="播放/暂停"></button>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
 </body>
 </html>
