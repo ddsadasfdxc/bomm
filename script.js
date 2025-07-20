@@ -1,7 +1,7 @@
 // =========================================================================
-// SCRIPT.JS - FINAL MASTER VERSION
-// Description: All functionalities integrated into a single, robust structure.
-// Version: 6.0 (Masterpiece Edition)
+// SCRIPT.JS - FINAL CLEANED VERSION
+// Description: All features integrated, loading screen removed.
+// Version: 7.0 (Stable Edition)
 // =========================================================================
 
 (function() {
@@ -107,3 +107,5 @@
                 }
                 audio.play();
             };
+
+            search
