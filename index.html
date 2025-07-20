@@ -78,5 +78,35 @@
     
     <!-- === 新增：星光效果画布 === -->
     <canvas id="starfield"></canvas>
+    <button id="music-player-trigger" aria-label="打开音乐播放器">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </button>
+        <div id="music-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close-button">×</button>
+            <div class="modal-header">
+                <h2>点播一首 BGM</h2>
+                <p>为此刻的浏览体验配上心动的旋律</p>
+            </div>
+            <div class="modal-content">
+                <div class="song-search-area">
+                    <input type="text" id="song-search-input" placeholder="输入歌曲名或歌手...">
+                    <ul id="song-results-list"></ul>
+                </div>
+                <div class="music-player">
+                    <audio id="audio-player"></audio>
+                    <div class="now-playing">
+                        <span class="status">暂无播放</span>
+                        <div class="song-info">
+                            <span id="player-song-title">冬眠2023</span>
+                            <span id="player-song-artist">阿yueyue</span>
+                        </div>
+                    </div>
+                    <button id="player-play-pause-button" class="play" aria-label="播放/暂停"></button>
+                </div>
+            </div>
+        </div>
+        </div>
 </body>
 </html>
