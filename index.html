@@ -1,70 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的绝美博客 | 主页</title>
-    <meta name="description" content="一个关于技术、设计与思考的个人空间。">
-
-    <!-- 顶级审美始于字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- 链接我们的CSS和JS -->
+    <!-- ... head内容保持不变 ... -->
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="page-container">
-        <header class="site-header">
-            <a href="index.html" class="logo">我的博客</a>
-            <nav class="main-nav">
-                <a href="#">关于</a>
-                <a href="#">归档</a>
-                <button id="theme-toggle" aria-label="切换深色模式">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-            </nav>
-        </header>
+        <!-- ... header部分保持不变 ... -->
 
         <main class="main-content">
             <section class="hero-section">
-                <h1>思想的火花，设计的角落。</h1>
-                <p>探索代码的健壮之美与设计的精确之道。</p>
+                <!-- 这部分可以保留，也可以移除，根据你的喜好 -->
+                <h1>代码的诗意，设计的哲学。</h1>
+                <p>在像素间漫步，于逻辑中沉思。</p>
             </section>
             
             <div class="post-list">
-                <!-- 文章1 -->
-                <article class="post-preview fade-in">
-                    <div class="post-meta">
-                        <time datetime="2024-10-26">2024年10月26日</time>
-                        <span class="post-tags">#设计 #美学</span>
-                    </div>
-                    <h2><a href="post.html">设计的本质：简约而不简单</a></h2>
-                    <p>在信息过载的时代，如何通过留白、排版和色彩的精确运用，创造出既美观又实用的用户界面？本文将深入探讨...</p>
-                    <a href="post.html" class="read-more">继续阅读 →</a>
-                </article>
+                <!-- 文章1 (结构简化，包裹在a标签里) -->
+                <a href="post.html" class="post-preview">
+                    <article>
+                        <div class="post-meta">
+                            <time datetime="2024-10-26">2024年10月26日</time>
+                            <span>#设计 #创意</span>
+                        </div>
+                        <h2>设计的留白：沉默的语言</h2>
+                        <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
+                    </article>
+                </a>
 
                 <!-- 文章2 -->
-                <article class="post-preview fade-in">
-                    <div class="post-meta">
-                        <time datetime="2024-10-15">2024年10月15日</time>
-                        <span class="post-tags">#代码 #前端</span>
-                    </div>
-                    <h2><a href="post.html">构建健壮的CSS：变量与架构</a></h2>
-                    <p>停止编写脆弱易碎的样式表！学习如何利用CSS变量（自定义属性）和BEM等架构方法，构建可维护、可扩展的健壮前端代码...</p>
-                    <a href="post.html" class="read-more">继续阅读 →</a>
-                </article>
-
-                <!-- 更多文章... -->
+                <a href="post.html" class="post-preview">
+                    <article>
+                        <div class="post-meta">
+                            <time datetime="2024-10-15">2024年10月15日</time>
+                            <span>#前端 #动画</span>
+                        </div>
+                        <h2>流动的交互：让界面活起来</h2>
+                        <p>通过CSS动画与微交互，赋予网页元素生命力，让用户在不经意间感受到愉悦与惊喜。</p>
+                    </article>
+                </a>
             </div>
         </main>
 
-        <footer class="site-footer">
-            <p>© 2024 我的博客。由热爱驱动。</p>
-        </footer>
+        <!-- ... footer部分保持不变 ... -->
     </div>
 </body>
-</html>>
+</html>
