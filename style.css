@@ -1,0 +1,204 @@
+/* -------------------------------------------------------------------------- */
+/*                            全局变量与重置 (Global & Reset)                   */
+/* -------------------------------------------------------------------------- */
+
+:root {
+    /* 颜色 -- 修改这里可以快速更换主题色 */
+    --color-text-light: #2c3e50;
+    --color-bg-light: #ffffff;
+    --color-primary-light: #3498db;
+    --color-secondary-light: #7f8c8d;
+    --color-border-light: #ecf0f1;
+    --color-code-bg-light: #f8f8f8;
+    
+    --color-text-dark: #ecf0f1;
+    --color-bg-dark: #1c2833;
+    --color-primary-dark: #5dade2;
+    --color-secondary-dark: #95a5a6;
+    --color-border-dark: #34495e;
+    --color-code-bg-dark: #283747;
+
+    /* 字体 -- 确保在HTML中已引入 */
+    --font-serif: 'Lora', serif;
+    --font-sans: 'Poppins', sans-serif;
+
+    /* 布局 */
+    --content-width: 800px;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+/* 根据HTML标签的data-theme属性切换颜色变量 */
+html[data-theme='light'] {
+    --color-text: var(--color-text-light);
+    --color-bg: var(--color-bg-light);
+    --color-primary: var(--color-primary-light);
+    --color-secondary: var(--color-secondary-light);
+    --color-border: var(--color-border-light);
+    --color-code-bg: var(--color-code-bg-light);
+}
+html[data-theme='dark'] {
+    --color-text: var(--color-text-dark);
+    --color-bg: var(--color-bg-dark);
+    --color-primary: var(--color-primary-dark);
+    --color-secondary: var(--color-secondary-dark);
+    --color-border: var(--color-border-dark);
+    --color-code-bg: var(--color-code-bg-dark);
+}
+
+
+/* 健壮的盒子模型与基础样式 */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-serif);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                                布局 (Layout)                               */
+/* -------------------------------------------------------------------------- */
+
+.page-container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+    margin-bottom: 3rem;
+}
+
+.logo {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.main-nav a {
+    font-family: var(--font-sans);
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 600;
+    position: relative;
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-primary);
+    bottom: -5px;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--transition-speed) ease;
+}
+
+.main-nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 4rem 0 2rem;
+    color: var(--color-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+}
+
+
+/* -------------------------------------------------------------------------- */
+/*                             主页特定样式 (Homepage)                          */
+/* -------------------------------------------------------------------------- */
+.hero-section {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-family: var(--font-sans);
+    margin-bottom: 0.5rem;
+}
+.hero-section p {
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+}
+
+
+.post-list .post-preview {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.post-list .post-preview:last-child {
+    border-bottom: none;
+}
+
+.post-meta {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+.post-tags {
+    margin-left: 1rem;
+    font-weight: 600;
+}
+
+.post-preview h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-family: var(--font-sans);
+}
+.post-preview h2 a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+.post-preview h2 a:hover {
+    color: var(--color-primary);
+}
+
+.read-more {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            文章页特定样式 (Post)                           */
+/* -------------------------------------------------------------------------- */
+
+#reading-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    backg
