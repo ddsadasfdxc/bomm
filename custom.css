@@ -5,35 +5,36 @@
  */
 
 /* -------------------------------------------------------------------------- */
-/*                         Part 1: 全屏滚动布局核心                         */
+/* custom.css */
+
+/* -------------------------------------------------------------------------- */
+/*             Part 1: 全屏滚动布局核心 (JS动态高度增强版)                 */
 /* -------------------------------------------------------------------------- */
 
-/*
- * 使用 CSS Grid 创建一个两行布局的容器
- * 这是一个非常现代和强大的布局方式
- */
 .freedom-container {
     display: grid;
-    grid-template-rows: 100vh auto; /* 第一行高度为100%视口高度，第二行自动 */
-    height: 100vh;
+    grid-template-rows: 100% auto; /* 第一行高度为容器的100% */
+    /* height: 100vh; */ /* 这一行被JS动态设置取代了！ */
     overflow-y: auto;
     overflow-x: hidden;
-    
-    /* === 核心技术: 滚动捕捉 (Scroll Snapping) === */
-    /* 这会让滚动在每个全屏区域的开始位置“吸附”，感觉非常清脆 */
     scroll-snap-type: y mandatory;
 }
 
 .fullscreen-section {
     width: 100%;
-    height: 100vh;
-    scroll-snap-align: start; /* 每个部分的顶部与视口顶部对齐吸附 */
+    /* height: 100vh; */ /* 这里不再需要，它会继承父容器的高度 */
+    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    position: relative; /* 用于定位内部元素 */
+    position: relative;
+}
+
+/* 强制让第一屏（大字屏）占满100%的高度 */
+.hero-section {
+    height: 100%;
 }
 
 
