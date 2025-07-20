@@ -3,755 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动漫の庭院 | 二次元风格博客</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --sakura-pink: #ffb7d5;
-            --sailor-blue: #5dacbd;
-            --manga-white: #fffaf0;
-            --accent-red: #e87a90;
-            --dark-purple: #392f41;
-            --shadow: 0 10px 30px rgba(93, 172, 189, 0.25);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'M PLUS Rounded 1c', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f8e3ff, #e0f7ff);
-            min-height: 100vh;
-            color: var(--dark-purple);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* 樱花飘落效果 */
-        .sakura-fall {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-            overflow: hidden;
-        }
-
-        .sakura {
-            position: absolute;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffb7d5' d='M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z'/%3E%3C/svg%3E");
-            background-size: contain;
-            width: 25px;
-            height: 25px;
-            opacity: 0.7;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(360deg); }
-        }
-
-        /* 导航栏美化 */
-        header {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            padding: 1.2rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            border-bottom: 2px solid var(--sakura-pink);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            color: var(--dark-purple);
-            text-decoration: none;
-            font-size: 1.8rem;
-            font-weight: 800;
-            position: relative;
-        }
-
-        .logo::before {
-            content: "✿";
-            color: var(--accent-red);
-            margin-right: 10px;
-            font-size: 1.8rem;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 1.5rem;
-        }
-
-        nav li {
-            position: relative;
-        }
-
-        nav a {
-            color: var(--dark-purple);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        nav a i {
-            margin-right: 8px;
-            font-size: 1.2rem;
-        }
-
-        nav a:hover {
-            background: var(--sakura-pink);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(232, 122, 144, 0.3);
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.8rem 1.8rem;
-            border-radius: 30px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .login {
-            background: rgba(93, 172, 189, 0.15);
-            color: var(--dark-purple);
-            border: 2px solid var(--sailor-blue);
-        }
-
-        .login:hover {
-            background: var(--sailor-blue);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .register {
-            background: linear-gradient(135deg, var(--accent-red), var(--sakura-pink));
-            color: white;
-            box-shadow: 0 5px 20px rgba(232, 122, 144, 0.4);
-        }
-
-        .register:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(232, 122, 144, 0.5);
-        }
-
-        /* 英雄区域美化 */
-        .hero {
-            padding: 5rem 5% 3rem;
-            min-height: 85vh;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 50%;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 1.8rem;
-            line-height: 1.1;
-            text-shadow: 2px 2px 4px rgba(93, 172, 189, 0.2);
-            position: relative;
-        }
-
-        .hero h1::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 80px;
-            height: 5px;
-            background: var(--accent-red);
-            border-radius: 5px;
-        }
-
-        .hero p {
-            font-size: 1.4rem;
-            margin-bottom: 2.5rem;
-            color: #5a5260;
-            line-height: 1.8;
-        }
-
-        .cta {
-            padding: 1.2rem 2.5rem;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, var(--sailor-blue), #4d8fa5);
-            color: white;
-            border-radius: 50px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(93, 172, 189, 0.4);
-            display: inline-flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .cta i {
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .cta:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(93, 172, 189, 0.5);
-        }
-
-        .cta:hover i {
-            transform: translateX(5px);
-        }
-
-        .hero-illustration {
-            width: 45%;
-            position: relative;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        .mascot {
-            position: relative;
-            width: 100%;
-            padding-bottom: 100%;
-        }
-
-        .mascot::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, var(--sailor-blue) 0%, #6bb9cb 100%);
-            border-radius: 50%;
-            box-shadow: var(--shadow);
-        }
-
-        .mascot::after {
-            content: "♪(^∇^*)";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 6rem;
-            color: white;
-            opacity: 0.9;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* 特色卡片美化 */
-        .features {
-            padding: 5rem 5%;
-            position: relative;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-title h2 {
-            font-size: 2.8rem;
-            color: var(--dark-purple);
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            position: relative;
-            padding: 0 2rem;
-        }
-
-        .section-title h2::before,
-        .section-title h2::after {
-            content: "✧";
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-red);
-            font-size: 1.8rem;
-        }
-
-        .section-title h2::before {
-            left: 0;
-        }
-
-        .section-title h2::after {
-            right: 0;
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 3rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 25px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: var(--shadow);
-            position: relative;
-            z-index: 2;
-            padding: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transform: perspective(800px) rotateY(0deg);
-            transform-origin: center bottom;
-        }
-
-        .card:hover {
-            transform: perspective(800px) rotateY(-5deg) translateY(-15px);
-            box-shadow: 0 20px 40px rgba(93, 172, 189, 0.3);
-        }
-
-        .card-icon {
-            font-size: 4rem;
-            color: var(--sailor-blue);
-            margin-bottom: 1.8rem;
-            display: inline-flex;
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .card h3 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: var(--dark-purple);
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        .card h3::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--accent-red);
-        }
-
-        .card p {
-            margin-bottom: 2rem;
-            color: #6a5d75;
-            flex-grow: 1;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .card-btn {
-            display: inline-flex;
-            align-items: center;
-            color: var(--sailor-blue);
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            padding: 0.5rem 0;
-            width: fit-content;
-        }
-
-        .card-btn i {
-            margin-left: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .card-btn:hover {
-            color: var(--accent-red);
-        }
-
-        .card-btn:hover i {
-            transform: translateX(5px);
-        }
-
-        /* 页脚美化 */
-        footer {
-            background: rgba(57, 47, 65, 0.9);
-            color: var(--manga-white);
-            padding: 4rem 5% 2rem;
-            margin-top: 5rem;
-            position: relative;
-            border-top: 3px solid var(--accent-red);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            max-width: 1300px;
-            margin: 0 auto 3rem;
-        }
-
-        .footer-logo {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            color: var(--sakura-pink);
-        }
-
-        .footer-section h4 {
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            color: var(--sakura-pink);
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-section h4::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: var(--sailor-blue);
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links a {
-            color: #d0c5d5;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-links a i {
-            margin-right: 10px;
-            color: var(--sailor-blue);
-        }
-
-        .footer-links a:hover {
-            color: var(--sakura-pink);
-            transform: translateX(5px);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1.5rem;
-            margin: 2rem 0 0;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--sakura-pink);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            background: var(--sailor-blue);
-            color: white;
-            transform: translateY(-5px) rotate(10deg);
-        }
-
-        .copyright {
-            text-align: center;
-            color: #a59aab;
-            font-size: 1rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 183, 213, 0.2);
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 900px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .hero-content {
-                max-width: 100%;
-                margin-bottom: 3rem;
-            }
-            
-            .hero h1 {
-                font-size: 3.2rem;
-            }
-            
-            .hero h1::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            
-            .hero-illustration {
-                width: 60%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            nav ul {
-                justify-content: center;
-                flex-wrap: wrap;
-                margin-top: 1rem;
-            }
-            
-            nav li {
-                margin: 0.5rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    <meta name="description" content="《败犬女主太多了！》官方粉丝主题应援网站。">
+    <meta name="keywords" content="败犬女主太多了, 负けヒロインが多すぎる！, Makeinu, 轻小说, 八奈见杏菜, 烧盐柠檬, 小拔志帆">
+    <title>《败犬女主太多了！》主题应援站 | 败犬们的青春赞歌</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https.fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 樱花飘落效果 -->
-    <div class="sakura-fall"></div>
-    
-    <!-- 顶部导航 -->
-    <header>
-        <a href="#" class="logo">
-            <span>动漫の庭院</span>
-        </a>
-        
-        <nav>
-            <ul>
-                <li><a href="#"><i class="fas fa-home"></i> 主页</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> 文章</a></li>
-                <li><a href="#"><i class="fas fa-paint-brush"></i> 画廊</a></li>
-                <li><a href="#"><i class="fas fa-heart"></i> 收藏</a></li>
-                <li><a href="#"><i class="fas fa-user-friends"></i> 关于</a></li>
+
+    <!-- 网站头部与导航 -->
+    <header class="main-header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#">败犬女主应援会</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#story">故事介绍</a></li>
+                <li><a href="#characters">角色档案</a></li>
+                <li><a href="#media">媒体情报</a></li>
+                <li><a href="#gallery">败犬图集</a></li>
+                <li><a href="#news">最新动态</a></li>
             </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
         </nav>
-        
-        <div class="user-actions">
-            <button class="btn login"><i class="fas fa-sign-in-alt"></i> 登录</button>
-            <button class="btn register"><i class="fas fa-user-plus"></i> 注册</button>
-        </div>
     </header>
 
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>欢迎来到二次元梦想世界</h1>
-            <p>这里是动漫爱好者的精神家园，探索无限可能的二次元宇宙。从热门番剧到冷门宝藏，从同人创作到剧情解析，我们一起感受二次元的美好与感动。</p>
-            <a href="#" class="cta">开始探索 <i class="fas fa-arrow-right"></i></a>
-        </div>
-        
-        <div class="hero-illustration">
-            <div class="mascot"></div>
-        </div>
-    </section>
+    <main>
+        <!-- 英雄区域 - 网站主视觉 -->
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">败犬女主太多了！</h1>
+                <p class="hero-subtitle">献给所有败北的你，败犬们的青春由此开始——！</p>
+                <a href="#characters" class="cta-button">了解更多败犬</a>
+            </div>
+        </section>
 
-    <!-- 特色卡片区域 -->
-    <section class="features">
-        <div class="section-title">
-            <h2>特色功能</h2>
-        </div>
-        
-        <div class="cards-container">
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fas fa-book-open"></i>
+        <!-- 故事介绍区域 -->
+        <section id="story" class="content-section fade-in">
+            <h2 class="section-title">STORY | 故事梗概</h2>
+            <div class="story-container">
+                <div class="story-image">
+                    <!-- 图片占位符，建议使用小说封面 -->
+                    <img src="https://via.placeholder.com/400x600/DDDDDD/808080?text=小说第一卷" alt="小说封面">
                 </div>
-                <h3>精选文章</h3>
-                <p>深入分析热门动漫剧情、角色发展和世界观设定，带你挖掘二次元作品的深层内涵和创作艺术。</p>
-                <a href="#" class="card-btn">阅读更多 <i class="fas fa-chevron-right"></i></a>
-            </div>
-            
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fas fa-palette"></i>
+                <div class="story-text">
+                    <h3>起始于一场败北的宣言……</h3>
+                    <p>故事的主人公，自诩为“背景角色”的男子高中生 **温水和彦**，某天偶然目击了同班的超人气女生 **八奈见杏菜** 被甩的瞬间。</p>
+                    <p>“为什么是我啊！”她发出了败犬的悲鸣。</p>
+                    <p>以此为契机，温水和彦的生活被卷入了各种“败犬女主角”的旋涡之中。无论是田径部的王牌 **烧盐柠檬**，还是文艺部的小恶魔学妹 **小拔志帆**，她们都在恋爱的战场上屡战屡败。</p>
+                    <p>这是一个围绕着不愿承认失败的少女们，充满遗憾又闪闪发光的青春恋爱喜剧故事。和彦被她们折腾的同时，也开始寻找自己在这场青春剧中的真正角色。</p>
+                    <p class="story-quote">“没错，这是属于‘败犬’们的，为了不输给‘女主角’的故事。”</p>
                 </div>
-                <h3>原创画廊</h3>
-                <p>展示高质量同人作品与原创插画，每日更新精彩内容。支持创作者，分享你的二次元创作灵感。</p>
-                <a href="#" class="card-btn">查看作品 <i class="fas fa-chevron-right"></i></a>
             </div>
-            
-            <div class="card">
-                <div class="card-icon">
-                    <i class="fas fa-film"></i>
-                </div>
-                <h3>番剧推荐</h3>
-                <p>每季新番追踪评测和经典动漫回顾，根据不同兴趣定制你的追番列表，发掘下一部神作。</p>
-                <a href="#" class="card-btn">探索番剧 <i class="fas fa-chevron-right"></i></a>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 页脚 -->
-    <footer>
+        <!-- 角色介绍区域 -->
+        <section id="characters" class="content-section fade-in">
+            <h2 class="section-title">CHARACTERS | 败犬档案</h2>
+            <div class="character-grid">
+                <!-- 角色卡片: 温水和彦 -->
+                <div class="character-card">
+                    <div class="character-card-inner">
+                        <div class="character-card-front">
+                            <img src="https://via.placeholder.com/300x450/B0C4DE/FFFFFF?text=温水+和彦" alt="温水和彦">
+                            <div class="character-name-plate">温水 和彦</div>
+                        </div>
+                        <div class="character-card-back">
+                            <h4>温水 和彦 (Nukumizu Kazuhiko)</h4>
+                            <p class="character-cv">CV: 梅田修一朗</p>
+                            <hr>
+                            <p>本作男主角。爱好是阅读，信奉“人生应如白开水一般平淡”，是个甘于担当“背景角色”的少年。然而，自从撞见八奈见的败北现场后，他平静的生活就此一去不复返，被迫成为了“败犬”们的军师（兼吐槽役）。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色卡片: 八奈见杏菜 -->
+                <div class="character-card">
+                    <div class="character-card-inner">
+                        <div class="character-card-front">
+                            <img src="https://via.placeholder.com/300x450/FFB6C1/FFFFFF?text=八奈见+杏菜" alt="八奈见杏菜">
+                             <div class="character-name-plate">八奈见 杏菜</div>
+                        </div>
+                        <div class="character-card-back">
+                            <h4>八奈见 杏菜 (Yanami Anna)</h4>
+                            <p class="character-cv">CV: 远野光</p>
+                            <hr>
+                            <p>文静的美少女，但在恋爱上却是个不折不扣的“败犬”。向青梅竹马告白失败后，发出了载入史册的败犬悲鸣。表面上是完美优等生，私下却意外地随性且毒舌。与和彦组成了“败犬同盟”。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色卡片: 烧盐柠檬 -->
+                <div class="character-card">
+                    <div class="character-card-inner">
+                        <div class="character-card-front">
+                            <img src="https://via.placeholder.com/300x450/FFD700/FFFFFF?text=烧盐+柠檬" alt="烧盐柠檬">
+                            <div class="character-name-plate">烧盐 柠檬</div>
+                        </div>
+                        <div class="character-card-back">
+                            <h4>烧盐 柠檬 (Yakishio Remon)</h4>
+                             <p class="character-cv">CV: 若山诗音</p>
+                             <hr>
+                            <p>元气满满的田径部少女，拥有超强的运动能力和开朗的性格，在男女生中都很受欢迎。然而，她的恋爱之路同样坎坷。因为一次意外的告白失败，也加入了败犬的行列。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色卡片: 小拔志帆 -->
+                <div class="character-card">
+                    <div class="character-card-inner">
+                        <div class="character-card-front">
+                            <img src="https://via.placeholder.com/300x450/DDA0DD/FFFFFF?text=小拔+志帆" alt="小拔志帆">
+                            <div class="character-name-plate">小拔 志帆</div>
+                        </div>
+                        <div class="character-card-back">
+                            <h4>小拔 志帆 (Chikama Shihan)</h4>
+                             <p class="character-cv">CV: 寺泽百花</p>
+                             <hr>
+                            <p>文艺部的后辈，外表可爱，但实际上是个有点小恶魔性格的少女。她通过创作以自己为原型的“败犬女主角”小说来排解失恋的忧郁。虽然年纪最小，但对恋爱的见解却异常犀利。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 媒体情报区域 -->
+        <section id="media" class="content-section fade-in">
+            <h2 class="section-title">MEDIA MIX | 媒体展开</h2>
+            <div class="media-container">
+                <div class="media-item">
+                    <div class="media-icon book-icon"></div>
+                    <h3>轻小说原作</h3>
+                    <p>作者：雨森焚火 / 插画：いみぎむる</p>
+                    <p>GAGAGA文库（小学馆）出版发行。小说细腻地描绘了败犬们的心理活动和令人捧腹的日常，是整个故事的根基。</p>
+                    <a href="https://gagagabunko.jp/special/makeinu/" target="_blank" class="media-link">查看原作官网</a>
+                </div>
+                <div class="media-item">
+                    <div class="media-icon manga-icon"></div>
+                    <h3>漫画改编</h3>
+                    <p>在小学馆的《Ura Sunday》和《Manga One》上连载。漫画以生动的画面还原了小说中的经典场面和角色的可爱之处，让败犬们的形象更加活灵活现。</p>
+                    <a href="#" class="media-link">阅读漫画（占位）</a>
+                </div>
+                <div class="media-item">
+                    <div class="media-icon tv-icon"></div>
+                    <h3>TV动画化</h3>
+                    <p>2024年7月放送决定！由A-1 Pictures制作。备受期待的动画将为败犬们的青春故事注入全新的活力，敬请期待会动的败犬们！</p>
+                    <a href="https://makeinu-anime.com/" target="_blank" class="media-link">访问动画官网</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图集区域 -->
+        <section id="gallery" class="content-section fade-in">
+            <h2 class="section-title">GALLERY | 败犬瞬间</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/FFB6C1/FFFFFF?text=杏菜的败北瞬间" alt="图集图片1"></div>
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/FFD700/FFFFFF?text=柠檬的活力笑容" alt="图集图片2"></div>
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/DDA0DD/FFFFFF?text=志帆的小恶魔计划" alt="图集图片3"></div>
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/B0C4DE/FFFFFF?text=和彦的无奈吐槽" alt="图集图片4"></div>
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/CCCCCC/808080?text=小说插画1" alt="图集图片5"></div>
+                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/CCCCCC/808080?text=动画名场面" alt="图集图片6"></div>
+            </div>
+        </section>
+        
+        <!-- 新闻区域 -->
+        <section id="news" class="content-section fade-in">
+            <h2 class="section-title">NEWS | 最新动态</h2>
+            <ul class="news-list">
+                <li class="news-item">
+                    <span class="news-date">2024.07.13</span>
+                    <span class="news-tag anime-tag">动画</span>
+                    <a href="#">TV动画《败犬女主太多了！》正式开播！第一话广受好评！</a>
+                </li>
+                <li class="news-item">
+                     <span class="news-date">2024.06.28</span>
+                    <span class="news-tag book-tag">原作</span>
+                    <a href="#">轻小说原作第X卷发售纪念！作者签名会活动决定！</a>
+                </li>
+                <li class="news-item">
+                     <span class="news-date">2024.06.15</span>
+                    <span class="news-tag goods-tag">周边</span>
+                    <a href="#">主要角色亚克力立牌、钥匙扣等周边开启预售！</a>
+                </li>
+                <li class="news-item">
+                     <span class="news-date">2024.05.20</span>
+                    <span class="news-tag anime-tag">动画</span>
+                    <a href="#">动画PV第二弹公开，追加声优阵容发表！</a>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- 网站页脚 -->
+    <footer class="main-footer">
         <div class="footer-content">
-            <div class="footer-section">
-                <div class="footer-logo">动漫の庭院</div>
-                <p>探索二次元的无限可能性，分享对动漫的热爱与见解，构建属于我们的精神家园。</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-weibo"></i></a>
-                    <a href="#"><i class="fab fa-bilibili"></i></a>
-                    <a href="#"><i class="fab fa-pixiv"></i></a>
-                    <a href="#"><i class="fab fa-discord"></i></a>
-                </div>
+            <p>© 2024 《败犬女主太多了！》粉丝应援会. All Rights Reserved.</p>
+            <p>本网站为非官方粉丝作品，所有版权归属原作、出版社及动画制作委员会。</p>
+            <div class="social-links">
+                <a href="#" title="Twitter">T</a>
+                <a href="#" title="Pixiv">P</a>
+                <a href="#" title="Bilibili">B</a>
             </div>
-            
-            <div class="footer-section">
-                <h4>快速链接</h4>
-                <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-arrow-right"></i> 主页</a></li>
-                    <li><a href="#"><i class="fas fa-arrow-right"></i> 最新文章</a></li>
-                    <li><a href="#"><i class="fas fa-arrow-right"></i> 热门作品</a></li>
-                    <li><a href="#"><i class="fas fa-arrow-right"></i> 新番导视</a></li>
-                    <li><a href="#"><i class="fas fa-arrow-right"></i> 创作者中心</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h4>联系我们</h4>
-                <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-envelope"></i> contact@animegarden.com</a></li>
-                    <li><a href="#"><i class="fas fa-comment-dots"></i> 用户社区</a></li>
-                    <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
-                    <li><a href="#"><i class="fas fa-exclamation-circle"></i> 问题反馈</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            © 2025 动漫の庭院 | 探索二次元的美好世界
         </div>
     </footer>
 
-    <script>
-        // 樱花飘落生成器
-        document.addEventListener('DOMContentLoaded', function() {
-            const sakuraContainer = document.querySelector('.sakura-fall');
-            const sakuraCount = 30;
-            
-            for (let i = 0; i < sakuraCount; i++) {
-                const sakura = document.createElement('div');
-                sakura.className = 'sakura';
-                
-                // 随机位置
-                sakura.style.left = `${Math.random() * 100}%`;
-                sakura.style.top = `${-Math.random() * 20}%`;
-                
-                // 随机大小
-                const size = Math.random() * 15 + 10;
-                sakura.style.width = `${size}px`;
-                sakura.style.height = `${size}px`;
-                
-                // 随机透明度
-                sakura.style.opacity = Math.random() * 0.5 + 0.3;
-                
-                // 随机动画持续时间和延迟
-                const duration = Math.random() * 8 + 8;
-                const delay = Math.random() * 5;
-                sakura.style.animationDuration = `${duration}s`;
-                sakura.style.animationDelay = `${delay}s`;
-                
-                sakuraContainer.appendChild(sakura);
-            }
-            
-            // 卡片悬停效果增强
-            const cards = document.querySelectorAll('.card');
-            
-            cards.forEach(card => {
-                card.addEventListener('mousemove', function(e) {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateY = (x - centerX) / 20;
-                    const rotateX = (centerY - y) / 20;
-                    
-                    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px)`;
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    card.style.transform = 'perspective(800px) rotateY(-5deg) translateY(-15px)';
-                });
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
