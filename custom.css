@@ -428,3 +428,35 @@ body.is-scrolled .sticky-site-header {
     
     /* 让容器本身从顶部开始，但滚动内容将在 JS 的帮助下从页眉下开始 */
 }
+/* custom.css (追加) */
+/* --- Feature: Q版小人Logo样式 --- */
+
+/* 首先，调整一下 .logo 链接本身的样式，让它更适合放图片 */
+.logo {
+    display: flex;
+    align-items: center;
+    /* 取消之前可能存在的文字渐变效果 */
+    background: none;
+    -webkit-text-fill-color: initial;
+}
+
+/* 接着，定义我们新Logo图片的样式 */
+.logo-image {
+    height: 45px; /* 控制Logo的高度，你可以根据喜好调整这个数值 */
+    width: auto;  /* 宽度自动，保持图片比例不拉伸 */
+    border-radius: 50%; /* 将图片裁剪成完美的圆形 */
+    object-fit: cover; /* 确保图片内容填满圆形而不变形 */
+    
+    /* 增加一个微妙的阴影，让它更有立体感 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    /* 为鼠标悬停动画做准备 */
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                box-shadow 0.3s ease;
+}
+
+/* === 交互效果：当鼠标悬停在Logo上时 === */
+.logo:hover .logo-image {
+    transform: scale(1.1) rotate(8deg); /* 图片放大一点点，并俏皮地旋转8度 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 阴影变深，更有层次感 */
+}
