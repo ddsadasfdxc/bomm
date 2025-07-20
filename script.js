@@ -1,3 +1,28 @@
+// script.js (在文件最开始添加)
+
+(function() {
+    'use strict';
+
+    // 动态设置全屏高度，解决移动端100vh问题
+    function setFreedomHeight() {
+        const freedomContainer = document.querySelector('.freedom-container');
+        if (freedomContainer) {
+            // window.innerHeight 能获取浏览器窗口的内部高度，这是最精确的值
+            freedomContainer.style.height = `${window.innerHeight}px`;
+        }
+    }
+
+    // 首次加载时设置
+    window.addEventListener('load', setFreedomHeight);
+    
+    // 当窗口大小改变（比如手机横竖屏切换）时重新设置
+    window.addEventListener('resize', setFreedomHeight);
+
+    // --- 这里是你原有的其他JS代码，比如深色模式切换 ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... (你之前的深色模式和动画代码)
+    });
+})();
 // 使用IIFE（立即调用函数表达式）来封装代码，避免污染全局作用域
 (function() {
     'use strict';
