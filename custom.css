@@ -1,3 +1,36 @@
+/* custom.css (顶部追加) */
+/* --- Feature: 加载屏 --- */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg-hero, #0f2027); /* 初始背景色 */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader { /* 这是一个CSS绘制的旋转加载动画 */
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--color-primary-hero, #fff);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
 
 :root {
