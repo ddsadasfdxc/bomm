@@ -61,8 +61,8 @@
     // === 功能：音乐播放器 Modal ===
     const playlist = [
         // 在这里添加你的歌曲列表！
-        // { title: "歌曲名", artist: "歌手", src: "/music/song1.mp3" },
-        // { title: "另一首歌", artist: "另一位歌手", src: "/music/song2.mp3" },
+        // { title: "冬眠2023", artist: "阿YueYue.刘兆宇", src: "/music/song1.mp3" },
+        // { title: "唯一", artist: "G.E.M.邓紫棋", src: "/music/song2.mp3" },
         // ...
     ];
 
