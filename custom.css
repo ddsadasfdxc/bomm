@@ -1,111 +1,153 @@
 /*
- * Filename: custom.css (二次元幻想风·最终版)
- * Description: Transforms the blog into a bright, cheerful, and stylish Anime theme.
- * Version: 4.0 (Kawaii Edition)
+ * Filename: custom.css (自由感·最终版)
+ * Description: Implements the 'Monumental Title -> Free Scroll' user experience.
+ * Version: 5.0 (Freedom Edition)
  */
 
 /* -------------------------------------------------------------------------- */
-/*                         Part 1: 二次元风格核心设计体系                     */
+/*                         Part 1: 全屏滚动布局核心                         */
 /* -------------------------------------------------------------------------- */
-:root {
-    /* 1.1 - 调整字体，增加二次元特色 */
-    /* 从Google Fonts引入更圆润可爱的字体 "M PLUS Rounded 1c" */
-    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
 
-    /* 主要使用圆体，保留Lora给长篇正文 */
-    --font-sans: 'M PLUS Rounded 1c', 'Helvetica Rounded', 'Arial Rounded MT Bold', sans-serif;
-    --font-serif: 'Lora', 'Georgia', serif;
+/*
+ * 使用 CSS Grid 创建一个两行布局的容器
+ * 这是一个非常现代和强大的布局方式
+ */
+.freedom-container {
+    display: grid;
+    grid-template-rows: 100vh auto; /* 第一行高度为100%视口高度，第二行自动 */
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* === 核心技术: 滚动捕捉 (Scroll Snapping) === */
+    /* 这会让滚动在每个全屏区域的开始位置“吸附”，感觉非常清脆 */
+    scroll-snap-type: y mandatory;
+}
 
-    /* 1.2 - 全新二次元调色板 */
-    /* 亮色模式：天空与薄荷 */
-    --color-primary-light: #29b6f6; /* 天空蓝 */
-    --color-secondary-light: #4db6ac; /* 薄荷绿 */
-    --color-text-light: #0d47a1; /* 深海蓝文字 */
-    --color-bg-light: #ffffff; /* 纯白背景 */
-    --color-accent-light: #ffcdd2; /* 樱花粉点缀 */
-    --color-border-light: rgba(13, 71, 161, 0.1);
+.fullscreen-section {
+    width: 100%;
+    height: 100vh;
+    scroll-snap-align: start; /* 每个部分的顶部与视口顶部对齐吸附 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    position: relative; /* 用于定位内部元素 */
+}
 
-    /* 暗色模式：星空与霓虹 */
-    --color-primary-dark: #f06292; /* 霓虹粉 */
-    --color-secondary-dark: #4dd0e1; /* 赛博青 */
-    --color-text-dark: #e1f5fe; /* 淡蓝色文字 */
-    --color-bg-dark: #1a237e; /* 深邃星空蓝 */
-    --color-accent-dark: #7e57c2; /* 迷幻紫 */
-    --color-border-dark: rgba(240, 98, 146, 0.3);
 
-    /* 1.3 - 调整布局和元素 */
-    --content-width: 960px;
-    --border-radius: 20px; /* 更圆润的边角 */
+/* -------------------------------------------------------------------------- */
+/*                      Part 2: 大字跃出动画 (Hero Section)                    */
+/* -------------------------------------------------------------------------- */
+
+/* .hero-section 本身的样式 */
+.hero-section {
+    background-color: var(--color-bg-dark); /* 强制使用深色背景以突出文字 */
+    color: var(--color-text-dark);
+}
+
+.monumental-title {
+    font-size: clamp(2.5rem, 10vw, 8rem); /* 巨大且自适应的字体 */
+    font-weight: 900;
+    text-transform: uppercase; /* 字母大写更有冲击力 */
+    text-align: center;
+    line-height: 1.1;
+    display: flex;
+    flex-direction: column; /* 让每个span垂直排列 */
+}
+
+/* === 核心技术: Staggered Animation (交错动画) === */
+/* 让每个span依次“跃出” */
+.monumental-title span {
+    display: block;
+    opacity: 0;
+    transform: translateY(50px) rotate(5deg);
+    animation: title-jump-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* 通过 animation-delay 为每个span设置不同的延迟时间 */
+.monumental-title span:nth-child(1) { animation-delay: 0.2s; }
+.monumental-title span:nth-child(2) { animation-delay: 0.3s; }
+.monumental-title span:nth-child(3) { animation-delay: 0.4s; }
+.monumental-title span:nth-child(4) { animation-delay: 0.5s; }
+
+
+@keyframes title-jump-in {
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+
+/* “向下滚动”提示的样式和动画 */
+.scroll-down-prompt {
+    position: absolute;
+    bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    opacity: 0;
+    animation: fade-in-slow 1s ease 1.5s forwards; /* 在标题动画结束后淡入 */
+}
+
+@keyframes fade-in-slow {
+    to { opacity: 0.7; }
 }
 
 /* -------------------------------------------------------------------------- */
-/*                 Part 2: 全局美化与二次元风格背景                         */
+/*                   Part 3: 博文区域样式调整 (Content Section)                 */
 /* -------------------------------------------------------------------------- */
-
-body::before {
-    /* === 美化核心 1: 程式化的云层/粒子背景 === */
-    /* 移除之前的极光，改为更简单的气泡/粒子动画 */
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    background: radial-gradient(circle at 15% 25%, var(--color-primary), transparent 25%),
-                radial-gradient(circle at 85% 30%, var(--color-accent), transparent 25%),
-                radial-gradient(circle at 50% 80%, var(--color-secondary), transparent 25%);
-    opacity: 0.3;
-    filter: blur(80px); /* 模糊程度降低，让色块更明显 */
-    z-index: -1;
-    animation: anime-bubbles 25s linear infinite alternate;
-}
-
-@keyframes anime-bubbles {
-    from { transform: translateY(-20px) scale(1) rotate(0deg); }
-    to { transform: translateY(20px) scale(1.1) rotate(360deg); }
-}
-
-/* -------------------------------------------------------------------------- */
-/*                         Part 3: 组件二次元化改造                          */
-/* -------------------------------------------------------------------------- */
-
-/* === 美化核心 2: 动漫风格标题 === */
-.hero-section h1 {
-    font-weight: 800; /* 加粗 */
-    font-size: var(--font-size-xxl);
+.content-section {
+    height: auto; /* 高度不再是100vh，而是由内容决定 */
+    min-height: 100vh; /* 保证即使内容少也至少占一屏 */
+    background-color: var(--color-bg);
     color: var(--color-text);
-    /* 模拟日漫Logo的文字描边效果 */
-    text-shadow: 
-        -2px -2px 0 var(--color-bg),  
-         2px -2px 0 var(--color-bg),
-        -2px  2px 0 var(--color-bg),
-         2px  2px 0 var(--color-bg),
-        -3px -3px 0 var(--color-primary),
-         3px -3px 0 var(--color-primary),
-        -3px  3px 0 var(--color-primary),
-         3px  3px 0 var(--color-primary);
-    line-height: 1.2;
-}
-.hero-section p {
-    font-size: var(--font-size-md);
-    color: var(--color-secondary);
-    font-weight: 700;
+    padding: 0; /* 内边距由内部的 .page-container 控制 */
 }
 
-/* === 美化核心 3: "魔法卡片" 效果 === */
+/* 将 header, post-list, footer 放在一个容器里 */
+.content-section .page-container {
+    width: 100%;
+    max-width: var(--content-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+}
+.content-section .site-header {
+    width: 100%;
+    padding: 2.5rem 0;
+    margin: 0; /* 移除之前的外边距 */
+}
+
+/* 对 .post-preview 保持之前的二次元风格或任何你喜欢的风格 */
+/* (这里的代码是可选的，如果你喜欢之前的卡片样式，可以把它们复制过来) */
 .post-list .post-preview {
-    background: rgba(255, 255, 255, 0.5); /* 提高透明度，增加“水晶感” */
+    background: rgba(255, 255, 255, 0.5); 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 2px solid var(--color-border);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* 默认阴影 */
+    border-radius: var(--border-radius, 20px);
+    margin-bottom: 2rem;
 }
-
-/* 悬停时发光效果 */
 .post-list .post-preview:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 0 25px 0 var(--color-primary); /* 卡片外发光 */
+    box-shadow: 0 0 25px 0 var(--color-primary);
     border-color: var(--color-primary);
+}
+
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .freedom-container {
+        /* 在手机上，禁用滚动捕捉，提供更流畅自由的滚动体验 */
+        scroll-snap-type: none;
+    }
+}    border-color: var(--color-primary);
 }
 
 .post-preview h2 {
