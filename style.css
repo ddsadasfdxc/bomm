@@ -1,221 +1,284 @@
-/* style.css - 创意与艺术感升级版 */
+/*
+ * Filename: style.css
+ * Description: A meticulously crafted stylesheet for a top-tier, modern blog.
+ * Version: 3.0 (Masterpiece Edition)
+ * Features: Aurora background, fluid typography, robust responsiveness, advanced aesthetics.
+ */
 
 /* -------------------------------------------------------------------------- */
-/*                            全局变量与重置                           */
+/*                         Part 1: 核心设计体系 (Core Design System)            */
 /* -------------------------------------------------------------------------- */
-
 :root {
-    /* 颜色方案 - 一套更具现代感和艺术气息的配色 */
-    --color-text-light: #121826;
-    --color-bg-light-start: #f5f7fa;
-    --color-bg-light-end: #c3cfe2;
-    --color-primary-light: #4a00e0;
-    --color-secondary-light: #8e2de2;
-    --color-border-light: rgba(0, 0, 0, 0.08);
+    /* 1.1 - Fluid Typography (自适应字体) */
+    /* 使用 clamp() 函数，让字体大小在320px到1200px的屏幕宽度之间平滑缩放 */
+    --font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.94rem);
+    --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.25rem);
+    --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.69rem);
+    --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.25rem);
+    --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 3rem);
+    --font-size-xxl: clamp(2.44rem, 2.38vw + 1.85rem, 4rem);
 
-    --color-text-dark: #e0e0e0;
-    --color-bg-dark-start: #0f2027;
-    --color-bg-dark-end: #203a43;
-    --color-primary-dark: #80ffea;
-    --color-secondary-dark: #7f7fd5;
+    /* 1.2 - Color Palette (调色板) */
+    --color-primary-light: #5e548e;
+    --color-secondary-light: #9f86c0;
+    --color-text-light: #231942;
+    --color-bg-light: #e0b1cb;
+    --color-accent-light: #be95c4;
+    --color-border-light: rgba(0, 0, 0, 0.07);
+
+    --color-primary-dark: #90f1ef;
+    --color-secondary-dark: #a1c4fd;
+    --color-text-dark: #e8e8e8;
+    --color-bg-dark: #121826;
+    --color-accent-dark: #4b6cb7;
     --color-border-dark: rgba(255, 255, 255, 0.1);
-
-    /* 字体 */
-    --font-sans: 'Poppins', sans-serif; /* 全部使用现代无衬线字体 */
-    --font-serif: 'Lora', serif; /* 保留给正文 */
-
-    /* 布局 */
-    --content-width: 820px;
+    
+    /* 1.3 - Fonts (字体) */
+    --font-sans: 'Poppins', 'Helvetica Neue', 'Arial', 'sans-serif';
+    --font-serif: 'Lora', 'Georgia', 'serif';
+    
+    /* 1.4 - Layout & Spacing (布局与间距) */
+    --content-width: 800px;
     --border-radius: 12px;
-    --transition-speed: 0.4s;
+    --spacing-unit: 1rem;
+    --transition-speed: 0.35s;
 }
 
-/* 根据HTML标签的data-theme属性切换颜色变量 */
+/* 根据主题切换变量 */
 html[data-theme='light'] {
-    --color-text: var(--color-text-light);
-    --color-bg-start: var(--color-bg-light-start);
-    --color-bg-end: var(--color-bg-light-end);
     --color-primary: var(--color-primary-light);
     --color-secondary: var(--color-secondary-light);
+    --color-text: var(--color-text-light);
+    --color-bg: var(--color-bg-light);
+    --color-accent: var(--color-accent-light);
     --color-border: var(--color-border-light);
 }
-
 html[data-theme='dark'] {
-    --color-text: var(--color-text-dark);
-    --color-bg-start: var(--color-bg-dark-start);
-    --color-bg-end: var(--color-bg-dark-end);
     --color-primary: var(--color-primary-dark);
     --color-secondary: var(--color-secondary-dark);
+    --color-text: var(--color-text-dark);
+    --color-bg: var(--color-bg-dark);
+    --color-accent: var(--color-accent-dark);
     --color-border: var(--color-border-dark);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                        Part 2: 全局重置与基础样式                        */
+/* -------------------------------------------------------------------------- */
 *, *::before, *::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: var(--font-sans); /* 默认字体更改 */
-    line-height: 1.75;
-    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    background-color: var(--color-bg); /* 提供一个基础背景色 */
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden; /* 防止水平滚动条 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: color var(--transition-speed);
-    
-    /* === 创意核心 1：流动的背景 === */
-    background: linear-gradient(45deg, var(--color-bg-start), var(--color-bg-end));
-    background-size: 200% 200%;
-    animation: gradient-flow 15s ease infinite;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-@keyframes gradient-flow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* === 美化核心 1: 极光背景 (Aurora Background) === */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 确保不影响点击 */
+    background: radial-gradient(circle at 10% 20%, var(--color-primary), transparent 40%),
+                radial-gradient(circle at 80% 90%, var(--color-accent), transparent 40%);
+    opacity: 0.4;
+    filter: blur(100px);
+    z-index: -1;
+    animation: aurora-flow 20s linear infinite alternate;
+}
+
+@keyframes aurora-flow {
+    from { transform: rotate(0deg) scale(1); }
+    to { transform: rotate(360deg) scale(1.2); }
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                布局 (Layout)                               */
+/*                       Part 3: 可重用组件与布局 (Components)                */
 /* -------------------------------------------------------------------------- */
 .page-container {
     max-width: var(--content-width);
-    margin: 0 auto;
-    padding: 0 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--spacing-unit);
 }
 
 .site-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2.5rem 0;
-    margin-bottom: 4rem;
+    padding: calc(var(--spacing-unit) * 2) 0;
+    margin-bottom: calc(var(--spacing-unit) * 3);
 }
 
-/* Logo采用渐变色，增加品牌感 */
 .logo {
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: var(--font-size-lg);
     text-decoration: none;
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--color-text);
 }
 
 .main-nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: calc(var(--spacing-unit) * 1.5);
 }
 
-.main-nav a {
-    text-decoration: none;
+.main-nav a, #theme-toggle {
+    font-size: var(--font-size-base);
     color: var(--color-text);
+    text-decoration: none;
     font-weight: 600;
     transition: color var(--transition-speed);
 }
-.main-nav a:hover {
-    color: var(--color-primary);
-}
 
+.main-nav a:hover { color: var(--color-primary); }
 
-/* === 创意核心 2：玻璃拟态主题切换按钮 === */
 #theme-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    transition: transform var(--transition-speed) ease;
+    background: none; border: none; cursor: pointer;
 }
-
-#theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-}
+html[data-theme='light'] .icon-moon { display: none; }
+html[data-theme='dark'] .icon-sun { display: none; }
 
 .site-footer {
+    padding: calc(var(--spacing-unit) * 4) 0 calc(var(--spacing-unit) * 2);
     text-align: center;
-    padding: 4rem 0 2rem;
+    font-size: var(--font-size-sm);
     color: var(--color-secondary);
-    font-size: 0.9rem;
-    opacity: 0.8;
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                主页特定样式                           */
+/*                             Part 4: 主页样式                             */
 /* -------------------------------------------------------------------------- */
+.hero-section {
+    text-align: center;
+    padding: calc(var(--spacing-unit) * 2) 0 calc(var(--spacing-unit) * 4);
+}
+.hero-section h1 { font-size: var(--font-size-xxl); line-height: 1.1; }
+.hero-section p { font-size: var(--font-size-md); color: var(--color-secondary); }
+
 .post-list .post-preview {
-    background: rgba(255, 255, 255, 0.05);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
-    padding: 2.5rem;
-    margin-bottom: 2.5rem;
+    padding: calc(var(--spacing-unit) * 2);
+    margin-bottom: calc(var(--spacing-unit) * 2);
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
 }
 
 .post-list .post-preview:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .post-meta {
-    font-size: 0.85rem;
-    color: var(--color-secondary);
-    margin-bottom: 0.5rem;
     display: flex;
     justify-content: space-between;
+    font-size: var(--font-size-sm);
+    color: var(--color-secondary);
+    margin-bottom: var(--spacing-unit);
 }
 
 .post-preview h2 {
-    font-size: 1.8rem;
-    margin: 0.5rem 0 1rem;
-    line-height: 1.3;
-}
-.post-preview h2 a {
+    font-size: var(--font-size-lg);
     color: var(--color-text);
-    text-decoration: none;
-    background-image: linear-gradient(120deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    background-repeat: no-repeat;
-    background-size: 100% 0.1em;
-    background-position: 0 88%;
-    transition: background-size 0.25s ease-in;
+    margin: 0 0 calc(var(--spacing-unit) * 0.5);
 }
-
-.post-preview h2 a:hover {
-    background-size: 100% 88%;
-    color: var(--color-bg-start); /* 悬停时文字颜色反转 */
-}
-
 
 .post-preview p {
+    font-size: var(--font-size-base);
     color: var(--color-secondary);
-    margin-bottom: 0;
 }
-
-/* 隐藏了“继续阅读”，让卡片本身成为点击区域 */
-.post-preview a.read-more { display: none; }
-.post-preview a:not(h2 a) { 
-    text-decoration: none; 
-    color: inherit; 
-    display: block; 
-}
-
 
 /* -------------------------------------------------------------------------- */
-/*                                文章页特定样式                           */
+/*                             Part 5: 文章页样式                             */
 /* -------------------------------------------------------------------------- */
 #reading-progress-bar {
     position: fixed;
     top: 0;
     left: 0;
-    height: 4px;
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+    height: 3px;
+    background: var(--color-primary);
     width: 0%;
-    z-index: 1000;
+    z-index: 100;
+}
+
+.post-full .post-header {
+    margin-bottom: calc(var(--spacing-unit) * 3);
+    text-align: center;
+}
+.post-full .post-title {
+    font-size: var(--font-size-xl);
+    line-height: 1.2;
+    margin: 0 0 var(--spacing-unit);
+}
+.post-full .post-meta {
+    justify-content: center;
+    gap: var(--spacing-unit);
+}
+
+.post-content {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-base);
+}
+.post-content > * + * { margin-top: calc(var(--spacing-unit) * 1.5); }
+
+.post-content h2, .post-content h3 { font-family: var(--font-sans); }
+.post-content h2 { font-size: var(--font-size-lg); margin-top: calc(var(--spacing-unit) * 3); }
+.post-content h3 { font-size: var(--font-size-md); margin-top: calc(var(--spacing-unit) * 2); }
+
+.post-content a { color: var(--color-primary); text-decoration: none; border-bottom: 2px solid; }
+.post-content strong { font-weight: 700; }
+.post-content ul, .post-content ol { padding-left: calc(var(--spacing-unit) * 2); }
+
+.post-content blockquote {
+    border-left: 4px solid var(--color-primary);
+    padding-left: calc(var(--spacing-unit) * 1.5);
+    font-style: italic;
+    color: var(--color-secondary);
+}
+
+.post-content pre {
+    padding: calc(var(--spacing-unit) * 1.5);
+    border-radius: var(--border-radius);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    white-space: pre-wrap; /* 保证代码在移动端可换行 */
+    overflow-x: auto;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            Part 6: 入场动画                              */
+/* -------------------------------------------------------------------------- */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.site-header, .hero-section, .post-list, .post-full, .site-footer {
+    animation: fadeIn 0.8s ease both;
+}
+
+.post-preview { animation: none; /* 卡片使用JS逐个动画 */ }
+
+/* -------------------------------------------------------------------------- */
+/*                      Part 7: 移动端最终优化 (Final Polish)                  */
+/* -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+    /* 缩小移动端标题和间距，确保不拥挤 */
+    .site-header { padding: var(--spacing-unit) 0; margin-bottom: var(--spacing-unit) * 2; }
+    .post-list .post-preview { padding: var(--spacing-unit) * 1.5; }
+    .post-full .post-title { letter-spacing: -1px; } /* 负字间距让大标题在小屏幕上更紧凑 */
 }
