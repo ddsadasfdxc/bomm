@@ -1,87 +1,757 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LSS.WORK.GD | 我的小世界</title>
-    <meta name="description" content="一个关于代码诗意与设计哲学的个人空间。">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="custom.css">
-    <script src="script.js" defer></script>
+    <title>动漫の庭院 | 二次元风格博客</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sakura-pink: #ffb7d5;
+            --sailor-blue: #5dacbd;
+            --manga-white: #fffaf0;
+            --accent-red: #e87a90;
+            --dark-purple: #392f41;
+            --shadow: 0 10px 30px rgba(93, 172, 189, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'M PLUS Rounded 1c', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8e3ff, #e0f7ff);
+            min-height: 100vh;
+            color: var(--dark-purple);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 樱花飘落效果 */
+        .sakura-fall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .sakura {
+            position: absolute;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffb7d5' d='M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z'/%3E%3C/svg%3E");
+            background-size: contain;
+            width: 25px;
+            height: 25px;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* 导航栏美化 */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 1.2rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border-bottom: 2px solid var(--sakura-pink);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            color: var(--dark-purple);
+            text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .logo::before {
+            content: "✿";
+            color: var(--accent-red);
+            margin-right: 10px;
+            font-size: 1.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav li {
+            position: relative;
+        }
+
+        nav a {
+            color: var(--dark-purple);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        nav a i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        nav a:hover {
+            background: var(--sakura-pink);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(232, 122, 144, 0.3);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .login {
+            background: rgba(93, 172, 189, 0.15);
+            color: var(--dark-purple);
+            border: 2px solid var(--sailor-blue);
+        }
+
+        .login:hover {
+            background: var(--sailor-blue);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .register {
+            background: linear-gradient(135deg, var(--accent-red), var(--sakura-pink));
+            color: white;
+            box-shadow: 0 5px 20px rgba(232, 122, 144, 0.4);
+        }
+
+        .register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(232, 122, 144, 0.5);
+        }
+
+        /* 英雄区域美化 */
+        .hero {
+            padding: 5rem 5% 3rem;
+            min-height: 85vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.8rem;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(93, 172, 189, 0.2);
+            position: relative;
+        }
+
+        .hero h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 5px;
+            background: var(--accent-red);
+            border-radius: 5px;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            color: #5a5260;
+            line-height: 1.8;
+        }
+
+        .cta {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--sailor-blue), #4d8fa5);
+            color: white;
+            border-radius: 50px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(93, 172, 189, 0.4);
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .cta i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(93, 172, 189, 0.5);
+        }
+
+        .cta:hover i {
+            transform: translateX(5px);
+        }
+
+        .hero-illustration {
+            width: 45%;
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .mascot {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+        }
+
+        .mascot::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--sailor-blue) 0%, #6bb9cb 100%);
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+        }
+
+        .mascot::after {
+            content: "♪(^∇^*)";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6rem;
+            color: white;
+            opacity: 0.9;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 特色卡片美化 */
+        .features {
+            padding: 5rem 5%;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.8rem;
+            color: var(--dark-purple);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .section-title h2::before,
+        .section-title h2::after {
+            content: "✧";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-red);
+            font-size: 1.8rem;
+        }
+
+        .section-title h2::before {
+            left: 0;
+        }
+
+        .section-title h2::after {
+            right: 0;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transform: perspective(800px) rotateY(0deg);
+            transform-origin: center bottom;
+        }
+
+        .card:hover {
+            transform: perspective(800px) rotateY(-5deg) translateY(-15px);
+            box-shadow: 0 20px 40px rgba(93, 172, 189, 0.3);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            color: var(--sailor-blue);
+            margin-bottom: 1.8rem;
+            display: inline-flex;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark-purple);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .card h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-red);
+        }
+
+        .card p {
+            margin-bottom: 2rem;
+            color: #6a5d75;
+            flex-grow: 1;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            color: var(--sailor-blue);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            width: fit-content;
+        }
+
+        .card-btn i {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .card-btn:hover {
+            color: var(--accent-red);
+        }
+
+        .card-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        /* 页脚美化 */
+        footer {
+            background: rgba(57, 47, 65, 0.9);
+            color: var(--manga-white);
+            padding: 4rem 5% 2rem;
+            margin-top: 5rem;
+            position: relative;
+            border-top: 3px solid var(--accent-red);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1300px;
+            margin: 0 auto 3rem;
+        }
+
+        .footer-logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            color: var(--sakura-pink);
+        }
+
+        .footer-section h4 {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--sakura-pink);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h4::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--sailor-blue);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #d0c5d5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a i {
+            margin-right: 10px;
+            color: var(--sailor-blue);
+        }
+
+        .footer-links a:hover {
+            color: var(--sakura-pink);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin: 2rem 0 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--sakura-pink);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--sailor-blue);
+            color: white;
+            transform: translateY(-5px) rotate(10deg);
+        }
+
+        .copyright {
+            text-align: center;
+            color: #a59aab;
+            font-size: 1rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 183, 213, 0.2);
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+                margin-bottom: 3rem;
+            }
+            
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            
+            .hero h1::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .hero-illustration {
+                width: 60%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+            
+            nav li {
+                margin: 0.5rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <!-- === 全局置顶的粘性页眉 === -->
-    <header class="sticky-site-header">
-        <div class="header-container">
-            <a href="index.html" class="logo">
-                <img src="/images/avatar.png" alt="博客头像 - 返回主页" class="logo-image">
-            </a>
-            <nav class="main-nav">
-                <a href="#">关于</a>
-                <a href="#">归档</a>
-                <button id="theme-toggle" aria-label="切换深色/浅色模式">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-            </nav>
+    <!-- 樱花飘落效果 -->
+    <div class="sakura-fall"></div>
+    
+    <!-- 顶部导航 -->
+    <header>
+        <a href="#" class="logo">
+            <span>动漫の庭院</span>
+        </a>
+        
+        <nav>
+            <ul>
+                <li><a href="#"><i class="fas fa-home"></i> 主页</a></li>
+                <li><a href="#"><i class="fas fa-book"></i> 文章</a></li>
+                <li><a href="#"><i class="fas fa-paint-brush"></i> 画廊</a></li>
+                <li><a href="#"><i class="fas fa-heart"></i> 收藏</a></li>
+                <li><a href="#"><i class="fas fa-user-friends"></i> 关于</a></li>
+            </ul>
+        </nav>
+        
+        <div class="user-actions">
+            <button class="btn login"><i class="fas fa-sign-in-alt"></i> 登录</button>
+            <button class="btn register"><i class="fas fa-user-plus"></i> 注册</button>
         </div>
     </header>
 
-    <!-- 主滚动容器 -->
-    <div class="freedom-container">
-        <section class="fullscreen-section hero-section">
-            <h1 class="monumental-title" id="typewriter-title"></h1>
-            <div class="scroll-down-prompt">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span>向下滚动</span>
-            </div>
-        </section>
-        <main class="content-section" id="main-content-area">
-            <div class="page-container">
-                <div class="post-list">
-                    <a href="post.html" class="post-preview">
-                        <article>
-                            <div class="post-meta"><time datetime="2024-10-26">2024年10月26日</time><span>#设计 #创意</span></div>
-                            <h2>设计的留白：沉默的语言</h2>
-                            <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
-                        </article>
-                    </a>
-                    <a href="post.html" class="post-preview">
-                        <article>
-                            <div class="post-meta"><time datetime="2024-10-15">2024年10月15日</time><span>#前端 #动画</span></div>
-                            <h2>流动的交互：让界面活起来</h2>
-                            <p>通过CSS动画与微交互，赋予网页元素生命力，让用户在不经意间感受到愉悦与惊喜。</p>
-                        </article>
-                    </a>
-                </div>
-                <footer class="site-footer"><p>© 2024 我的博客。由热爱驱动。</p></footer>
-            </div>
-        </main>
-    </div>
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>欢迎来到二次元梦想世界</h1>
+            <p>这里是动漫爱好者的精神家园，探索无限可能的二次元宇宙。从热门番剧到冷门宝藏，从同人创作到剧情解析，我们一起感受二次元的美好与感动。</p>
+            <a href="#" class="cta">开始探索 <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+        <div class="hero-illustration">
+            <div class="mascot"></div>
+        </div>
+    </section>
 
-    <!-- 全局功能元素 -->
-    <button id="music-player-trigger" aria-label="打开音乐播放器">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-    </button>
-    <div id="music-modal" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-container">
-            <button class="modal-close-button">×</button>
-            <div class="modal-header"><h2>点播一首 BGM</h2><p>为此刻的浏览体验配上心动的旋律</p></div>
-            <div class="modal-content">
-                <div class="song-search-area"><input type="text" id="song-search-input" placeholder="输入歌曲名或歌手..."><ul id="song-results-list"></ul></div>
-                <div class="music-player">
-                    <audio id="audio-player"></audio>
-                    <div class="now-playing">
-                        <span class="status">暂无播放</span>
-                        <div class="song-info"><span id="player-song-title">歌曲名</span><span id="player-song-artist">歌手</span></div>
-                    </div>
-                    <button id="player-play-pause-button" class="play" aria-label="播放/暂停"></button>
+    <!-- 特色卡片区域 -->
+    <section class="features">
+        <div class="section-title">
+            <h2>特色功能</h2>
+        </div>
+        
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-book-open"></i>
                 </div>
+                <h3>精选文章</h3>
+                <p>深入分析热门动漫剧情、角色发展和世界观设定，带你挖掘二次元作品的深层内涵和创作艺术。</p>
+                <a href="#" class="card-btn">阅读更多 <i class="fas fa-chevron-right"></i></a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3>原创画廊</h3>
+                <p>展示高质量同人作品与原创插画，每日更新精彩内容。支持创作者，分享你的二次元创作灵感。</p>
+                <a href="#" class="card-btn">查看作品 <i class="fas fa-chevron-right"></i></a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>番剧推荐</h3>
+                <p>每季新番追踪评测和经典动漫回顾，根据不同兴趣定制你的追番列表，发掘下一部神作。</p>
+                <a href="#" class="card-btn">探索番剧 <i class="fas fa-chevron-right"></i></a>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">动漫の庭院</div>
+                <p>探索二次元的无限可能性，分享对动漫的热爱与见解，构建属于我们的精神家园。</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-bilibili"></i></a>
+                    <a href="#"><i class="fab fa-pixiv"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> 主页</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> 最新文章</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> 热门作品</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> 新番导视</a></li>
+                    <li><a href="#"><i class="fas fa-arrow-right"></i> 创作者中心</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>联系我们</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-envelope"></i> contact@animegarden.com</a></li>
+                    <li><a href="#"><i class="fas fa-comment-dots"></i> 用户社区</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                    <li><a href="#"><i class="fas fa-exclamation-circle"></i> 问题反馈</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © 2025 动漫の庭院 | 探索二次元的美好世界
+        </div>
+    </footer>
+
+    <script>
+        // 樱花飘落生成器
+        document.addEventListener('DOMContentLoaded', function() {
+            const sakuraContainer = document.querySelector('.sakura-fall');
+            const sakuraCount = 30;
+            
+            for (let i = 0; i < sakuraCount; i++) {
+                const sakura = document.createElement('div');
+                sakura.className = 'sakura';
+                
+                // 随机位置
+                sakura.style.left = `${Math.random() * 100}%`;
+                sakura.style.top = `${-Math.random() * 20}%`;
+                
+                // 随机大小
+                const size = Math.random() * 15 + 10;
+                sakura.style.width = `${size}px`;
+                sakura.style.height = `${size}px`;
+                
+                // 随机透明度
+                sakura.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                // 随机动画持续时间和延迟
+                const duration = Math.random() * 8 + 8;
+                const delay = Math.random() * 5;
+                sakura.style.animationDuration = `${duration}s`;
+                sakura.style.animationDelay = `${delay}s`;
+                
+                sakuraContainer.appendChild(sakura);
+            }
+            
+            // 卡片悬停效果增强
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', function(e) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = (x - centerX) / 20;
+                    const rotateX = (centerY - y) / 20;
+                    
+                    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px)`;
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    card.style.transform = 'perspective(800px) rotateY(-5deg) translateY(-15px)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
