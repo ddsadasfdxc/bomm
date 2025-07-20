@@ -8,18 +8,41 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="page-container">
-        <!-- ... header部分保持不变 ... -->
+    <!-- 容器将使用 CSS Grid 实现全屏布局 -->
+    <div class="freedom-container">
 
-        <main class="main-content">
-            <section class="hero-section">
-                <!-- 这部分可以保留，也可以移除，根据你的喜好 -->
-                <h1>代码的诗意，设计的哲学。</h1>
-                <p>在像素间漫步，于逻辑中沉思。</p>
-            </section>
-            
+        <!-- 第一个全屏区域: 大字跃出 (The 'Hero' Section) -->
+        <section class="fullscreen-section hero-section">
+            <h1 class="monumental-title">
+                <span>代码的</span>
+                <span>诗意，</span>
+                <span>设计的</span>
+                <span>哲学。</span>
+            </h1>
+            <div class="scroll-down-prompt">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>向下滚动</span>
+            </div>
+        </section>
+
+        <!-- 第二个全屏区域: 博客文章列表 -->
+        <main class="fullscreen-section content-section">
+            <!-- 头部导航现在放在这里，随内容滚动 -->
+            <header class="site-header">
+                <a href="index.html" class="logo">LSS.WORK.GD</a>
+                <nav class="main-nav">
+                    <a href="#">关于</a>
+                    <a href="#">归档</a>
+                    <button id="theme-toggle" aria-label="切换深色模式">
+                        <!-- SVG icons -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </nav>
+            </header>
+
             <div class="post-list">
-                <!-- 文章1 (结构简化，包裹在a标签里) -->
+                <!-- 文章1 -->
                 <a href="post.html" class="post-preview">
                     <article>
                         <div class="post-meta">
@@ -30,7 +53,6 @@
                         <p>探索如何运用留白创造呼吸感，引导用户视线，并提升整体设计的格调与奢侈感。</p>
                     </article>
                 </a>
-
                 <!-- 文章2 -->
                 <a href="post.html" class="post-preview">
                     <article>
@@ -43,9 +65,12 @@
                     </article>
                 </a>
             </div>
+            
+            <footer class="site-footer">
+                <p>© 2024 我的博客。由热爱驱动。</p>
+            </footer>
         </main>
-
-        <!-- ... footer部分保持不变 ... -->
+        
     </div>
 </body>
 </html>
