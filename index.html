@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感回响 | Aether Echoes</title>
+    <meta name="description" content="一个充满动态美学与深度思考的个人博客空间。">
+    <meta name="keywords" content="个人博客, 科技, 设计, 艺术, 动态效果, WebGL">
+    
+    <!-- 字体引入：优雅的衬线字体与清晰的无衬线字体组合 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入主要样式文件 -->
+    <link rel="stylesheet" href="style.css">
 
+    <!-- Favicon (网站图标) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+</head>
+<body class="light-mode">
+
+    <!-- =================================================================
+    == 自定义动态光标 (DYNAMIC CURSOR)
+    ================================================================== -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- =================================================================
+    == 页面加载动画 (PAGE LOADER)
+    ================================================================== -->
+    <div class="page-loader">
+        <div class="loader-shape"></div>
+        <div class="loader-shape"></div>
+        <div class="loader-shape"></div>
+    </div>
+    
+    <!-- =================================================================
+    == 页面切换遮罩 (PAGE TRANSITION OVERLAY)
+    ================================================================== -->
+    <div class="page-transition-overlay"></div>
+
+    <!-- =================================================================
+    == 顶部阅读进度条 (READING PROGRESS BAR)
+    ================================================================== -->
+    <div class="reading-progress-bar"></div>
+
+    <!-- =================================================================
+    == 网站主容器 (MAIN WRAPPER)
+    ================================================================== -->
+    <div id="main-wrapper">
+
+        <!-- =================================================================
+        == 网站头部 (HEADER)
+        ================================================================== -->
+        <header id="header">
+            <div class="container header-container">
+                <div class="logo-container magnetic-item">
+                    <a href="index.html" class="logo">AetherEchoes</a>
+                </div>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#hero" class="nav-link magnetic-item active"><span>主页</span></a></li>
+                        <li><a href="#featured-articles" class="nav-link magnetic-item"><span>精选</span></a></li>
+                        <li><a href="#about" class="nav-link magnetic-item"><span>关于</span></a></li>
+                        <li><a href="#contact" class="nav-link magnetic-item"><span>联系</span></a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-controls">
+                    <button id="theme-switcher" class="theme-switcher magnetic-item" aria-label="切换主题">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="打开菜单">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- =================================================================
+        == 网站主内容区 (MAIN CONTENT)
+        ================================================================== -->
+        <main id="main-content">
+
+            <!-- =================================================================
+            == 英雄区域 (HERO SECTION)
+            ================================================================== -->
+            <section id="hero" class="hero-section">
+                <canvas id="particle-canvas" class="particle-canvas"></canvas>
+                <div class="hero-content container">
+                    <h1 class="hero-title animate-text-reveal">
+                        思想的星尘，在此汇聚成河
+                    </h1>
+                    <p class="hero-subtitle animate-on-scroll fade-in-up" data-delay="300">
+                        探索技术的前沿，触摸设计的脉搏，感受艺术的温度。
+                    </p>
+                    <a href="#featured-articles" class="btn btn-primary btn-hero animate-on-scroll fade-in-up" data-delay="600">
+                        开始探索之旅
+                        <span class="btn-arrow">→</span>
+                    </a>
+                </div>
+                <div class="scroll-down-indicator">
+                    <a href="#featured-articles">
+                        <div class="mouse">
+                            <div class="wheel"></div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+            
+            <!-- =================================================================
+            == 精选文章 (FEATURED ARTICLES SECTION)
+            ================================================================== -->
+            <section id="featured-articles" class="featured-articles-section content-section">
+                <div class="container">
+                    <h2 class="section-title animate-on-scroll fade-in"><span>精选文章</span></h2>
+                    <div class="article-grid">
+
+                        <!-- Article Card 1 -->
+                        <article class="article-card animate-on-scroll fade-in-up" data-delay="0">
+                            <a href="#" class="card-link">
+                                <div class="card-image-container">
+                                    <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200" alt="未来网络技术图" class="card-image">
+                                    <div class="card-overlay"></div>
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-category">科技前沿</span>
+                                    <h3 class="card-title">解构 Web 3.0：从概念到现实的漫漫长路</h3>
+                                    <p class="card-excerpt">Web 3.0 不仅仅是加密货币和 NFT。本文将深入探讨其核心技术栈、哲学理念以及它将如何重塑我们的数字生活...</p>
+                                    <div class="card-meta">
+                                        <span class="read-more">阅读全文 →</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+
+                        <!-- Article Card 2 -->
+                        <article class="article-card animate-on-scroll fade-in-up" data-delay="200">
+                            <a href="#" class="card-link">
+                                <div class="card-image-container">
+                                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200" alt="设计师工作台" class="card-image">
+                                    <div class="card-overlay"></div>
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-category">设计美学</span>
+                                    <h3 class="card-title">动态设计的黄金法则：如何创造“有生命感”的交互</h3>
+                                    <p class="card-excerpt">优秀的动态效果不仅仅是炫技。它关乎时机、缓动曲线和用户心理。我们将剖析苹果、Google等大厂的设计案例...</p>
+                                    <div class="card-meta">
+                                        <span class="read-more">阅读全文 →</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+
+                        <!-- Article Card 3 -->
+                        <article class="article-card animate-on-scroll fade-in-up" data-delay="400">
+                            <a href="#" class="card-link">
+                                <div class="card-image-container">
+                                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200" alt="地球与星空" class="card-image">
+                                    <div class="card-overlay"></div>
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-category">深度思考</span>
+                                    <h3 class="card-title">人工智能时代的创作焦虑与存在主义的出路</h3>
+                                    <p class="card-excerpt">当 AI 也能作画、写诗、编程时，人类创作者的价值何在？本文试图从哲学层面探讨这个问题，并寻找新的定位。</p>
+                                    <div class="card-meta">
+                                        <span class="read-more">阅读全文 →</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </article>
+
+                    </div>
+                </div>
+            </section>
+            
+            <!-- =================================================================
+            == 关于我 (ABOUT SECTION)
+            ================================================================== -->
+            <section id="about" class="about-section content-section">
+                <div class="container about-container">
+                    <div class="about-image-wrapper animate-on-scroll fade-in-right" data-delay="200">
+                        <div class="about-image-bg"></div>
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=800" alt="博主头像" class="about-image">
+                    </div>
+                    <div class="about-content animate-on-scroll fade-in-left" data-delay="0">
+                        <h2 class="section-title"><span>关于博主</span></h2>
+                        <p>你好，我是 Aether。一名对代码的严谨与设计的感性同样着迷的开发者与创造者。</p>
+                        <p>我相信，最好的产品诞生于技术与艺术的交汇点。这个博客是我记录学习、分享见解、碰撞思想的个人空间。我在这里谈论全栈开发、交互设计、图形学，偶尔也会分享一些关于生活、音乐和宇宙的胡思乱想。</p>
+                        <p>如果你也对创造充满激情，欢迎与我同行。</p>
+                        <a href="#contact" class="btn btn-secondary">保持联系</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+            == 联系方式 (CONTACT SECTION)
+            ================================================================== -->
+            <section id="contact" class="contact-section content-section">
+                <div class="container">
+                    <h2 class="section-title animate-on-scroll fade-in"><span>保持联系</span></h2>
+                    <p class="contact-subtitle animate-on-scroll fade-in-up" data-delay="200">
+                        有任何想法、合作建议或只是想打个招呼？<br>随时给我留言，我会在 48 小时内回复。
+                    </p>
+                    <form action="#" method="POST" class="contact-form animate-on-scroll fade-in-up" data-delay="400">
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="name">您的大名</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">您的邮箱</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">您的留言</label>
+                            <textarea id="message" name="message" rows="6" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit magnetic-item">
+                            <span>发送消息</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- =================================================================
+        == 网站页脚 (FOOTER)
+        ================================================================== -->
+        <footer id="footer">
+            <div class="container footer-container">
+                <div class="footer-social-links">
+                    <a href="#" class="social-link magnetic-item" aria-label="GitHub">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                    <a href="#" class="social-link magnetic-item" aria-label="Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.635 4.218 3.792 4.653-.562 1.55-2.003 2.15-3.441.81a4.918 4.918 0 0 0 4.613 3.42 9.873 9.873 0 0 1-6.115 2.107c-.398 0-.79-.023-1.175-.068 2.067 1.332 4.533 2.105 7.188 2.105 8.547 0 13.229-7.078 13.229-13.229 0-.202-.005-.403-.014-.602.91-.658 1.697-1.477 2.323-2.41z"/></svg>
+                    </a>
+                    <a href="#" class="social-link magnetic-item" aria-label="LinkedIn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© <span id="current-year"></span> AetherEchoes. All Rights Reserved.</p>
+                    <p class="design-credit">Elegantly crafted with code and dreams.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- End #main-wrapper -->
+
+    <!-- 引入主要脚本文件 -->
+    <script src="script.js" defer></script>
+
+</body>
+</html>
