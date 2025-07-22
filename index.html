@@ -3,218 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="《败犬女主太多了！》官方粉丝主题应援网站。">
-    <meta name="keywords" content="败犬女主太多了, 负けヒロインが多すぎる！, Makeinu, 轻小说, 八奈见杏菜, 烧盐柠檬, 小拔志帆">
-    <title>《败犬女主太多了！》主题应援站 | 败犬们的青春赞歌</title>
+    <title>流光代码 | Your Name's Blog</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https.fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- 网站头部与导航 -->
+    <!-- 导航栏 -->
     <header class="main-header">
         <nav class="navbar">
-            <div class="logo">
-                <a href="#">败犬女主应援会</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#story">故事介绍</a></li>
-                <li><a href="#characters">角色档案</a></li>
-                <li><a href="#media">媒体情报</a></li>
-                <li><a href="#gallery">败犬图集</a></li>
-                <li><a href="#news">最新动态</a></li>
+            <a href="#" class="nav-logo">Luminous Code</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#hero" class="nav-link">首页</a></li>
+                <li class="nav-item"><a href="#about" class="nav-link">关于我</a></li>
+                <li class="nav-item"><a href="#posts" class="nav-link">文章</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">联系</a></li>
             </ul>
-            <div class="burger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
         </nav>
     </header>
 
     <main>
-        <!-- 英雄区域 - 网站主视觉 -->
-        <section class="hero">
-            <div class="hero-overlay"></div>
+        <!-- 英雄区 -->
+        <section id="hero" class="hero-section">
             <div class="hero-content">
-                <h1 class="hero-title">败犬女主太多了！</h1>
-                <p class="hero-subtitle">献给所有败北的你，败犬们的青春由此开始——！</p>
-                <a href="#characters" class="cta-button">了解更多败犬</a>
+                <h1 class="hero-title">静谧中的跃动</h1>
+                <p class="hero-subtitle">探索代码、设计与生活的交集</p>
             </div>
+            <a href="#about" class="scroll-down-arrow">
+                <i class="fas fa-chevron-down"></i>
+            </a>
         </section>
 
-        <!-- 故事介绍区域 -->
-        <section id="story" class="content-section fade-in">
-            <h2 class="section-title">STORY | 故事梗概</h2>
-            <div class="story-container">
-                <div class="story-image">
-                    <!-- 图片占位符，建议使用小说封面 -->
-                    <img src="https://via.placeholder.com/400x600/DDDDDD/808080?text=小说第一卷" alt="小说封面">
-                </div>
-                <div class="story-text">
-                    <h3>起始于一场败北的宣言……</h3>
-                    <p>故事的主人公，自诩为“背景角色”的男子高中生 **温水和彦**，某天偶然目击了同班的超人气女生 **八奈见杏菜** 被甩的瞬间。</p>
-                    <p>“为什么是我啊！”她发出了败犬的悲鸣。</p>
-                    <p>以此为契机，温水和彦的生活被卷入了各种“败犬女主角”的旋涡之中。无论是田径部的王牌 **烧盐柠檬**，还是文艺部的小恶魔学妹 **小拔志帆**，她们都在恋爱的战场上屡战屡败。</p>
-                    <p>这是一个围绕着不愿承认失败的少女们，充满遗憾又闪闪发光的青春恋爱喜剧故事。和彦被她们折腾的同时，也开始寻找自己在这场青春剧中的真正角色。</p>
-                    <p class="story-quote">“没错，这是属于‘败犬’们的，为了不输给‘女主角’的故事。”</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 角色介绍区域 -->
-        <section id="characters" class="content-section fade-in">
-            <h2 class="section-title">CHARACTERS | 败犬档案</h2>
-            <div class="character-grid">
-                <!-- 角色卡片: 温水和彦 -->
-                <div class="character-card">
-                    <div class="character-card-inner">
-                        <div class="character-card-front">
-                            <img src="https://via.placeholder.com/300x450/B0C4DE/FFFFFF?text=温水+和彦" alt="温水和彦">
-                            <div class="character-name-plate">温水 和彦</div>
-                        </div>
-                        <div class="character-card-back">
-                            <h4>温水 和彦 (Nukumizu Kazuhiko)</h4>
-                            <p class="character-cv">CV: 梅田修一朗</p>
-                            <hr>
-                            <p>本作男主角。爱好是阅读，信奉“人生应如白开水一般平淡”，是个甘于担当“背景角色”的少年。然而，自从撞见八奈见的败北现场后，他平静的生活就此一去不复返，被迫成为了“败犬”们的军师（兼吐槽役）。</p>
-                        </div>
+        <!-- 关于我 -->
+        <section id="about" class="content-section animate-on-scroll">
+            <div class="container">
+                <h2 class="section-title">关于我</h2>
+                <div class="about-content">
+                    <div class="about-image">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2488&auto=format&fit=crop" alt="博主头像">
                     </div>
-                </div>
-
-                <!-- 角色卡片: 八奈见杏菜 -->
-                <div class="character-card">
-                    <div class="character-card-inner">
-                        <div class="character-card-front">
-                            <img src="https://via.placeholder.com/300x450/FFB6C1/FFFFFF?text=八奈见+杏菜" alt="八奈见杏菜">
-                             <div class="character-name-plate">八奈见 杏菜</div>
-                        </div>
-                        <div class="character-card-back">
-                            <h4>八奈见 杏菜 (Yanami Anna)</h4>
-                            <p class="character-cv">CV: 远野光</p>
-                            <hr>
-                            <p>文静的美少女，但在恋爱上却是个不折不扣的“败犬”。向青梅竹马告白失败后，发出了载入史册的败犬悲鸣。表面上是完美优等生，私下却意外地随性且毒舌。与和彦组成了“败犬同盟”。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 角色卡片: 烧盐柠檬 -->
-                <div class="character-card">
-                    <div class="character-card-inner">
-                        <div class="character-card-front">
-                            <img src="https://via.placeholder.com/300x450/FFD700/FFFFFF?text=烧盐+柠檬" alt="烧盐柠檬">
-                            <div class="character-name-plate">烧盐 柠檬</div>
-                        </div>
-                        <div class="character-card-back">
-                            <h4>烧盐 柠檬 (Yakishio Remon)</h4>
-                             <p class="character-cv">CV: 若山诗音</p>
-                             <hr>
-                            <p>元气满满的田径部少女，拥有超强的运动能力和开朗的性格，在男女生中都很受欢迎。然而，她的恋爱之路同样坎坷。因为一次意外的告白失败，也加入了败犬的行列。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 角色卡片: 小拔志帆 -->
-                <div class="character-card">
-                    <div class="character-card-inner">
-                        <div class="character-card-front">
-                            <img src="https://via.placeholder.com/300x450/DDA0DD/FFFFFF?text=小拔+志帆" alt="小拔志帆">
-                            <div class="character-name-plate">小拔 志帆</div>
-                        </div>
-                        <div class="character-card-back">
-                            <h4>小拔 志帆 (Chikama Shihan)</h4>
-                             <p class="character-cv">CV: 寺泽百花</p>
-                             <hr>
-                            <p>文艺部的后辈，外表可爱，但实际上是个有点小恶魔性格的少女。她通过创作以自己为原型的“败犬女主角”小说来排解失恋的忧郁。虽然年纪最小，但对恋爱的见解却异常犀利。</p>
-                        </div>
+                    <div class="about-text">
+                        <h3>你好，我是 [你的名字]</h3>
+                        <p>一名前端开发者、UI/UX 设计爱好者和终身学习者。我热衷于创造美观、实用且富有表现力的数字体验。</p>
+                        <p>在这个小小的空间里，我将分享我在技术探索、项目实践、设计思考以及生活点滴中的心得与感悟。希望我的文字能为你带来一丝启发或片刻的宁静。</p>
+                        <p>技术栈: React, Vue, Node.js, WebGL, Figma</p>
                     </div>
                 </div>
             </div>
         </section>
-        
-        <!-- 媒体情报区域 -->
-        <section id="media" class="content-section fade-in">
-            <h2 class="section-title">MEDIA MIX | 媒体展开</h2>
-            <div class="media-container">
-                <div class="media-item">
-                    <div class="media-icon book-icon"></div>
-                    <h3>轻小说原作</h3>
-                    <p>作者：雨森焚火 / 插画：いみぎむる</p>
-                    <p>GAGAGA文库（小学馆）出版发行。小说细腻地描绘了败犬们的心理活动和令人捧腹的日常，是整个故事的根基。</p>
-                    <a href="https://gagagabunko.jp/special/makeinu/" target="_blank" class="media-link">查看原作官网</a>
+
+        <!-- 最新文章 -->
+        <section id="posts" class="content-section animate-on-scroll">
+            <div class="container">
+                <h2 class="section-title">最新文章</h2>
+                <div class="post-grid">
+                    <!-- 文章卡片 1 -->
+                    <a href="#" class="post-card">
+                        <div class="post-card-image">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop" alt="文章封面">
+                        </div>
+                        <div class="post-card-content">
+                            <span class="post-card-category">技术</span>
+                            <h3 class="post-card-title">深入理解 JavaScript Intersection Observer API</h3>
+                            <p class="post-card-excerpt">告别性能瓶颈，用现代化的方式实现滚动动画与懒加载...</p>
+                            <span class="post-card-date">2023年10月26日</span>
+                        </div>
+                    </a>
+                    <!-- 文章卡片 2 -->
+                    <a href="#" class="post-card">
+                        <div class="post-card-image">
+                             <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2670&auto=format&fit=crop" alt="文章封面">
+                        </div>
+                        <div class="post-card-content">
+                            <span class="post-card-category">设计</span>
+                            <h3 class="post-card-title">构建优雅暗色主题UI的设计原则</h3>
+                            <p class="post-card-excerpt">色彩、对比度、层级... 打造沉浸式用户体验的关键要素...</p>
+                            <span class="post-card-date">2023年10月15日</span>
+                        </div>
+                    </a>
+                    <!-- 文章卡片 3 -->
+                    <a href="#" class="post-card">
+                         <div class="post-card-image">
+                             <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?q=80&w=2670&auto=format&fit=crop" alt="文章封面">
+                        </div>
+                        <div class="post-card-content">
+                             <span class="post-card-category">生活</span>
+                            <h3 class="post-card-title">我的极简数字生活工作流</h3>
+                            <p class="post-card-excerpt">在信息爆炸的时代，如何保持专注与高效，让工具为人服务...</p>
+                            <span class="post-card-date">2023年9月28日</span>
+                        </div>
+                    </a>
                 </div>
-                <div class="media-item">
-                    <div class="media-icon manga-icon"></div>
-                    <h3>漫画改编</h3>
-                    <p>在小学馆的《Ura Sunday》和《Manga One》上连载。漫画以生动的画面还原了小说中的经典场面和角色的可爱之处，让败犬们的形象更加活灵活现。</p>
-                    <a href="#" class="media-link">阅读漫画（占位）</a>
-                </div>
-                <div class="media-item">
-                    <div class="media-icon tv-icon"></div>
-                    <h3>TV动画化</h3>
-                    <p>2024年7月放送决定！由A-1 Pictures制作。备受期待的动画将为败犬们的青春故事注入全新的活力，敬请期待会动的败犬们！</p>
-                    <a href="https://makeinu-anime.com/" target="_blank" class="media-link">访问动画官网</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- 图集区域 -->
-        <section id="gallery" class="content-section fade-in">
-            <h2 class="section-title">GALLERY | 败犬瞬间</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/FFB6C1/FFFFFF?text=杏菜的败北瞬间" alt="图集图片1"></div>
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/FFD700/FFFFFF?text=柠檬的活力笑容" alt="图集图片2"></div>
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/DDA0DD/FFFFFF?text=志帆的小恶魔计划" alt="图集图片3"></div>
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/B0C4DE/FFFFFF?text=和彦的无奈吐槽" alt="图集图片4"></div>
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/CCCCCC/808080?text=小说插画1" alt="图集图片5"></div>
-                <div class="gallery-item"><img src="https://via.placeholder.com/400x300/CCCCCC/808080?text=动画名场面" alt="图集图片6"></div>
-            </div>
-        </section>
-        
-        <!-- 新闻区域 -->
-        <section id="news" class="content-section fade-in">
-            <h2 class="section-title">NEWS | 最新动态</h2>
-            <ul class="news-list">
-                <li class="news-item">
-                    <span class="news-date">2024.07.13</span>
-                    <span class="news-tag anime-tag">动画</span>
-                    <a href="#">TV动画《败犬女主太多了！》正式开播！第一话广受好评！</a>
-                </li>
-                <li class="news-item">
-                     <span class="news-date">2024.06.28</span>
-                    <span class="news-tag book-tag">原作</span>
-                    <a href="#">轻小说原作第X卷发售纪念！作者签名会活动决定！</a>
-                </li>
-                <li class="news-item">
-                     <span class="news-date">2024.06.15</span>
-                    <span class="news-tag goods-tag">周边</span>
-                    <a href="#">主要角色亚克力立牌、钥匙扣等周边开启预售！</a>
-                </li>
-                <li class="news-item">
-                     <span class="news-date">2024.05.20</span>
-                    <span class="news-tag anime-tag">动画</span>
-                    <a href="#">动画PV第二弹公开，追加声优阵容发表！</a>
-                </li>
-            </ul>
-        </section>
-
-    </main>
-
-    <!-- 网站页脚 -->
-    <footer class="main-footer">
-        <div class="footer-content">
-            <p>© 2024 《败犬女主太多了！》粉丝应援会. All Rights Reserved.</p>
-            <p>本网站为非官方粉丝作品，所有版权归属原作、出版社及动画制作委员会。</p>
-            <div class="social-links">
-                <a href="#" title="Twitter">T</a>
-                <a href="#" title="Pixiv">P</a>
-                <a href="#" title="Bilibili">B</a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-</body>
-</html>
+                 <div clas
