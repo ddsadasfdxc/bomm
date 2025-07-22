@@ -151,17 +151,81 @@ a:hover {
     transform-origin: bottom left;
 }
 
-/* --- 英雄区 --- */
+
+
+/* --- 升级版: 极光动态背景 --- */
 .hero-section {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    /* 确保 hero-section 有相对定位 */
     position: relative;
-    overflow: hidden;
-    color: white;
-    padding: 0 1rem;
+    overflow: hidden; 
+}
+
+/* 移除旧的 .hero-section::before */
+
+.hero-section::before,
+.hero-section::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(100px); /* 关键的模糊效果 */
+    opacity: 0.4;
+}
+
+.hero-section::before {
+    width: 60vw;
+    height: 60vw;
+    max-width: 600px;
+    max-height: 600px;
+    left: -20vw;
+    top: -20vh;
+    background: radial-gradient(circle, #ff00c1, #00e5ff);
+    animation: aurora-flow-1 25s linear infinite;
+}
+
+.hero-section::after {
+    width: 50vw;
+    height: 50vw;
+    max-width: 500px;
+    max-height: 500px;
+    right: -20vw;
+    bottom: -20vh;
+    background: radial-gradient(circle, #7f00ff, #007bff);
+    animation: aurora-flow-2 30s linear infinite alternate;
+}
+
+@keyframes aurora-flow-1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(40vw, 40vh) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+@keyframes aurora-flow-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30vw, -30vh) scale(1.2); }
+}
+
+/* 在上面添加一个黑色遮罩，让文字更清晰 */
+.hero-section > div { /* 用 > 确保只选中直接子元素 */
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes aurora-flow-1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(40vw, 40vh) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+@keyframes aurora-flow-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30vw, -30vh) scale(1.2); }
+}
+
+/* 在上面添加一个黑色遮罩，让文字更清晰 */
+.hero-section > div { /* 用 > 确保只选中直接子元素 */
+    position: relative;
+    z-index: 1;
 }
 
 .hero-section::before {
@@ -467,3 +531,42 @@ a:hover {
         grid-template-columns: 1fr;
     }
 }
+/* --- 卡片悬停炫光特效 --- */
+.post-card {
+    position: relative; /* 为伪元素定位提供基准 */
+    overflow: hidden; /* 隐藏超出范围的伪元素 */
+}
+
+.post-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%; /* 从左侧外部开始 */
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg); /* 倾斜光芒 */
+    transition: left 0.7s ease-in-out;
+}
+
+.post-card:hover::before {
+    left: 150%; /* 移动到右侧外部 */
+}
+/* --- 主题切换 --- */
+:root {
+    /* 默认是暗色主题的变量... */
+    --primary-color: #00e5ff;
+    --primary-color-darker: #00b8d4;
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --on-background-color: #e0e0e0;
+    --on-surface-color: #ffffff;
+    --subtle-text-color: #a0a0a0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-color: rgba(0, 229, 255, 0.2);
+    
