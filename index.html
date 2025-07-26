@@ -1,384 +1,213 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 AI Hub | 多模型智能代理平台</title>
-    <meta name="description" content="集成多个先进AI模型的智能代理平台，包括GPT-4、Claude、Gemini等">
-    <meta name="keywords" content="AI, GPT-4, Claude, Gemini, 人工智能, 代理, API">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" type="image/svg+xml">
-    
-    <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css">
+    <title>LLM Proxy Geek Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        
+        h1 {
+            color: #00ff41;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        .endpoint {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff41;
+        }
+        
+        .endpoint h3 {
+            color: #00ff41;
+            margin-bottom: 10px;
+        }
+        
+        code {
+            background: #000;
+            color: #00ff41;
+            padding: 10px;
+            border-radius: 3px;
+            display: block;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #333;
+        }
+        
+        .models {
+            margin: 30px 0;
+        }
+        
+        .model-item {
+            background: #1a1a1a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .model-item:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+        }
+        
+        .model-name {
+            font-weight: bold;
+            color: #00ff41;
+        }
+        
+        .model-provider {
+            color: #888;
+            font-style: italic;
+        }
+        
+        .status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff41;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .geek-note {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ff6b35;
+        }
+        
+        .geek-note h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="loading-content">
-            <div class="loading-spinner">
-                <div class="spinner-ring"></div>
-                <div class="spinner-core">🤖</div>
+    <div class="container">
+        <h1>🤖 LLM Proxy Geek Edition</h1>
+        
+        <div class="endpoint">
+            <h3><span class="status"></span>API Endpoint</h3>
+            <code>/v1/chat/completions</code>
+            <p>Compatible with OpenAI API format. No API keys provided - bring your own!</p>
+        </div>
+        
+        <div class="models">
+            <h3>Available Models</h3>
+            <div class="model-item">
+                <div class="model-name">gpt-3.5-turbo</div>
+                <div class="model-provider">OpenAI</div>
             </div>
-            <div class="loading-text">AI Hub 启动中...</div>
-            <div class="loading-progress">
-                <div class="progress-bar"></div>
+            <div class="model-item">
+                <div class="model-name">gpt-4</div>
+                <div class="model-provider">OpenAI</div>
             </div>
+            <div class="model-item">
+                <div class="model-name">llama-2-7b</div>
+                <div class="model-provider">Meta</div>
+            </div>
+            <div class="model-item">
+                <div class="model-name">gemini-pro</div>
+                <div class="model-provider">Google</div>
+            </div>
+            <div class="model-item">
+                <div class="model-name">mistral-7b</div>
+                <div class="model-provider">Mistral AI</div>
+            </div>
+            <div class="model-item">
+                <div class="model-name">claude-3-sonnet</div>
+                <div class="model-provider">Anthropic</div>
+            </div>
+        </div>
+        
+        <div class="geek-note">
+            <h4>🚀 Quick Start</h4>
+            <p>curl -X POST "https://www.lss.work.gd/v1/chat/completions" \<br>
+            &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+            &nbsp;&nbsp;-H "Authorization: Bearer YOUR_API_KEY" \<br>
+            &nbsp;&nbsp;-d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Hello!"}]}'</p>
+        </div>
+        
+        <div class="footer">
+            <p>Built with ❤️ by a true geek | Non-commercial use only</p>
+            <p>For hackers, tinkerers, and AI enthusiasts</p>
         </div>
     </div>
-
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-brand">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Hub</span>
-                </div>
-                <div class="nav-menu" id="nav-menu">
-                    <a href="#home" class="nav-link active">首页</a>
-                    <a href="#models" class="nav-link">模型</a>
-                    <a href="#chat" class="nav-link">对话</a>
-                    <a href="#api" class="nav-link">API</a>
-                    <a href="#docs" class="nav-link">文档</a>
-                </div>
-                <div class="nav-actions">
-                    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section id="home" class="hero">
-            <div class="hero-background">
-                <canvas id="neural-network"></canvas>
-            </div>
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h1 class="hero-title">
-                            <span class="gradient-text">AI Hub</span>
-                            <br>
-                            <span class="subtitle">多模型智能代理平台</span>
-                        </h1>
-                        <p class="hero-description">
-                            集成全球顶尖AI模型，提供统一API接口<br>
-                            支持GPT-4、Claude、Gemini等多种先进模型
-                        </p>
-                        <div class="hero-stats">
-                            <div class="stat-item">
-                                <div class="stat-number">15+</div>
-                                <div class="stat-label">AI模型</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">99.9%</div>
-                                <div class="stat-label">可用性</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">24/7</div>
-                                <div class="stat-label">服务</div>
-                            </div>
-                        </div>
-                        <div class="hero-actions">
-                            <button class="btn btn-primary" onclick="scrollToSection('chat')">
-                                <i class="fas fa-comments"></i>
-                                开始对话
-                            </button>
-                            <button class="btn btn-secondary" onclick="scrollToSection('api')">
-                                <i class="fas fa-code"></i>
-                                API文档
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Models Section -->
-        <section id="models" class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">支持的AI模型</h2>
-                    <p class="section-subtitle">集成业界领先的生成式语言模型</p>
-                </div>
-                <div class="models-grid">
-                    <div class="model-card">
-                        <div class="model-icon">🚀</div>
-                        <h3>GPT-4.1 Mini</h3>
-                        <p>最新版本的GPT-4.1-mini-2025-04-14，高效且经济的选择</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">128K Context</span>
-                            <span class="spec-tag">快速响应</span>
-                        </div>
-                    </div>
-                    
-                    <div class="model-card">
-                        <div class="model-icon">🔷</div>
-                        <h3>Amazon Nova Pro</h3>
-                        <p>amazon.nova-pro-v1:0 - 亚马逊最新的多模态AI模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">多模态</span>
-                            <span class="spec-tag">高质量</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">⭕</div>
-                        <h3>O3 Mini</h3>
-                        <p>OpenAI最新的O3-mini模型，专注推理能力</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">推理专家</span>
-                            <span class="spec-tag">高精度</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">🧠</div>
-                        <h3>Grok-3 Mini</h3>
-                        <p>grok-3-mini-beta - X.AI的幽默智能助手</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">创意写作</span>
-                            <span class="spec-tag">Beta版</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">🔬</div>
-                        <h3>DeepSeek R1</h3>
-                        <p>deepseek-r1-0528 - 深度思考的推理模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">深度推理</span>
-                            <span class="spec-tag">逻辑分析</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">💎</div>
-                        <h3>Gemini 2.5 Flash</h3>
-                        <p>gemini-2.5-flash-lite-preview - Google最新轻量级模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">超快响应</span>
-                            <span class="spec-tag">轻量级</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">🌟</div>
-                        <h3>Claude 3.5 Sonnet</h3>
-                        <p>claude-3-5-sonnet-20250219-thinking - Anthropic思考型模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">深度思考</span>
-                            <span class="spec-tag">安全可靠</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">⚡</div>
-                        <h3>Claude 3.5 Haiku</h3>
-                        <p>claude-3-5-haiku-20241022 - 快速简洁的对话模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">极速响应</span>
-                            <span class="spec-tag">简洁高效</span>
-                        </div>
-                    </div>
-
-                    <div class="model-card">
-                        <div class="model-icon">🚀</div>
-                        <h3>Nova Experimental</h3>
-                        <p>amazon-nova-experimental-chat-05-14 - 实验性对话模型</p>
-                        <div class="model-specs">
-                            <span class="spec-tag">实验性</span>
-                            <span class="spec-tag">前沿技术</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chat Section -->
-        <section id="chat" class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">智能对话</h2>
-                    <p class="section-subtitle">与AI模型进行实时对话</p>
-                </div>
-                <div class="chat-container">
-                    <div class="chat-sidebar">
-                        <div class="model-selector">
-                            <label for="model-select">选择AI模型:</label>
-                            <select id="model-select">
-                                <option value="gpt-4.1-mini-2025-04-14">GPT-4.1 Mini</option>
-                                <option value="amazon.nova-pro-v1:0">Amazon Nova Pro</option>
-                                <option value="o3-mini">O3 Mini</option>
-                                <option value="grok-3-mini-beta">Grok-3 Mini</option>
-                                <option value="deepseek-r1-0528">DeepSeek R1</option>
-                                <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash</option>
-                                <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
-                                <option value="claude-3-5-haiku">Claude 3.5 Haiku</option>
-                                <option value="amazon-nova-experimental">Nova Experimental</option>
-                            </select>
-                        </div>
-                        <div class="chat-settings">
-                            <div class="setting-group">
-                                <label for="temperature">创造性 (Temperature):</label>
-                                <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
-                                <span id="temp-value">0.7</span>
-                            </div>
-                            <div class="setting-group">
-                                <label for="max-tokens">最大长度:</label>
-                                <input type="number" id="max-tokens" min="100" max="4000" value="1000">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-main">
-                        <div class="chat-messages" id="chat-messages">
-                            <div class="message system-message">
-                                <div class="message-content">
-                                    <i class="fas fa-robot"></i>
-                                    欢迎使用AI Hub！选择一个模型开始对话吧。
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chat-input-container">
-                            <div class="chat-input-wrapper">
-                                <textarea id="chat-input" placeholder="输入你的问题..." rows="1"></textarea>
-                                <button id="send-button" class="send-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- API Section -->
-        <section id="api" class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">API接口</h2>
-                    <p class="section-subtitle">统一的API接口，轻松集成到您的应用中</p>
-                </div>
-                <div class="api-docs">
-                    <div class="api-card">
-                        <h3>快速开始</h3>
-                        <div class="code-block">
-                            <pre><code>curl -X POST https://ddsadasfdxc.github.io/bomm/api/chat \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{
-    "model": "gpt-4.1-mini-2025-04-14",
-    "messages": [
-      {"role": "user", "content": "Hello, AI!"}
-    ],
-    "temperature": 0.7,
-    "max_tokens": 1000
-  }'</code></pre>
-                        </div>
-                    </div>
-                    <div class="api-features">
-                        <div class="feature-item">
-                            <i class="fas fa-lightning-bolt"></i>
-                            <h4>高性能</h4>
-                            <p>优化的请求路由，确保最快响应</p>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <h4>安全可靠</h4>
-                            <p>企业级安全保护，数据加密传输</p>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-chart-line"></i>
-                            <h4>监控统计</h4>
-                            <p>详细的使用统计和性能监控</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Documentation Section -->
-        <section id="docs" class="section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">文档中心</h2>
-                    <p class="section-subtitle">详细的使用说明和最佳实践</p>
-                </div>
-                <div class="docs-grid">
-                    <div class="doc-card">
-                        <i class="fas fa-rocket"></i>
-                        <h3>快速开始</h3>
-                        <p>5分钟内集成AI Hub到你的应用</p>
-                        <a href="#" class="doc-link">查看指南 →</a>
-                    </div>
-                    <div class="doc-card">
-                        <i class="fas fa-book"></i>
-                        <h3>API参考</h3>
-                        <p>完整的API文档和参数说明</p>
-                        <a href="#" class="doc-link">查看文档 →</a>
-                    </div>
-                    <div class="doc-card">
-                        <i class="fas fa-code"></i>
-                        <h3>代码示例</h3>
-                        <p>各种编程语言的示例代码</p>
-                        <a href="#" class="doc-link">查看示例 →</a>
-                    </div>
-                    <div class="doc-card">
-                        <i class="fas fa-question-circle"></i>
-                        <h3>常见问题</h3>
-                        <p>常见问题解答和故障排除</p>
-                        <a href="#" class="doc-link">查看FAQ →</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Hub</span>
-                </div>
-                <div class="footer-links">
-                    <a href="#">关于我们</a>
-                    <a href="#">隐私政策</a>
-                    <a href="#">服务条款</a>
-                    <a href="#">联系我们</a>
-                </div>
-                <div class="footer-social">
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 AI Hub. 由先进AI技术驱动.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="back-to-top" aria-label="返回顶部">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <script src="script.js"></script>
+    
+    <script>
+        // Add some geeky terminal-style effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Add typing effect to title
+            const title = document.querySelector('h1');
+            const originalText = title.textContent;
+            title.textContent = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    title.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+            
+            setTimeout(typeWriter, 500);
+        });
+    </script>
 </body>
 </html>

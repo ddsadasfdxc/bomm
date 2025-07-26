@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#111;color:#eee;font-family:monospace;">
+<head>
+  <meta charset="UTF-8">
+  <title>LLM Proxy Geek Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { max-width: 600px; margin: 40px auto; padding: 2em; background: #181818; border-radius: 12px; box-shadow: 0 0 24px #0008; }
+    h1 { color: #00ffe7; }
+    code { background: #222; color: #0ff; padding: 2px 6px; border-radius: 4px; }
+    ul { list-style: square; }
+    a { color: #0ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    small { color: #888; }
+  </style>
+</head>
+<body>
+  <h1>🤖 LLM Proxy Geek Edition</h1>
+  <p>API Endpoint: <code>/v1/chat/completions</code></p>
+  <h2>Available Models</h2>
+  <ul id="models"></ul>
+  <hr>
+  <small>Non-commercial. For geeks only. | <a href="https://github.com/">Source</a></small>
+  <script>
+    // Fetch model list from backend
+    fetch('/v1/models').then(r=>r.json()).then(data=>{
+      const ul = document.getElementById('models');
+      data.data.forEach(m => {
+        const li = document.createElement('li');
+        li.innerHTML = `<b>${m.id}</b> <i>(${m.provider})</i>`;
+        ul.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
