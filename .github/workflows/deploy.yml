@@ -1,148 +1,30 @@
-name: 🚀 自动部署到 lss.work.gd
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, master, cursor/say-hello-in-chinese-c907 ]
-  workflow_dispatch:
+    branches: [ main, master ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
     steps:
-    - name: 📥 检出代码
+    - name: 📥 Checkout
       uses: actions/checkout@v4
 
-    - name: 🔍 代码质量检查
-      run: |
-        echo "🧹 检查文件完整性..."
-        ls -la
-        
-        # 检查关键文件
-        if [ ! -f "index.html" ]; then
-          echo "❌ 缺少 index.html"
-          exit 1
-        fi
-        
-        if [ ! -f "style.css" ]; then
-          echo "❌ 缺少 style.css"
-          exit 1
-        fi
-        
-        if [ ! -f "script.js" ]; then
-          echo "❌ 缺少 script.js"
-          exit 1
-        fi
-        
-        echo "✅ 所有关键文件检查通过"
+    - name: 🔧 Setup Pages
+      uses: actions/configure-pages@v4
 
-    - name: 🔨 构建项目
-      run: |
-        echo "🔨 开始构建项目..."
-        mkdir -p dist
-        
-        # 复制主要文件
-        cp index.html dist/
-        cp style.css dist/
-        cp script.js dist/
-        cp README.md dist/
-        
-        # 复制资源目录
-        if [ -d "image" ]; then
-          cp -r image dist/
-        fi
-        
-        if [ -d "music" ]; then
-          cp -r music dist/
-        fi
-        
-        echo "✅ 项目构建完成"
-
-    - name: ⚡ 优化文件
-      run: |
-        echo "⚡ 开始优化文件..."
-        
-        # 简单的文件优化
-        if [ -f "dist/style.css" ]; then
-          # 移除CSS注释（简单版本）
-          sed -i 's|/\*.*\*/||g' dist/style.css
-          echo "✓ CSS文件已优化"
-        fi
-        
-        if [ -f "dist/index.html" ]; then
-          # 移除HTML注释
-          sed -i 's|<!--.*-->||g' dist/index.html
-          echo "✓ HTML文件已优化"
-        fi
-        
-        echo "✅ 文件优化完成"
-
-    - name: 📊 生成部署信息
-      run: |
-        echo "📊 生成部署信息..."
-        
-        # 创建部署配置
-        cat > dist/deploy.json << EOF
-        {
-          "name": "Aether Echoes Blog",
-          "version": "$(date +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)",
-          "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-          "targetUrl": "https://www.lss.work.gd/",
-          "commitHash": "$(git rev-parse HEAD)",
-          "commitMessage": "$(git log -1 --pretty=%B | head -1)",
-          "branch": "${{ github.ref_name }}",
-          "buildNumber": "${{ github.run_number }}"
-        }
-        EOF
-        
-        echo "✅ 部署信息已生成"
-
-    - name: 📤 推送到 GitHub Pages
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cursor/say-hello-in-chinese-c907'
-      uses: peaceiris/actions-gh-pages@v3
+    - name: 📄 Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-        publish_branch: gh-pages
+        path: '.'
 
-    - name: 🌐 模拟部署到目标网站
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cursor/say-hello-in-chinese-c907'
-      env:
-        TARGET_URL: https://www.lss.work.gd/
-      run: |
-        echo "🌐 准备部署到目标网站..."
-        echo "📁 构建目录内容："
-        ls -la dist/
-        
-        echo "📄 部署配置："
-        cat dist/deploy.json
-        
-        echo "🚀 模拟部署过程..."
-        echo "✅ 文件已准备完成！"
-        echo "🌐 目标地址: $TARGET_URL"
-        
-        # 在实际部署中，这里需要添加具体的上传逻辑
-        # 例如：FTP上传、SSH部署、API调用等
-
-    - name: 📋 部署总结
-      if: always()
-      run: |
-        echo ""
-        echo "=================================="
-        echo "🎉 部署流程完成"
-        echo "=================================="
-        echo "📊 项目: Aether Echoes Blog"
-        echo "🌐 目标: https://www.lss.work.gd/"
-        echo "📁 分支: ${{ github.ref_name }}"
-        echo "🔢 构建: #${{ github.run_number }}"
-        echo "⏰ 时间: $(date)"
-        echo "=================================="
-        
-        if [ -d "dist" ]; then
-          echo "✅ 构建成功完成！"
-          echo "📦 构建产物大小: $(du -sh dist/ | cut -f1)"
-          echo "📄 文件列表:"
-          ls -la dist/
-        else
-          echo "❌ 构建失败"
-        fi
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
