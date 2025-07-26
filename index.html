@@ -15,6 +15,11 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="LLM Geek Proxy - Geek API Showcase">
     <meta name="twitter:description" content="Personal LLM API proxy, geek/hacker style, 2025 models, SZA endpoints, no API key public distribution.">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#39ff14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Geek Proxy">
     <style>
         * {
             margin: 0;
@@ -1071,6 +1076,17 @@ rm: cannot remove '/': Operation not permitted
         document.addEventListener('DOMContentLoaded', function() {
             populateModels();
             initTerminal();
+            
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Geek Proxy: Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Geek Proxy: Service Worker registration failed:', error);
+                    });
+            }
         });
     </script>
 </body>
