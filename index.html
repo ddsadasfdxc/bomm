@@ -86,30 +86,115 @@
             border: 2px solid #39ff14;
             border-radius: 8px;
             padding: 1.5rem;
-            transition: all 0.3s ease;
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 0 #00ff41;
         }
-
-        .model-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .model-card:hover::before {
-            left: 100%;
-        }
-
         .model-card:hover {
             border-color: #00ff41;
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
-            transform: translateY(-2px);
+            box-shadow: 0 0 32px 4px #00ff41cc, 0 0 8px 2px #ff0055aa;
+            transform: translateY(-3px) scale(1.02) rotate(-0.5deg);
+            z-index: 2;
+        }
+        .model-features {
+            margin-bottom: 0.7em;
+            font-size: 1.1em;
+            color: #00bfff;
+            display: flex;
+            gap: 0.7em;
+            flex-wrap: wrap;
+        }
+        .endpoint-section .endpoint-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-top: 0.3em;
+        }
+        .endpoint-section .fake-api {
+            color: #ff0055;
+            font-size: 0.85em;
+            font-style: italic;
+            margin-left: 0.5em;
+        }
+        .endpoint-section .docs-link {
+            color: #00bfff;
+            font-size: 0.95em;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            margin-left: 0.5em;
+            transition: color 0.2s;
+        }
+        .endpoint-section .docs-link:hover {
+            color: #ff0055;
+        }
+        #toast {
+            position: fixed;
+            top: 2.2em;
+            right: 2.2em;
+            background: #18181a;
+            color: #39ff14;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 0.8em 1.5em;
+            font-family: 'Fira Mono', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 0 16px #00ff41cc;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.3s, top 0.3s;
+        }
+        #toast.show {
+            opacity: 1;
+            top: 3.5em;
+        }
+        #docs-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10,10,10,0.92);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        #docs-modal.active {
+            display: flex;
+        }
+        .docs-content {
+            background: #18181a;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 2em 2.5em;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            min-width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 0 32px #00ff41cc;
+            position: relative;
+        }
+        .docs-content h3 {
+            color: #00bfff;
+            margin-bottom: 1em;
+        }
+        .docs-content pre {
+            background: #000;
+            color: #39ff14;
+            padding: 1em;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-bottom: 1em;
+        }
+        .docs-close {
+            position: absolute;
+            top: 0.7em;
+            right: 1.2em;
+            color: #ff0055;
+            font-size: 1.5em;
+            cursor: pointer;
+            font-weight: bold;
+            background: none;
+            border: none;
         }
 
         .model-header {
@@ -611,6 +696,10 @@ window.MODELS = [
                                 📋
                             </button>
                         </div>
+                        <div class="endpoint-meta">
+                            <span class="fake-api">Fake API</span>
+                            <a href="#" class="docs-link" onclick="openDocsModal('${model.docs}')">Docs</a>
+                        </div>
                     </div>
                     <div class="model-actions">
                         <button class="test-btn">View Documentation</button>
@@ -628,6 +717,7 @@ window.MODELS = [
             navigator.clipboard.writeText(text).then(() => {
                 button.textContent = '✓';
                 button.classList.add('copied');
+                showToast('Endpoint copied!');
                 setTimeout(() => {
                     button.textContent = '📋';
                     button.classList.remove('copied');
@@ -644,11 +734,35 @@ window.MODELS = [
                 
                 button.textContent = '✓';
                 button.classList.add('copied');
+                showToast('Endpoint copied!');
                 setTimeout(() => {
                     button.textContent = '📋';
                     button.classList.remove('copied');
                 }, 2000);
             });
+        }
+
+        // Show toast message
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        // Open documentation modal
+        function openDocsModal(docs) {
+            const modal = document.getElementById('docs-modal');
+            const modalContent = document.querySelector('.docs-content');
+            modalContent.querySelector('pre').textContent = docs; // Update docs content
+            modal.classList.add('active');
+        }
+
+        // Close documentation modal
+        function closeDocsModal() {
+            document.getElementById('docs-modal').classList.remove('active');
         }
 
         // Initialize when page loads
