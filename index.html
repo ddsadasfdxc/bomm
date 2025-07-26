@@ -519,62 +519,78 @@ max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
     </div>
 
     <script>
-        // Static model data
-        const MODELS = [
-            {
-                name: "GPT-4.1",
-                id: "gpt-4.1-2025-04-14",
-                endpoint: "https://api.sza.dev/v1/gpt-4.1-2025-04-14",
-                description: "Latest GPT-4.1 model with enhanced reasoning"
-            },
-            {
-                name: "Gemini 2.5 Pro",
-                id: "gemini-2.5-pro",
-                endpoint: "https://sza.dev/gemini/2.5-pro",
-                description: "Google's most advanced multimodal AI model"
-            },
-            {
-                name: "Claude Opus 4",
-                id: "claude-opus-4-20250514",
-                endpoint: "https://claude.sza.dev/opus-4-20250514",
-                description: "Anthropic's flagship reasoning model"
-            },
-            {
-                name: "Gemini 2.5 Flash",
-                id: "gemini-2.5-flash",
-                endpoint: "https://sza-api.net/gemini/2.5-flash",
-                description: "Ultra-fast lightweight Gemini model"
-            },
-            {
-                name: "O3",
-                id: "03-2025-04-16",
-                endpoint: "https://llm.sza.dev/o3-2025-04-16",
-                description: "OpenAI's latest O3 reasoning model"
-            },
-            {
-                name: "ChatGPT 4.0 Latest",
-                id: "chatgpt-40-latest-20250326",
-                endpoint: "https://api.sza.dev/chatgpt/40-latest-20250326",
-                description: "Latest ChatGPT 4.0 with enhanced capabilities"
-            },
-            {
-                name: "Mistral Small 3.1",
-                id: "mistral-small-3.1-24b-instruct-2503",
-                endpoint: "https://sza.labs/mistral/small-3.1-24b-instruct-2503",
-                description: "Mistral's efficient 24B parameter model"
-            },
-            {
-                name: "Gemma 3 27B",
-                id: "gemma-3-27b-it",
-                endpoint: "https://gemma.sza.dev/3-27b-it",
-                description: "Google's open-source 27B parameter model"
-            }
-        ];
+// Geek Model Data
+window.MODELS = [
+    {
+        name: "GPT-4.1",
+        id: "gpt-4.1-2025-04-14",
+        endpoint: "https://api.sza.dev/v1/gpt-4.1-2025-04-14",
+        description: "Latest GPT-4.1 model with enhanced reasoning",
+        features: ["🧠 Reasoning", "💬 Chat", "🏎️ Fast"],
+        docs: "Max context: 200k\nMax output: 10k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemini 2.5 Pro",
+        id: "gemini-2.5-pro",
+        endpoint: "https://sza.dev/gemini/2.5-pro",
+        description: "Google's most advanced multimodal AI model",
+        features: ["🧠 Reasoning", "💬 Chat", "🏎️ Fast", "🧩 Open-source"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "Claude Opus 4",
+        id: "claude-opus-4-20250514",
+        endpoint: "https://claude.sza.dev/opus-4-20250514",
+        description: "Anthropic's flagship reasoning model",
+        features: ["🧠 Reasoning", "🔒 Private"],
+        docs: "Max context: 200k\nMax output: 10k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemini 2.5 Flash",
+        id: "gemini-2.5-flash",
+        endpoint: "https://sza-api.net/gemini/2.5-flash",
+        description: "Ultra-fast lightweight Gemini model",
+        features: ["🏎️ Fast", "💬 Chat"],
+        docs: "Max context: 64k\nMax output: 4k\nMultimodal: N/A"
+    },
+    {
+        name: "O3",
+        id: "03-2025-04-16",
+        endpoint: "https://llm.sza.dev/o3-2025-04-16",
+        description: "OpenAI's latest O3 reasoning model",
+        features: ["🧠 Reasoning", "💬 Chat"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "ChatGPT 4.0 Latest",
+        id: "chatgpt-40-latest-20250326",
+        endpoint: "https://api.sza.dev/chatgpt/40-latest-20250326",
+        description: "Latest ChatGPT 4.0 with enhanced capabilities",
+        features: ["💬 Chat", "🏎️ Fast"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "Mistral Small 3.1",
+        id: "mistral-small-3.1-24b-instruct-2503",
+        endpoint: "https://sza.labs/mistral/small-3.1-24b-instruct-2503",
+        description: "Mistral's efficient 24B parameter model",
+        features: ["🧩 Open-source", "🏎️ Fast"],
+        docs: "Max context: 64k\nMax output: 4k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemma 3 27B",
+        id: "gemma-3-27b-it",
+        endpoint: "https://gemma.sza.dev/3-27b-it",
+        description: "Google's open-source 27B parameter model",
+        features: ["🧩 Open-source", "💬 Chat"],
+        docs: "Max context: 32k\nMax output: 2k\nMultimodal: N/A"
+    }
+];
 
         // Populate models
         function populateModels() {
             const modelsGrid = document.getElementById('models-grid');
-            modelsGrid.innerHTML = MODELS.map(model => `
+            modelsGrid.innerHTML = window.MODELS.map(model => `
                 <div class="model-card">
                     <div class="model-header">
                         <h3>${model.name}</h3>
