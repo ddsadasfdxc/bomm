@@ -394,6 +394,29 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #00ff41;
         }
+
+        .param-log {
+            background: #18181a;
+            color: #39ff14;
+            border: 2px dashed #00ff41;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin: 2.5rem auto 1.5rem auto;
+            max-width: 700px;
+            font-family: 'Fira Mono', monospace;
+            font-size: 1rem;
+            box-shadow: 0 0 10px #00ff4133;
+            text-align: left;
+            word-break: break-all;
+        }
+
+        .param-log pre {
+            margin: 0;
+            background: none;
+            color: #39ff14;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -440,6 +463,12 @@
     "max_tokens": 100
   }'</code></pre>
                 </div>
+            </div>
+
+            <div class="param-log">
+                <pre>// Proxy param log (FYI, mate):
+max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
+</pre>
             </div>
 
             <div class="info-section">
