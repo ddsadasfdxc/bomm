@@ -4,13 +4,534 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Geek Proxy - Personal LLM Gateway</title>
-    <link rel="stylesheet" href="llm-proxy/frontend/src/App.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #0a0a0a; color: #39ff14; font-family: 'Fira Mono', monospace; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Mono', monospace;
+            background: #0a0a0a;
+            color: #39ff14;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .banner {
+            font-size: 0.8rem;
+            color: #00ff41;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #00ff41;
+            white-space: pre;
+            font-weight: bold;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ff0055;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ff0055;
+            font-weight: 700;
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .geek-note {
+            color: #ff0055;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .models-section {
+            margin-bottom: 3rem;
+        }
+
+        .models-section h2 {
+            color: #00bfff;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 15px #00bfff;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .model-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .model-card:hover::before {
+            left: 100%;
+        }
+
+        .model-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .model-header h3 {
+            color: #00bfff;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .model-id {
+            background: #ff0055;
+            color: #000;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .model-description {
+            margin-bottom: 1rem;
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .endpoint-section {
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-section label {
+            display: block;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #000;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .endpoint-display code {
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            flex: 1;
+            word-break: break-all;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            background: #ff0055;
+            color: #000;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            min-width: 40px;
+        }
+
+        .copy-btn:hover {
+            background: #ff3377;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: #39ff14;
+            color: #000;
+        }
+
+        .model-actions {
+            text-align: center;
+        }
+
+        .test-btn {
+            background: transparent;
+            color: #39ff14;
+            border: 2px solid #39ff14;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            background: #39ff14;
+            color: #000;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+        }
+
+        .usage-section {
+            margin-bottom: 3rem;
+        }
+
+        .usage-section h2 {
+            color: #00bfff;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 15px #00bfff;
+        }
+
+        .code-block {
+            background: #000;
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .code-block code {
+            color: #39ff14;
+        }
+
+        .info-section {
+            margin-bottom: 3rem;
+        }
+
+        .info-section h2 {
+            color: #00bfff;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 15px #00bfff;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            border-color: #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        .info-card h3 {
+            color: #00bfff;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card p {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        .geek-footer {
+            color: #ff0055;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .app {
+                padding: 1rem;
+            }
+            
+            .banner {
+                font-size: 0.6rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-card {
+                padding: 1rem;
+            }
+            
+            .endpoint-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .copy-btn {
+                align-self: flex-end;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #39ff14;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff41;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="module" src="llm-proxy/frontend/src/main.ts"></script>
+    <div class="app">
+        <pre class="banner">
+ _     _ _     _                 _           
+| |   (_) |__ | | ___  ___ _ __ (_)_ __  ___ 
+| |   | | '_ \| |/ _ \/ __| '_ \| | '_ \/ __|
+| |___| | |_) | |  __/ (__| | | | | |_) \__ \
+|_____|_|_.__/|_|\___|\___|_| |_|_| .__/|___/
+                                  |_|        
+        </pre>
+        
+        <div class="content">
+            <h1 class="title">Welcome, fellow hacker.</h1>
+            
+            <div class="description">
+                <p>Your personal LLM proxy gateway. No API keys exposed, just pure geekery.</p>
+                <p class="geek-note">// If you know, you know. #root</p>
+            </div>
+
+            <div class="models-section">
+                <h2>Available Models</h2>
+                <div class="models-grid" id="models-grid">
+                    <!-- Models will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="usage-section">
+                <h2>Usage Example</h2>
+                <div class="code-block">
+                    <pre><code>curl -X POST "https://api.openai.com/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [{"role": "user", "content": "Hello, world!"}],
+    "temperature": 0.7,
+    "max_tokens": 100
+  }'</code></pre>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>About This Proxy</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>🔒 Security</h3>
+                        <p>API keys are never exposed. Only endpoints are shown for reference.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🚀 Performance</h3>
+                        <p>Direct API calls to providers for maximum speed and reliability.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🛠️ Customizable</h3>
+                        <p>Easy to add new models and customize endpoints as needed.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📱 Responsive</h3>
+                        <p>Works perfectly on desktop, tablet, and mobile devices.</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p>&copy; 2024 Geek Proxy. Not for commercial use.</p>
+                <p class="geek-footer">Built with ❤️ and ☕ by a fellow geek</p>
+                <p class="geek-footer">// This is just a frontend showcase. No backend required.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Static model data
+        const MODELS = [
+            {
+                name: "OpenAI GPT-4",
+                id: "openai-gpt4",
+                endpoint: "https://api.openai.com/v1/chat/completions",
+                description: "Latest GPT-4 model with enhanced reasoning"
+            },
+            {
+                name: "Anthropic Claude-3",
+                id: "anthropic-claude3", 
+                endpoint: "https://api.anthropic.com/v1/messages",
+                description: "Claude 3 Opus - most capable model"
+            },
+            {
+                name: "Google Gemini Pro",
+                id: "google-gemini",
+                endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+                description: "Google's most advanced AI model"
+            },
+            {
+                name: "Mistral Large",
+                id: "mistral-large",
+                endpoint: "https://api.mistral.ai/v1/chat/completions", 
+                description: "Mistral's flagship reasoning model"
+            },
+            {
+                name: "Cohere Command",
+                id: "cohere-command",
+                endpoint: "https://api.cohere.ai/v1/chat",
+                description: "Cohere's conversational AI model"
+            },
+            {
+                name: "Perplexity Mixtral",
+                id: "perplexity-mixtral",
+                endpoint: "https://api.perplexity.ai/chat/completions",
+                description: "Fast and efficient open model"
+            }
+        ];
+
+        // Populate models
+        function populateModels() {
+            const modelsGrid = document.getElementById('models-grid');
+            modelsGrid.innerHTML = MODELS.map(model => `
+                <div class="model-card">
+                    <div class="model-header">
+                        <h3>${model.name}</h3>
+                        <span class="model-id">${model.id}</span>
+                    </div>
+                    <div class="model-description">
+                        <p>${model.description}</p>
+                    </div>
+                    <div class="endpoint-section">
+                        <label>API Endpoint:</label>
+                        <div class="endpoint-display">
+                            <code>${model.endpoint}</code>
+                            <button 
+                                class="copy-btn"
+                                onclick="copyToClipboard('${model.endpoint}', this)"
+                                title="Copy endpoint"
+                            >
+                                📋
+                            </button>
+                        </div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="test-btn">View Documentation</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '✓';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '📋';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = '✓';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '📋';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', populateModels);
+    </script>
 </body>
 </html>
