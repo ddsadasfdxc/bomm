@@ -304,6 +304,44 @@
             margin-top: 0.5rem;
         }
 
+        .announcement {
+            background: linear-gradient(90deg, #ff0055, #ff3377);
+            color: #000;
+            padding: 0.8rem 2rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #39ff14;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announcement::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .announcement-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .announcement-icon {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
         @media (max-width: 768px) {
             .app {
                 padding: 1rem;
@@ -359,6 +397,11 @@
     </style>
 </head>
 <body>
+    <div class="announcement">
+        <span class="announcement-icon">⚠️</span>
+        <span class="announcement-text">NOTICE: No public API key distribution available. Private use only.</span>
+    </div>
+    
     <div class="app">
         <pre class="banner">
  _     _ _     _                 _           
