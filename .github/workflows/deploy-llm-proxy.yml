@@ -1,0 +1,48 @@
+name: Deploy LLM Geek Proxy
+
+on:
+  push:
+    branches: [ main, master ]
+    paths: ['llm-proxy/**']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    steps:
+    - name: 📥 Checkout
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: llm-proxy/frontend/package-lock.json
+
+    - name: 📦 Install dependencies
+      run: |
+        cd llm-proxy/frontend
+        npm ci
+
+    - name: 🏗️ Build frontend
+      run: |
+        cd llm-proxy/frontend
+        npm run build
+
+    - name: 🔧 Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: 📄 Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'dist'
+
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
