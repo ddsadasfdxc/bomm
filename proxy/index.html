@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Geek Proxy - Personal LLM Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0a'/%3E%3Ctext x='50%' y='55%' text-anchor='middle' font-size='38' font-family='Fira Mono,monospace' fill='%2339ff14' font-weight='bold'%3ESZA%3C/text%3E%3C/svg%3E">
+    <meta name="description" content="LLM Geek Proxy - Personal LLM API proxy, geek/hacker style, 2025 models, SZA endpoints, no API key public distribution.">
+    <meta property="og:title" content="LLM Geek Proxy - Geek API Showcase">
+    <meta property="og:description" content="Personal LLM API proxy, geek/hacker style, 2025 models, SZA endpoints, no API key public distribution.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://www.lss.work.gd/sza-favicon.png">
+    <meta property="og:url" content="https://www.lss.work.gd/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="LLM Geek Proxy - Geek API Showcase">
+    <meta name="twitter:description" content="Personal LLM API proxy, geek/hacker style, 2025 models, SZA endpoints, no API key public distribution.">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#39ff14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Geek Proxy">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Mono', monospace;
+            background: #0a0a0a;
+            color: #39ff14;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .banner {
+            font-size: 0.8rem;
+            color: #00ff41;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #00ff41;
+            white-space: pre;
+            font-weight: bold;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ff0055;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ff0055;
+            font-weight: 700;
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .geek-note {
+            color: #ff0055;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .models-section {
+            margin-bottom: 3rem;
+        }
+
+        .models-section h2 {
+            color: #00bfff;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 15px #00bfff;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .model-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 #00ff41;
+        }
+        .model-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 32px 4px #00ff41cc, 0 0 8px 2px #ff0055aa;
+            transform: translateY(-3px) scale(1.02) rotate(-0.5deg);
+            z-index: 2;
+        }
+        .model-features {
+            margin-bottom: 0.7em;
+            font-size: 1.1em;
+            color: #00bfff;
+            display: flex;
+            gap: 0.7em;
+            flex-wrap: wrap;
+        }
+        .endpoint-section .endpoint-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-top: 0.3em;
+        }
+        .endpoint-section .docs-link {
+            color: #00bfff;
+            font-size: 0.95em;
+            text-decoration: underline dotted;
+            cursor: pointer;
+            margin-left: 0.5em;
+            transition: color 0.2s;
+        }
+        .endpoint-section .docs-link:hover {
+            color: #ff0055;
+        }
+        #toast {
+            position: fixed;
+            top: 2.2em;
+            right: 2.2em;
+            background: #18181a;
+            color: #39ff14;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            padding: 0.8em 1.5em;
+            font-family: 'Fira Mono', monospace;
+            font-size: 1.1em;
+            box-shadow: 0 0 16px #00ff41cc;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.3s, top 0.3s;
+        }
+        #toast.show {
+            opacity: 1;
+            top: 3.5em;
+        }
+        #docs-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10,10,10,0.92);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        #docs-modal.active {
+            display: flex;
+        }
+        .docs-content {
+            background: #18181a;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 2em 2.5em;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            min-width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 0 32px #00ff41cc;
+            position: relative;
+        }
+        .docs-content h3 {
+            color: #00bfff;
+            margin-bottom: 1em;
+        }
+        .docs-content pre {
+            background: #000;
+            color: #39ff14;
+            padding: 1em;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-bottom: 1em;
+        }
+        .docs-close {
+            position: absolute;
+            top: 0.7em;
+            right: 1.2em;
+            color: #ff0055;
+            font-size: 1.5em;
+            cursor: pointer;
+            font-weight: bold;
+            background: none;
+            border: none;
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .model-header h3 {
+            color: #00bfff;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .model-id {
+            background: #ff0055;
+            color: #000;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .model-description {
+            margin-bottom: 1rem;
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .endpoint-section {
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-section label {
+            display: block;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #000;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .endpoint-display code {
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            flex: 1;
+            word-break: break-all;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            background: #ff0055;
+            color: #000;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            min-width: 40px;
+        }
+
+        .copy-btn:hover {
+            background: #ff3377;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: #39ff14;
+            color: #000;
+        }
+
+        .model-actions {
+            text-align: center;
+        }
+
+        .test-btn {
+            background: transparent;
+            color: #39ff14;
+            border: 2px solid #39ff14;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Fira Mono', monospace;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            background: #39ff14;
+            color: #000;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+        }
+
+        .usage-section {
+            margin-bottom: 3rem;
+        }
+
+        .usage-section h2 {
+            color: #00bfff;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 15px #00bfff;
+        }
+
+        .code-block {
+            background: #000;
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .code-block code {
+            color: #39ff14;
+        }
+
+        .info-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(57, 255, 20, 0.05);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            border-radius: 10px;
+        }
+        
+        .info-section h2 {
+            color: #39ff14;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .faq-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            border-color: #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .faq-item h3 {
+            color: #ff0055;
+            margin-bottom: 0.8rem;
+            font-size: 1.1em;
+        }
+        
+        .faq-item p {
+            color: #39ff14;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        .geek-footer {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 0.5em;
+        }
+        
+        .terminal-section {
+            margin-top: 2em;
+            border: 1px solid #39ff14;
+            border-radius: 5px;
+            background: #0a0a0a;
+            padding: 1em;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .terminal-header {
+            border-bottom: 1px solid #39ff14;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+        
+        .terminal-title {
+            color: #39ff14;
+            font-weight: bold;
+        }
+        
+        .terminal-output {
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 1em;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        .terminal-line {
+            color: #39ff14;
+            margin-bottom: 0.2em;
+            word-wrap: break-word;
+        }
+        
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+        }
+        
+        .terminal-prompt {
+            color: #39ff14;
+            font-weight: bold;
+            margin-right: 0.5em;
+            font-family: 'Fira Mono', monospace;
+        }
+        
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9em;
+            flex: 1;
+            outline: none;
+        }
+        
+        .terminal-input::placeholder {
+            color: #666;
+        }
+        
+        .geek-easter-egg {
+            color: #666;
+            font-size: 0.8em;
+            margin-top: 1em;
+            text-align: center;
+        }
+
+        .announcement {
+            background: linear-gradient(90deg, #ff0055, #ff3377);
+            color: #000;
+            padding: 0.8rem 2rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #39ff14;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.4s, top 0.4s;
+        }
+        .announcement.hide {
+            opacity: 0;
+            top: -60px;
+            pointer-events: none;
+        }
+        .announcement-close {
+            position: absolute;
+            right: 1.2em;
+            top: 0.7em;
+            color: #000;
+            background: #ff0055;
+            border: none;
+            border-radius: 50%;
+            width: 1.7em;
+            height: 1.7em;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+            box-shadow: 0 0 6px #ff0055cc;
+        }
+        .announcement-close:hover {
+            background: #39ff14;
+            color: #18181a;
+        }
+
+        .announcement-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .announcement-icon {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .wait-time {
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-left: 0.3em;
+            letter-spacing: 1px;
+        }
+
+        .model-wait {
+            margin-top: 0.7em;
+            font-size: 0.95rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+            font-family: 'Fira Mono', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .app {
+                padding: 1rem;
+            }
+            
+            .banner {
+                font-size: 0.6rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-card {
+                padding: 1rem;
+            }
+            
+            .endpoint-display {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .copy-btn {
+                align-self: flex-end;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            background: #18181a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(120deg, #39ff14 40%, #00bfff 100%);
+            border-radius: 4px;
+            box-shadow: 0 0 8px #00ff41cc;
+            transition: background 0.3s;
+            animation: scrollpulse 2s infinite linear;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(120deg, #ff0055 0%, #39ff14 100%);
+        }
+        @keyframes scrollpulse {
+            0% { box-shadow: 0 0 8px #00ff41cc; }
+            50% { box-shadow: 0 0 16px #00bfffcc; }
+            100% { box-shadow: 0 0 8px #00ff41cc; }
+        }
+        .param-log {
+            background: #18181a;
+            color: #39ff14;
+            border: 2px dashed #00ff41;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin: 2.5rem auto 1.5rem auto;
+            max-width: 700px;
+            font-family: 'Fira Mono', monospace;
+            font-size: 1rem;
+            box-shadow: 0 0 10px #00ff4133;
+            text-align: left;
+            word-break: break-all;
+            cursor: pointer;
+            position: relative;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .param-log:hover {
+            box-shadow: 0 0 24px #00ff41cc;
+            border-color: #ff0055;
+        }
+        .param-log .param-arrow {
+            color: #00bfff;
+            font-weight: bold;
+            margin-right: 0.5em;
+            font-size: 1.1em;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .param-log.expanded .param-arrow {
+            transform: rotate(90deg);
+        }
+        .param-ascii-table {
+            margin-top: 1em;
+            background: #000;
+            color: #39ff14;
+            border-radius: 6px;
+            padding: 1em 1.2em;
+            font-size: 0.98em;
+            border: 1px solid #00ff41;
+            white-space: pre;
+            box-shadow: 0 0 8px #00ff41cc;
+            display: none;
+        }
+        .param-log.expanded .param-ascii-table {
+            display: block;
+        }
+
+        .param-log pre {
+            margin: 0;
+            background: none;
+            color: #39ff14;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement">
+        <span class="announcement-icon">⚠️</span>
+        <span class="announcement-text">NOTICE: No public API key distribution available. Private use only.</span>
+        <button class="announcement-close" onclick="closeAnnouncement()">×</button>
+    </div>
+    
+    <div class="app">
+        <pre class="banner">
+ _     _ _     _                 _           
+| |   (_) |__ | | ___  ___ _ __ (_)_ __  ___ 
+| |   | | '_ \| |/ _ \/ __| '_ \| | '_ \/ __|
+| |___| | |_) | |  __/ (__| | | | | |_) \__ \
+|_____|_|_.__/|_|\___|\___|_| |_|_| .__/|___/
+                                  |_|        
+        </pre>
+        
+        <div class="content">
+            <h1 class="title">Welcome, fellow hacker.</h1>
+            
+            <div class="description">
+                <p>Your personal LLM proxy gateway. No API keys exposed, just pure geekery.</p>
+                <p class="geek-note">// If you know, you know. #root</p>
+            </div>
+
+            <div class="models-section">
+                <h2>Available Models</h2>
+                <div class="models-grid" id="models-grid">
+                    <!-- Models will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="usage-section">
+                <h2>Usage Example</h2>
+                <div class="code-block">
+                    <pre><code>curl -X POST "https://api.openai.com/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [{"role": "user", "content": "Hello, world!"}],
+    "temperature": 0.7,
+    "max_tokens": 100
+  }'</code></pre>
+                </div>
+            </div>
+
+            <div class="param-log" id="param-log" onclick="toggleParamLog()">
+                <span class="param-arrow">▶</span>// Proxy param log (FYI, mate):
+                max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
+                <div class="param-ascii-table" id="param-ascii-table">
++-------------------+-------------------+
+|      PARAM        |      VALUE        |
++-------------------+-------------------+
+| Max context       | 200k tokens       |
+| Max output        | 10,000 tokens     |
+| Concurrency       | 8                 |
+| Requests          | Unlimited (∞)     |
+| Multimodal        | N/A               |
++-------------------+-------------------+
+</div>
+            </div>
+
+            <footer class="footer">
+                <div class="info-section">
+                    <h2>FAQ - Geek Edition</h2>
+                    <div class="faq-grid">
+                        <div class="faq-item">
+                            <h3>Q: Why did you create this proxy?</h3>
+                            <p>A: For the lulz, mate. Pure entertainment.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>Q: How to get API keys?</h3>
+                            <p>A: Send us a pic of your... never mind, just kidding! 😄</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>Q: Who are you?</h3>
+                            <p>A: I am who I am. That's all you need to know.</p>
+                        </div>
+                    </div>
+                </div>
+                <p>&copy; 2025 Geek Proxy. Not for commercial use.</p>
+                <p class="geek-footer">Built with ❤️ and ☕ by a fellow geek</p>
+                <div class="terminal-section">
+                    <div class="terminal-header">
+                        <span class="terminal-title">root@geek-proxy:~$</span>
+                    </div>
+                    <div class="terminal-output" id="terminal-output">
+                        <div class="terminal-line">Welcome to Geek Terminal v1.0</div>
+                        <div class="terminal-line">Type 'help' for available commands</div>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="terminal-prompt">root@geek-proxy:~$</span>
+                        <input type="text" id="terminal-input" class="terminal-input" placeholder="Enter command..." autocomplete="off">
+                    </div>
+                </div>
+                <p class="geek-easter-egg">// If you can read this, you're already one of us. #root</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+// Geek Model Data
+window.MODELS = [
+    {
+        name: "GPT-4.1",
+        id: "gpt-4.1-2025-04-14",
+        endpoint: "https://api.sza.dev/v1/gpt-4.1-2025-04-14",
+        description: "Latest GPT-4.1 model with enhanced reasoning",
+        features: ["🧠 Reasoning", "💬 Chat", "🏎️ Fast"],
+        docs: "Max context: 200k\nMax output: 10k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemini 2.5 Pro",
+        id: "gemini-2.5-pro",
+        endpoint: "https://sza.dev/gemini/2.5-pro",
+        description: "Google's most advanced multimodal AI model",
+        features: ["🧠 Reasoning", "💬 Chat", "🏎️ Fast", "🧩 Open-source"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "Claude Opus 4",
+        id: "claude-opus-4-20250514",
+        endpoint: "https://claude.sza.dev/opus-4-20250514",
+        description: "Anthropic's flagship reasoning model",
+        features: ["🧠 Reasoning", "🔒 Private"],
+        docs: "Max context: 200k\nMax output: 10k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemini 2.5 Flash",
+        id: "gemini-2.5-flash",
+        endpoint: "https://sza-api.net/gemini/2.5-flash",
+        description: "Ultra-fast lightweight Gemini model",
+        features: ["🏎️ Fast", "💬 Chat"],
+        docs: "Max context: 64k\nMax output: 4k\nMultimodal: N/A"
+    },
+    {
+        name: "O3",
+        id: "03-2025-04-16",
+        endpoint: "https://llm.sza.dev/o3-2025-04-16",
+        description: "OpenAI's latest O3 reasoning model",
+        features: ["🧠 Reasoning", "💬 Chat"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "ChatGPT 4.0 Latest",
+        id: "chatgpt-40-latest-20250326",
+        endpoint: "https://api.sza.dev/chatgpt/40-latest-20250326",
+        description: "Latest ChatGPT 4.0 with enhanced capabilities",
+        features: ["💬 Chat", "🏎️ Fast"],
+        docs: "Max context: 128k\nMax output: 8k\nMultimodal: N/A"
+    },
+    {
+        name: "Mistral Small 3.1",
+        id: "mistral-small-3.1-24b-instruct-2503",
+        endpoint: "https://sza.labs/mistral/small-3.1-24b-instruct-2503",
+        description: "Mistral's efficient 24B parameter model",
+        features: ["🧩 Open-source", "🏎️ Fast"],
+        docs: "Max context: 64k\nMax output: 4k\nMultimodal: N/A"
+    },
+    {
+        name: "Gemma 3 27B",
+        id: "gemma-3-27b-it",
+        endpoint: "https://gemma.sza.dev/3-27b-it",
+        description: "Google's open-source 27B parameter model",
+        features: ["🧩 Open-source", "💬 Chat"],
+        docs: "Max context: 32k\nMax output: 2k\nMultimodal: N/A"
+    }
+];
+
+        // Populate models
+        function populateModels() {
+            const modelsGrid = document.getElementById('models-grid');
+            modelsGrid.innerHTML = window.MODELS.map(model => {
+                // 随机生成1~50的key数量
+                const keyCount = Math.floor(Math.random() * 50) + 1;
+                return `
+                <div class="model-card">
+                    <div class="model-header">
+                        <h3>${model.name}</h3>
+                        <span class="model-id">${model.id}</span>
+                    </div>
+                    <div class="model-description">
+                        <p>${model.description}</p>
+                    </div>
+                    <div class="endpoint-section">
+                        <label>API Endpoint:</label>
+                        <div class="endpoint-display">
+                            <code>${model.endpoint}</code>
+                            <button 
+                                class="copy-btn"
+                                onclick="copyToClipboard('${model.endpoint}', this)"
+                                title="Copy endpoint"
+                            >
+                                📋
+                            </button>
+                        </div>
+                        <div class="endpoint-meta">
+                            <a href="#" class="docs-link" onclick="openDocsModal('${model.docs}')">Docs</a>
+                        </div>
+                    </div>
+                    <div class="model-actions">
+                        <button class="test-btn">View Documentation</button>
+                    </div>
+                    <div class="model-wait">
+                        <span>Wait Time:</span>
+                        <span class="wait-time">No wait</span>
+                        <span class="key-count">| Available keys: <b>${keyCount}</b></span>
+                    </div>
+                </div>
+            `; 
+            }).join('');
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '✓';
+                button.classList.add('copied');
+                showToast('Endpoint copied!');
+                setTimeout(() => {
+                    button.textContent = '📋';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = '✓';
+                button.classList.add('copied');
+                showToast('Endpoint copied!');
+                setTimeout(() => {
+                    button.textContent = '📋';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Show toast message
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        // Open documentation modal
+        function openDocsModal(docs) {
+            const modal = document.getElementById('docs-modal');
+            const modalContent = document.querySelector('.docs-content');
+            modalContent.querySelector('pre').textContent = docs; // Update docs content
+            modal.classList.add('active');
+        }
+
+        // Close documentation modal
+        function closeDocsModal() {
+            document.getElementById('docs-modal').classList.remove('active');
+        }
+
+        // Close announcement
+        function closeAnnouncement() {
+            const announcement = document.querySelector('.announcement');
+            announcement.classList.add('hide');
+            setTimeout(() => {
+                announcement.style.display = 'none';
+            }, 400); // Match transition duration
+        }
+
+        // Toggle parameter log expansion
+        function toggleParamLog() {
+            const paramLog = document.getElementById('param-log');
+            const paramAsciiTable = document.getElementById('param-ascii-table');
+            const arrow = paramLog.querySelector('.param-arrow');
+
+            if (paramAsciiTable.style.display === 'none' || paramAsciiTable.style.display === '') {
+                paramAsciiTable.style.display = 'block';
+                arrow.textContent = '▼'; // Down arrow
+            } else {
+                paramAsciiTable.style.display = 'none';
+                arrow.textContent = '▶'; // Right arrow
+            }
+        }
+
+        // Terminal functionality
+        function initTerminal() {
+            const terminalInput = document.getElementById('terminal-input');
+            const terminalOutput = document.getElementById('terminal-output');
+            
+            const commands = {
+                help: () => {
+                    return `Available commands:
+help     - Show this help
+ls       - List files
+whoami   - Show current user
+sudo     - Execute as superuser
+fortune  - Get a random fortune
+clear    - Clear terminal
+date     - Show current date
+pwd      - Show current directory
+cat      - Display file contents
+rm       - Remove files (be careful!)
+exit     - Exit terminal (just kidding)`;
+                },
+                ls: () => {
+                    return `total 42
+drwxr-xr-x  2 root root  4096 Jan 15 10:30 .
+drwxr-xr-x  3 root root  4096 Jan 15 10:30 ..
+-rw-r--r--  1 root root   256 Jan 15 10:30 .bashrc
+-rw-r--r--  1 root root   512 Jan 15 10:30 config.json
+-rw-r--r--  1 root root  1024 Jan 15 10:30 models.db
+-rw-r--r--  1 root root   128 Jan 15 10:30 secrets.txt
+-rw-r--r--  1 root root  2048 Jan 15 10:30 proxy.log
+-rw-r--r--  1 root root   512 Jan 15 10:30 README.md`;
+                },
+                whoami: () => {
+                    return 'root';
+                },
+                sudo: () => {
+                    return `[sudo] password for root: 
+Sorry, try again.
+[sudo] password for root: 
+Sorry, try again.
+[sudo] password for root: 
+sudo: 3 incorrect password attempts`;
+                },
+                fortune: () => {
+                    const fortunes = [
+                        "A bug in the hand is better than one as yet undetected.",
+                        "You will soon be visited by a very wealthy relative.",
+                        "The best way to predict the future is to implement it.",
+                        "There are 10 types of people: those who understand binary and those who don't.",
+                        "Life is what happens while you're busy making other plans.",
+                        "The only way to do great work is to love what you do.",
+                        "In a world full of trends, remain a classic.",
+                        "Code is like humor. When you have to explain it, it's bad."
+                    ];
+                    return fortunes[Math.floor(Math.random() * fortunes.length)];
+                },
+                clear: () => {
+                    terminalOutput.innerHTML = '';
+                    return '';
+                },
+                date: () => {
+                    return new Date().toString();
+                },
+                pwd: () => {
+                    return '/home/geek-proxy';
+                },
+                cat: (args) => {
+                    if (!args) return 'cat: missing file operand';
+                    if (args.includes('secrets')) return 'cat: secrets.txt: Permission denied';
+                    if (args.includes('config')) return '{"api_key": "sk-***", "models": ["gpt-4", "claude"], "status": "active"}';
+                    return `cat: ${args}: No such file or directory`;
+                },
+                rm: (args) => {
+                    if (!args) return 'rm: missing operand';
+                    if (args.includes('-rf') && args.includes('/')) {
+                        return `rm: cannot remove '/': Permission denied
+rm: cannot remove '/': Device or resource busy
+rm: cannot remove '/': Operation not permitted
+// Nice try, mate. But this is just a web terminal. 😄`;
+                    }
+                    return `rm: cannot remove '${args}': No such file or directory`;
+                },
+                exit: () => {
+                    return "exit: You can't exit a web terminal, mate. Just close the tab! 😄";
+                }
+            };
+            
+            function addOutput(text) {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.textContent = text;
+                terminalOutput.appendChild(line);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+            
+            function executeCommand(input) {
+                const parts = input.trim().split(' ');
+                const command = parts[0].toLowerCase();
+                const args = parts.slice(1).join(' ');
+                
+                if (commands[command]) {
+                    const result = commands[command](args);
+                    if (result !== '') {
+                        addOutput(result);
+                    }
+                } else if (command) {
+                    addOutput(`bash: ${command}: command not found`);
+                }
+            }
+            
+            terminalInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const input = this.value;
+                    if (input.trim()) {
+                        addOutput(`root@geek-proxy:~$ ${input}`);
+                        executeCommand(input);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            // Focus terminal on page load
+            setTimeout(() => {
+                terminalInput.focus();
+            }, 1000);
+        }
+        
+        // Initialize terminal when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            populateModels();
+            initTerminal();
+            
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Geek Proxy: Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Geek Proxy: Service Worker registration failed:', error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
