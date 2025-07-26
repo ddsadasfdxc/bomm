@@ -4,68 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Geek Proxy - Personal LLM Gateway</title>
+    <link rel="stylesheet" href="llm-proxy/frontend/src/App.css">
     <style>
-        body {
-            background: #0a0a0a;
-            color: #39ff14;
-            font-family: 'Fira Mono', monospace;
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-        }
-        .banner {
-            font-size: 1.2rem;
-            color: #00ff41;
-            margin-bottom: 2rem;
-            white-space: pre;
-            font-weight: bold;
-        }
-        h1 {
-            color: #ff0055;
-            margin-bottom: 1rem;
-        }
-        p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        .loading {
-            color: #00bfff;
-            animation: blink 1.5s infinite;
-        }
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
+        body { background: #0a0a0a; color: #39ff14; font-family: 'Fira Mono', monospace; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="banner">
- _     _ _     _                 _           
-| |   (_) |__ | | ___  ___ _ __ (_)_ __  ___ 
-| |   | | '_ \| |/ _ \/ __| '_ \| | '_ \/ __|
-| |___| | |_) | |  __/ (__| | | | | |_) \__ \
-|_____|_|_.__/|_|\___|\___|_| |_|_| .__/|___/
-                                  |_|        
-        </div>
-        <h1>Welcome, fellow hacker.</h1>
-        <p>Your personal LLM proxy gateway is loading...</p>
-        <p class="loading">Initializing geek mode...</p>
-        <p>// If you know, you know. #root</p>
-    </div>
-    
-    <script>
-        // Redirect to the LLM Proxy after a brief moment
-        setTimeout(() => {
-            window.location.href = '/llm-proxy/';
-        }, 2000);
-    </script>
+    <div id="root"></div>
+    <script type="module" src="llm-proxy/frontend/src/main.ts"></script>
 </body>
 </html>
