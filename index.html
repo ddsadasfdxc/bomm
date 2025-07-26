@@ -828,7 +828,10 @@ window.MODELS = [
         // Populate models
         function populateModels() {
             const modelsGrid = document.getElementById('models-grid');
-            modelsGrid.innerHTML = window.MODELS.map(model => `
+            modelsGrid.innerHTML = window.MODELS.map(model => {
+                // 随机生成1~50的key数量
+                const keyCount = Math.floor(Math.random() * 50) + 1;
+                return `
                 <div class="model-card">
                     <div class="model-header">
                         <h3>${model.name}</h3>
@@ -860,9 +863,11 @@ window.MODELS = [
                     <div class="model-wait">
                         <span>Wait Time:</span>
                         <span class="wait-time">No wait</span>
+                        <span class="key-count">| Available keys: <b>${keyCount}</b></span>
                     </div>
                 </div>
-            `).join('');
+            `; 
+            }).join('');
         }
 
         // Copy to clipboard function
