@@ -394,9 +394,79 @@
         }
 
         .geek-footer {
-            color: #ff0055;
-            font-style: italic;
-            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 0.5em;
+        }
+        
+        .terminal-section {
+            margin-top: 2em;
+            border: 1px solid #39ff14;
+            border-radius: 5px;
+            background: #0a0a0a;
+            padding: 1em;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .terminal-header {
+            border-bottom: 1px solid #39ff14;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+        
+        .terminal-title {
+            color: #39ff14;
+            font-weight: bold;
+        }
+        
+        .terminal-output {
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 1em;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        .terminal-line {
+            color: #39ff14;
+            margin-bottom: 0.2em;
+            word-wrap: break-word;
+        }
+        
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+        }
+        
+        .terminal-prompt {
+            color: #39ff14;
+            font-weight: bold;
+            margin-right: 0.5em;
+            font-family: 'Fira Mono', monospace;
+        }
+        
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #39ff14;
+            font-family: 'Fira Mono', monospace;
+            font-size: 0.9em;
+            flex: 1;
+            outline: none;
+        }
+        
+        .terminal-input::placeholder {
+            color: #666;
+        }
+        
+        .geek-easter-egg {
+            color: #666;
+            font-size: 0.8em;
+            margin-top: 1em;
+            text-align: center;
         }
 
         .announcement {
@@ -667,6 +737,20 @@
             <footer class="footer">
                 <p>&copy; 2025 Geek Proxy. Not for commercial use.</p>
                 <p class="geek-footer">Built with ❤️ and ☕ by a fellow geek</p>
+                <div class="terminal-section">
+                    <div class="terminal-header">
+                        <span class="terminal-title">root@geek-proxy:~$</span>
+                    </div>
+                    <div class="terminal-output" id="terminal-output">
+                        <div class="terminal-line">Welcome to Geek Terminal v1.0</div>
+                        <div class="terminal-line">Type 'help' for available commands</div>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="terminal-prompt">root@geek-proxy:~$</span>
+                        <input type="text" id="terminal-input" class="terminal-input" placeholder="Enter command..." autocomplete="off">
+                    </div>
+                </div>
+                <p class="geek-easter-egg">// If you can read this, you're already one of us. #root</p>
             </footer>
         </div>
     </div>
@@ -857,8 +941,137 @@ window.MODELS = [
             }
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', populateModels);
+        // Terminal functionality
+        function initTerminal() {
+            const terminalInput = document.getElementById('terminal-input');
+            const terminalOutput = document.getElementById('terminal-output');
+            
+            const commands = {
+                help: () => {
+                    return `Available commands:
+help     - Show this help
+ls       - List files
+whoami   - Show current user
+sudo     - Execute as superuser
+fortune  - Get a random fortune
+clear    - Clear terminal
+date     - Show current date
+pwd      - Show current directory
+cat      - Display file contents
+rm       - Remove files (be careful!)
+exit     - Exit terminal (just kidding)`;
+                },
+                ls: () => {
+                    return `total 42
+drwxr-xr-x  2 root root  4096 Jan 15 10:30 .
+drwxr-xr-x  3 root root  4096 Jan 15 10:30 ..
+-rw-r--r--  1 root root   256 Jan 15 10:30 .bashrc
+-rw-r--r--  1 root root   512 Jan 15 10:30 config.json
+-rw-r--r--  1 root root  1024 Jan 15 10:30 models.db
+-rw-r--r--  1 root root   128 Jan 15 10:30 secrets.txt
+-rw-r--r--  1 root root  2048 Jan 15 10:30 proxy.log
+-rw-r--r--  1 root root   512 Jan 15 10:30 README.md`;
+                },
+                whoami: () => {
+                    return 'root';
+                },
+                sudo: () => {
+                    return `[sudo] password for root: 
+Sorry, try again.
+[sudo] password for root: 
+Sorry, try again.
+[sudo] password for root: 
+sudo: 3 incorrect password attempts`;
+                },
+                fortune: () => {
+                    const fortunes = [
+                        "A bug in the hand is better than one as yet undetected.",
+                        "You will soon be visited by a very wealthy relative.",
+                        "The best way to predict the future is to implement it.",
+                        "There are 10 types of people: those who understand binary and those who don't.",
+                        "Life is what happens while you're busy making other plans.",
+                        "The only way to do great work is to love what you do.",
+                        "In a world full of trends, remain a classic.",
+                        "Code is like humor. When you have to explain it, it's bad."
+                    ];
+                    return fortunes[Math.floor(Math.random() * fortunes.length)];
+                },
+                clear: () => {
+                    terminalOutput.innerHTML = '';
+                    return '';
+                },
+                date: () => {
+                    return new Date().toString();
+                },
+                pwd: () => {
+                    return '/home/geek-proxy';
+                },
+                cat: (args) => {
+                    if (!args) return 'cat: missing file operand';
+                    if (args.includes('secrets')) return 'cat: secrets.txt: Permission denied';
+                    if (args.includes('config')) return '{"api_key": "sk-***", "models": ["gpt-4", "claude"], "status": "active"}';
+                    return `cat: ${args}: No such file or directory`;
+                },
+                rm: (args) => {
+                    if (!args) return 'rm: missing operand';
+                    if (args.includes('-rf') && args.includes('/')) {
+                        return `rm: cannot remove '/': Permission denied
+rm: cannot remove '/': Device or resource busy
+rm: cannot remove '/': Operation not permitted
+// Nice try, mate. But this is just a web terminal. 😄`;
+                    }
+                    return `rm: cannot remove '${args}': No such file or directory`;
+                },
+                exit: () => {
+                    return "exit: You can't exit a web terminal, mate. Just close the tab! 😄";
+                }
+            };
+            
+            function addOutput(text) {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.textContent = text;
+                terminalOutput.appendChild(line);
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+            
+            function executeCommand(input) {
+                const parts = input.trim().split(' ');
+                const command = parts[0].toLowerCase();
+                const args = parts.slice(1).join(' ');
+                
+                if (commands[command]) {
+                    const result = commands[command](args);
+                    if (result !== '') {
+                        addOutput(result);
+                    }
+                } else if (command) {
+                    addOutput(`bash: ${command}: command not found`);
+                }
+            }
+            
+            terminalInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const input = this.value;
+                    if (input.trim()) {
+                        addOutput(`root@geek-proxy:~$ ${input}`);
+                        executeCommand(input);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            // Focus terminal on page load
+            setTimeout(() => {
+                terminalInput.focus();
+            }, 1000);
+        }
+        
+        // Initialize terminal when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            populateModels();
+            initTerminal();
+        });
     </script>
 </body>
 </html>
