@@ -493,22 +493,25 @@
         }
 
         ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #39ff14;
+            width: 7px;
+            background: #18181a;
             border-radius: 4px;
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00ff41;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(120deg, #39ff14 40%, #00bfff 100%);
+            border-radius: 4px;
+            box-shadow: 0 0 8px #00ff41cc;
+            transition: background 0.3s;
+            animation: scrollpulse 2s infinite linear;
         }
-
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(120deg, #ff0055 0%, #39ff14 100%);
+        }
+        @keyframes scrollpulse {
+            0% { box-shadow: 0 0 8px #00ff41cc; }
+            50% { box-shadow: 0 0 16px #00bfffcc; }
+            100% { box-shadow: 0 0 8px #00ff41cc; }
+        }
         .param-log {
             background: #18181a;
             color: #39ff14;
@@ -522,6 +525,39 @@
             box-shadow: 0 0 10px #00ff4133;
             text-align: left;
             word-break: break-all;
+            cursor: pointer;
+            position: relative;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .param-log:hover {
+            box-shadow: 0 0 24px #00ff41cc;
+            border-color: #ff0055;
+        }
+        .param-log .param-arrow {
+            color: #00bfff;
+            font-weight: bold;
+            margin-right: 0.5em;
+            font-size: 1.1em;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        .param-log.expanded .param-arrow {
+            transform: rotate(90deg);
+        }
+        .param-ascii-table {
+            margin-top: 1em;
+            background: #000;
+            color: #39ff14;
+            border-radius: 6px;
+            padding: 1em 1.2em;
+            font-size: 0.98em;
+            border: 1px solid #00ff41;
+            white-space: pre;
+            box-shadow: 0 0 8px #00ff41cc;
+            display: none;
+        }
+        .param-log.expanded .param-ascii-table {
+            display: block;
         }
 
         .param-log pre {
@@ -580,10 +616,20 @@
                 </div>
             </div>
 
-            <div class="param-log">
-                <pre>// Proxy param log (FYI, mate):
-max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
-</pre>
+            <div class="param-log" id="param-log" onclick="toggleParamLog()">
+                <span class="param-arrow">▶</span>// Proxy param log (FYI, mate):
+                max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
+                <div class="param-ascii-table" id="param-ascii-table">
++-------------------+-------------------+
+|      PARAM        |      VALUE        |
++-------------------+-------------------+
+| Max context       | 200k tokens       |
+| Max output        | 10,000 tokens     |
+| Concurrency       | 8                 |
+| Requests          | Unlimited (∞)     |
+| Multimodal        | N/A               |
++-------------------+-------------------+
+</div>
             </div>
 
             <div class="info-section">
@@ -784,6 +830,21 @@ window.MODELS = [
             setTimeout(() => {
                 announcement.style.display = 'none';
             }, 400); // Match transition duration
+        }
+
+        // Toggle parameter log expansion
+        function toggleParamLog() {
+            const paramLog = document.getElementById('param-log');
+            const paramAsciiTable = document.getElementById('param-ascii-table');
+            const arrow = paramLog.querySelector('.param-arrow');
+
+            if (paramAsciiTable.style.display === 'none' || paramAsciiTable.style.display === '') {
+                paramAsciiTable.style.display = 'block';
+                arrow.textContent = '▼'; // Down arrow
+            } else {
+                paramAsciiTable.style.display = 'none';
+                arrow.textContent = '▶'; // Right arrow
+            }
         }
 
         // Initialize when page loads
