@@ -399,22 +399,33 @@
             border-bottom: 2px solid #39ff14;
             position: relative;
             overflow: hidden;
+            transition: opacity 0.4s, top 0.4s;
         }
-
-        .announcement::before {
-            content: '';
+        .announcement.hide {
+            opacity: 0;
+            top: -60px;
+            pointer-events: none;
+        }
+        .announcement-close {
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
+            right: 1.2em;
+            top: 0.7em;
+            color: #000;
+            background: #ff0055;
+            border: none;
+            border-radius: 50%;
+            width: 1.7em;
+            height: 1.7em;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+            box-shadow: 0 0 6px #ff0055cc;
         }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        .announcement-close:hover {
+            background: #39ff14;
+            color: #18181a;
         }
 
         .announcement-text {
@@ -526,6 +537,7 @@
     <div class="announcement">
         <span class="announcement-icon">⚠️</span>
         <span class="announcement-text">NOTICE: No public API key distribution available. Private use only.</span>
+        <button class="announcement-close" onclick="closeAnnouncement()">×</button>
     </div>
     
     <div class="app">
@@ -763,6 +775,15 @@ window.MODELS = [
         // Close documentation modal
         function closeDocsModal() {
             document.getElementById('docs-modal').classList.remove('active');
+        }
+
+        // Close announcement
+        function closeAnnouncement() {
+            const announcement = document.querySelector('.announcement');
+            announcement.classList.add('hide');
+            setTimeout(() => {
+                announcement.style.display = 'none';
+            }, 400); // Match transition duration
         }
 
         // Initialize when page loads
