@@ -1,0 +1,28 @@
+{
+  "name": "Aether Echoes Blog",
+  "version": "2025-07-260723-67ae80f",
+  "buildTime": "2025-07-26T07:23:32.939Z",
+  "targetUrl": "https://www.lss.work.gd/",
+  "files": [
+    {
+      "name": "README.md",
+      "size": 6,
+      "type": ".md"
+    },
+    {
+      "name": "index.html",
+      "size": 11845,
+      "type": ".html"
+    },
+    {
+      "name": "script.js",
+      "size": 17626,
+      "type": ".js"
+    },
+    {
+      "name": "style.css",
+      "size": 21034,
+      "type": ".css"
+    }
+  ]
+}

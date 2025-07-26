@@ -1,0 +1,235 @@
+name: 🚀 自动部署到 lss.work.gd
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🔧 设置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: 📦 安装依赖
+      run: |
+        npm install -g http-server
+        # 如果有 package.json，安装项目依赖
+        if [ -f "package.json" ]; then
+          npm install
+        fi
+
+    - name: 🔍 代码质量检查
+      run: |
+        echo "🧹 检查文件完整性..."
+        ls -la
+        
+        # 检查关键文件
+        if [ ! -f "index.html" ]; then
+          echo "❌ 缺少 index.html"
+          exit 1
+        fi
+        
+        if [ ! -f "style.css" ]; then
+          echo "❌ 缺少 style.css"
+          exit 1
+        fi
+        
+        if [ ! -f "script.js" ]; then
+          echo "❌ 缺少 script.js"
+          exit 1
+        fi
+        
+        echo "✅ 所有关键文件检查通过"
+
+    - name: 🔨 构建项目
+      run: |
+        echo "🔨 开始构建项目..."
+        mkdir -p dist
+        
+        # 复制主要文件
+        cp index.html dist/
+        cp style.css dist/
+        cp script.js dist/
+        cp README.md dist/
+        
+        # 复制资源目录
+        if [ -d "image" ]; then
+          cp -r image dist/
+        fi
+        
+        if [ -d "music" ]; then
+          cp -r music dist/
+        fi
+        
+        echo "✅ 项目构建完成"
+
+    - name: ⚡ 优化文件
+      run: |
+        echo "⚡ 开始优化文件..."
+        
+        # 压缩CSS（移除注释和多余空白）
+        if [ -f "dist/style.css" ]; then
+          sed -i 's/\/\*.*\*\///g' dist/style.css
+          sed -i 's/  */ /g' dist/style.css
+          echo "✓ CSS文件已优化"
+        fi
+        
+        # 压缩HTML（移除注释）
+        if [ -f "dist/index.html" ]; then
+          sed -i 's/<!--.*-->//g' dist/index.html
+          echo "✓ HTML文件已优化"
+        fi
+        
+        echo "✅ 文件优化完成"
+
+    - name: 📊 生成部署信息
+      run: |
+        echo "📊 生成部署信息..."
+        
+        # 创建部署配置
+        cat > dist/deploy.json << EOF
+        {
+          "name": "Aether Echoes Blog",
+          "version": "$(date +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)",
+          "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "targetUrl": "https://www.lss.work.gd/",
+          "commitHash": "$(git rev-parse HEAD)",
+          "commitMessage": "$(git log -1 --pretty=%B)",
+          "branch": "${{ github.ref_name }}",
+          "buildNumber": "${{ github.run_number }}"
+        }
+        EOF
+        
+        echo "✅ 部署信息已生成"
+
+    - name: 🧪 测试构建结果
+      run: |
+        echo "🧪 测试构建结果..."
+        
+        # 启动本地服务器测试
+        cd dist
+        http-server -p 8080 --silent &
+        SERVER_PID=$!
+        
+        # 等待服务器启动
+        sleep 3
+        
+        # 测试主页是否可访问
+        if curl -f http://localhost:8080/ > /dev/null 2>&1; then
+          echo "✅ 网站测试通过"
+        else
+          echo "❌ 网站测试失败"
+          exit 1
+        fi
+        
+        # 停止测试服务器
+        kill $SERVER_PID
+
+    - name: 📤 推送到 GitHub Pages (可选)
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
+
+    - name: 🌐 部署到目标网站
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      env:
+        TARGET_URL: https://www.lss.work.gd/
+      run: |
+        echo "🌐 准备部署到目标网站..."
+        
+        # 创建部署脚本
+        cat > deploy_to_target.sh << 'EOF'
+        #!/bin/bash
+        echo "🚀 开始部署到 https://www.lss.work.gd/"
+        
+        # 这里需要根据目标网站的具体部署方式来实现
+        # 常见的部署方式包括：
+        
+        # 方式1: FTP上传
+        # if command -v lftp &> /dev/null; then
+        #   lftp -c "
+        #     set ftp:ssl-allow no;
+        #     open -u $FTP_USER,$FTP_PASS $FTP_HOST;
+        #     mirror -R dist/ /public_html/;
+        #     quit
+        #   "
+        # fi
+        
+        # 方式2: SSH部署
+        # if [ ! -z "$SSH_PRIVATE_KEY" ]; then
+        #   echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        #   chmod 600 ~/.ssh/id_rsa
+        #   rsync -avz --delete dist/ user@server:/var/www/html/
+        # fi
+        
+        # 方式3: API调用
+        # if [ ! -z "$DEPLOY_API_KEY" ]; then
+        #   curl -X POST "$DEPLOY_API_URL" \
+        #     -H "Authorization: Bearer $DEPLOY_API_KEY" \
+        #     -F "files=@dist.tar.gz"
+        # fi
+        
+        # 方式4: Webhook触发
+        if [ ! -z "$WEBHOOK_URL" ]; then
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "action": "deploy",
+              "repository": "${{ github.repository }}",
+              "branch": "${{ github.ref_name }}",
+              "commit": "${{ github.sha }}",
+              "message": "Auto deploy from GitHub Actions"
+            }'
+        fi
+        
+        echo "✅ 部署完成！"
+        echo "🌐 网站地址: https://www.lss.work.gd/"
+        EOF
+        
+        chmod +x deploy_to_target.sh
+        ./deploy_to_target.sh
+
+    - name: 📋 部署总结
+      if: always()
+      run: |
+        echo "
+        ===================================
+        🎉 部署流程完成
+        ===================================
+        📊 项目: Aether Echoes Blog
+        🌐 目标: https://www.lss.work.gd/
+        📁 分支: ${{ github.ref_name }}
+        🔢 构建: #${{ github.run_number }}
+        ⏰ 时间: $(date)
+        ===================================
+        "
+        
+        # 如果部署成功，输出访问链接
+        if [ $? -eq 0 ]; then
+          echo "✅ 部署成功！"
+          echo "👀 访问 https://www.lss.work.gd/ 查看网站"
+        else
+          echo "❌ 部署过程中出现错误"
+        fi
+
+    - name: 💬 部署通知 (可选)
+      if: always()
+      run: |
+        # 这里可以添加通知逻辑，比如发送邮件、Slack消息等
+        echo "📢 部署通知已发送"

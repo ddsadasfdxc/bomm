@@ -1,0 +1,41 @@
+{
+  "name": "aether-echoes-blog",
+  "version": "1.0.0",
+  "description": "一个极其优美的个人博客网站 - 灵感回响",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server . -p 8080 -o",
+    "build": "node deploy.js",
+    "deploy": "node deploy.js",
+    "serve": "http-server dist -p 3000 -o",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "blog",
+    "personal-website",
+    "portfolio",
+    "responsive",
+    "modern",
+    "javascript",
+    "css3",
+    "html5"
+  ],
+  "author": "Aether",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ddsadasfdxc/bomm.git"
+  },
+  "homepage": "https://www.lss.work.gd/",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
