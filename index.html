@@ -342,6 +342,24 @@
             font-size: 1rem;
         }
 
+        .wait-time {
+            color: #00ff41;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-left: 0.3em;
+            letter-spacing: 1px;
+        }
+
+        .model-wait {
+            margin-top: 0.7em;
+            font-size: 0.95rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+            font-family: 'Fira Mono', monospace;
+        }
+
         @media (max-width: 768px) {
             .app {
                 padding: 1rem;
@@ -580,6 +598,10 @@ max_ctx=200k | max_output=10k | concurrency=8 | reqs=∞ | multimodal=N/A
                     </div>
                     <div class="model-actions">
                         <button class="test-btn">View Documentation</button>
+                    </div>
+                    <div class="model-wait">
+                        <span>Wait Time:</span>
+                        <span class="wait-time">No wait</span>
                     </div>
                 </div>
             `).join('');
