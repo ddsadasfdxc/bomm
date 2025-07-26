@@ -132,6 +132,13 @@ body {
   font-weight: bold;
 }
 
+.model-description {
+  margin-bottom: 1rem;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
 .endpoint-section {
   margin-bottom: 1rem;
 }
@@ -158,6 +165,7 @@ body {
   font-family: 'Fira Mono', monospace;
   flex: 1;
   word-break: break-all;
+  font-size: 0.85rem;
 }
 
 .copy-btn {
@@ -169,11 +177,17 @@ body {
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  min-width: 40px;
 }
 
 .copy-btn:hover {
   background: #ff3377;
   transform: scale(1.05);
+}
+
+.copy-btn.copied {
+  background: #39ff14;
+  color: #000;
 }
 
 .model-actions {
@@ -231,38 +245,49 @@ body {
   color: #39ff14;
 }
 
-/* Loading */
-.loading {
-  text-align: center;
-  padding: 4rem 2rem;
+/* Info Section */
+.info-section {
+  margin-bottom: 3rem;
 }
 
-.loading-text {
-  font-size: 1.2rem;
+.info-section h2 {
   color: #00bfff;
-  margin: 1rem 0;
-}
-
-.loading-dots {
-  color: #39ff14;
-  font-size: 1.5rem;
-  animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-/* Error */
-.error {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
   text-align: center;
-  padding: 2rem;
-  color: #ff0055;
+  text-shadow: 0 0 15px #00bfff;
 }
 
-.error h2 {
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  border-color: #39ff14;
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+}
+
+.info-card h3 {
+  color: #00bfff;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
+}
+
+.info-card p {
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 /* Footer */
@@ -310,6 +335,10 @@ body {
   
   .copy-btn {
     align-self: flex-end;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
   }
 }
 
