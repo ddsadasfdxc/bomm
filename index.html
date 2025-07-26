@@ -347,47 +347,48 @@
         }
 
         .info-section {
-            margin-bottom: 3rem;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(57, 255, 20, 0.05);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            border-radius: 10px;
         }
-
+        
         .info-section h2 {
-            color: #00bfff;
-            font-size: 1.8rem;
+            color: #39ff14;
             margin-bottom: 1.5rem;
             text-align: center;
-            text-shadow: 0 0 15px #00bfff;
         }
-
-        .info-grid {
+        
+        .faq-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
         }
-
-        .info-card {
-            background: rgba(26, 26, 26, 0.8);
-            border: 1px solid #333;
+        
+        .faq-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(57, 255, 20, 0.3);
             border-radius: 8px;
             padding: 1.5rem;
-            text-align: center;
             transition: all 0.3s ease;
         }
-
-        .info-card:hover {
+        
+        .faq-item:hover {
             border-color: #39ff14;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+            transform: translateY(-2px);
         }
-
-        .info-card h3 {
-            color: #00bfff;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+        
+        .faq-item h3 {
+            color: #ff0055;
+            margin-bottom: 0.8rem;
+            font-size: 1.1em;
         }
-
-        .info-card p {
-            color: #ccc;
-            font-size: 0.9rem;
-            line-height: 1.5;
+        
+        .faq-item p {
+            color: #39ff14;
+            line-height: 1.6;
         }
 
         .footer {
@@ -718,23 +719,19 @@
             </div>
 
             <div class="info-section">
-                <h2>About This Proxy</h2>
-                <div class="info-grid">
-                    <div class="info-card">
-                        <h3>🔒 Security</h3>
-                        <p>API keys are never exposed. Only endpoints are shown for reference.</p>
+                <h2>FAQ - Geek Edition</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h3>Q: Why did you create this proxy?</h3>
+                        <p>A: For the lulz, mate. Pure entertainment.</p>
                     </div>
-                    <div class="info-card">
-                        <h3>🚀 Performance</h3>
-                        <p>Direct API calls to providers for maximum speed and reliability.</p>
+                    <div class="faq-item">
+                        <h3>Q: How to get API keys?</h3>
+                        <p>A: Send us a pic of your... never mind, just kidding! 😄</p>
                     </div>
-                    <div class="info-card">
-                        <h3>🛠️ Customizable</h3>
-                        <p>Easy to add new models and customize endpoints as needed.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>📱 Responsive</h3>
-                        <p>Works perfectly on desktop, tablet, and mobile devices.</p>
+                    <div class="faq-item">
+                        <h3>Q: Who are you?</h3>
+                        <p>A: I am who I am. That's all you need to know.</p>
                     </div>
                 </div>
             </div>
