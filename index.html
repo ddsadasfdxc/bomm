@@ -1,127 +1,14 @@
----
-// src/pages/index.astro
-// 你只需要编辑这一个文件！
-import "@fontsource-variable/inter";
-import { Icon } from "astro-icon/components";
-
-// ✨ 1. 修改下方三个特色卡片的内容
-const features = [
-	{
-		title: "最新舞台合集",
-		description: "点击查看星瞳最新单曲和热门舞蹈的精彩舞台表演。",
-		icon: "mdi:play-box-outline",
-		link: "/videos",
-	},
-	{
-		title: "2023生日会回顾",
-		description: "万舰齐航的感动瞬间，重温生日会的每一个精彩时刻。",
-		icon: "mdi:cake-variant-outline",
-		link: "/timeline",
-	},
-	{
-		title: "官方壁纸廊",
-		description: "汇集了星瞳官方发布的高清壁纸，快来收藏吧！",
-		icon: "mdi:palette-outline",
-		link: "/gallery",
-	},
-];
----
-
-<!doctype html>
-<html lang="zh-CN" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="一个为虚拟偶像星瞳打造的粉丝网站" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<!-- ✨ 2. 修改浏览器标签页上显示的标题 -->
-		<title>星瞳粉丝站 | 首页</title>
-	</head>
-	<body class="bg-gray-900 text-gray-200">
-		<!-- 背景效果 -->
-		<div class="fixed inset-0 -z-10 overflow-hidden">
-			<div class="absolute inset-0 bg-gray-950"></div>
-			<div class="absolute top-[-20rem] left-[-20rem] h-[40rem] w-[40rem] rounded-full bg-gradient-radial from-pink-500/30 to-transparent blur-3xl animate-pulse-slow"></div>
-			<div class="absolute bottom-[-15rem] right-[-15rem] h-[30rem] w-[30rem] rounded-full bg-gradient-radial from-violet-600/30 to-transparent blur-3xl animate-pulse-slow-delay"></div>
-		</div>
-
-		<!-- ✨ 3. 修改顶部的导航栏 -->
-		<header class="sticky top-0 z-50 w-full backdrop-blur-lg bg-black/50 border-b border-white/10 shadow-lg">
-			<nav class="container mx-auto flex items-center justify-between p-4 text-white">
-				<!-- ✨ 修改网站名字 -->
-				<a href="/" class="text-xl font-bold transition-transform hover:scale-105">
-					✨ 星瞳的小窝
-				</a>
-				<div class="hidden md:flex items-center space-x-8 font-medium">
-					<!-- ✨ 修改导航链接 -->
-					<a href="/videos" class="hover:text-pink-300 transition-colors">作品集</a>
-					<a href="/timeline" class="hover:text-pink-300 transition-colors">大事记</a>
-					<a href="/gallery" class="hover:text-pink-300 transition-colors">图库</a>
-				</div>
-			</nav>
-		</header>
-
-		<!-- 主要内容 -->
-		<main class="container mx-auto p-4 md:p-8">
-			<!-- ✨ 4. 修改页面的主标题和描述 -->
-			<section class="py-20 sm:py-32 text-center">
-				<div class="max-w-4xl mx-auto px-4">
-					<h1 class="text-5xl md:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-500 bg-clip-text text-transparent pb-2">
-						与星同闪耀，为瞳而聚集
-					</h1>
-
-					<p class="mt-6 text-lg max-w-2xl mx-auto text-gray-300">
-						这里是星瞳(Stella)的非官方粉丝资料站。致力于收集和整理星瞳的每一个闪光时刻，为所有小星星提供一个温暖的线上小窝。
-					</p>
-
-					<!-- ✨ 5. 修改两个按钮上的文字 -->
-					<div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
-						<a href="/videos" class="flex items-center justify-center gap-2 bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg shadow-lg transition-transform hover:scale-105">
-							<Icon name="mdi:movie-open-play-outline" class="w-5 h-5"/>
-							探索作品集
-						</a>
-						<a href="https://space.bilibili.com/401497918" target="_blank" class="flex items-center justify-center gap-2 border-2 border-white/50 text-white font-semibold px-6 py-3 rounded-lg transition-colors hover:bg-white/10">
-							前往B站 🚀
-						</a>
-					</div>
-				</div>
-			</section>
-
-			<!-- 特色卡片区域 (由上面第1部分的数据自动生成) -->
-			<section class="mt-16">
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-					{features.map(feature => (
-						<a href={feature.link} class="relative block p-8 overflow-hidden rounded-lg bg-white/5 border border-white/10 shadow-xl transition-all duration-300 hover:border-pink-400/50 hover:-translate-y-1">
-							<div class="flex items-center gap-4 mb-4">
-								<div class="p-2 rounded-md bg-pink-500/20">
-									<Icon name={feature.icon} class="w-6 h-6 text-pink-300"/>
-								</div>
-								<h3 class="text-xl font-bold text-white">{feature.title}</h3>
-							</div>
-							<p class="text-gray-400">{feature.description}</p>
-						</a>
-					))}
-				</div>
-			</section>
-		</main>
-
-		<!-- ✨ 6. 修改底部的页脚文字 -->
-		<footer class="mt-24 text-center text-sm text-gray-500 p-8 border-t border-white/10">
-			<p>本项目为粉丝自发创建，为爱发电 ❤️</p>
-			<p class="mt-2">内容版权归星瞳及相关方所有。</p>
-		</footer>
-	</body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新项目</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>新项目</h1>
+    <p>这是一个全新的 web 项目。</p>
+    <script src="script.js"></script>
+</body>
 </html>
-
-<!-- 全局样式，让动画和字体生效，不需要动这里 -->
-<style is:global>
-	@keyframes pulse-slow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } }
-	@keyframes pulse-slow-delay { 0%, 100% { transform: scale(1.1); opacity: 1; } 50% { transform: scale(0.9); opacity: 0.7; } }
-	.animate-pulse-slow { animation: pulse-slow 12s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-	.animate-pulse-slow-delay { animation: pulse-slow-delay 15s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-	html { font-family: 'InterVariable', sans-serif; }
-	::-webkit-scrollbar { width: 8px; }
-	::-webkit-scrollbar-track { background: transparent; }
-	::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); border-radius: 4px; }
-	::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
-</style>
