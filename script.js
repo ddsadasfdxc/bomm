@@ -1,7 +1,12 @@
 (function () {
     var i18n = {
         en: {
-            nav_blog: 'Blog', nav_games: 'Games', nav_tools: 'Tools',
+            nav_home: 'Home', nav_blog: 'Blog', nav_games: 'Games', nav_tools: 'Tools',
+            hero_kicker: 'PERSONAL SPACE',
+            hero_title_zh: 'I sink into code, and still love the world.',
+            hero_title_en: 'I code, and I love the world.',
+            hero_desc: 'A bilingual space for writing, building, and playing.',
+            hero_cta: 'Enter Blog',
             blog_title: 'Blog', blog_desc: 'Thoughts, stories and ideas.', blog_new: 'New Post',
             games_title: 'Games', games_desc: 'Mini games to pass the time.',
             games_2048_desc: 'Slide and merge tiles to reach 2048.',
@@ -25,7 +30,12 @@
             opening: 'Opening: '
         },
         zh: {
-            nav_blog: '\u535a\u5ba2', nav_games: '\u6e38\u620f', nav_tools: '\u5de5\u5177',
+            nav_home: '\u9996\u9875', nav_blog: '\u535a\u5ba2', nav_games: '\u6e38\u620f', nav_tools: '\u5de5\u5177',
+            hero_kicker: '\u4e2a\u4eba\u7a7a\u95f4',
+            hero_title_zh: '\u6211\u6c89\u6eba\u4ee3\u7801\uff0c\u4e5f\u70ed\u7231\u4e16\u754c\u3002',
+            hero_title_en: 'I code, and I love the world.',
+            hero_desc: '\u4e00\u4e2a\u53ef\u4ee5\u5199\u4f5c\u3001\u521b\u9020\u548c\u6e38\u73a9\u7684\u53cc\u8bed\u7a7a\u95f4\u3002',
+            hero_cta: '\u8fdb\u5165\u535a\u5ba2',
             blog_title: '\u535a\u5ba2', blog_desc: '\u601d\u7ef4\u3001\u6545\u4e8b\u4e0e\u7075\u611f', blog_new: '\u53d1\u5e03\u63a8\u6587',
             games_title: '\u6e38\u620f', games_desc: '\u5c0f\u6e38\u620f\uff0c\u6253\u53d1\u65f6\u95f4',
             games_2048_desc: '\u6ed1\u52a8\u5408\u5e76\u65b9\u5757\uff0c\u76ee\u6807\u8fbe\u5230 2048',
@@ -138,6 +148,15 @@
             });
     }
 
+    function switchSection(sectionId) {
+        document.querySelectorAll('.nav-link').forEach(function (l) {
+            l.classList.toggle('active', l.getAttribute('data-section') === sectionId);
+        });
+        document.querySelectorAll('.section').forEach(function (s) {
+            s.classList.toggle('active', s.id === sectionId);
+        });
+    }
+
     // Init theme
     var saved = localStorage.getItem('theme');
     if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -190,13 +209,17 @@
     document.querySelectorAll('.nav-link').forEach(function (link) {
         link.addEventListener('click', function (e) {
             e.preventDefault();
-            var sectionId = this.getAttribute('data-section');
-            document.querySelectorAll('.nav-link').forEach(function (l) { l.classList.remove('active'); });
-            this.classList.add('active');
-            document.querySelectorAll('.section').forEach(function (s) { s.classList.remove('active'); });
-            document.getElementById(sectionId).classList.add('active');
+            switchSection(this.getAttribute('data-section'));
         });
     });
+
+    var enterBlogBtn = document.getElementById('enterBlogBtn');
+    if (enterBlogBtn) {
+        enterBlogBtn.addEventListener('click', function () {
+            switchSection('blog');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 
     // Compose
     var composeEl = document.getElementById('postCompose');
