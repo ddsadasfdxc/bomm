@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "First Post",
+    "content": "Welcome to my space. This is where I share my thoughts and ideas with the world.",
+    "tag": "Essay",
+    "date": "2026-04-19"
+  },
+  {
+    "id": 2,
+    "title": "Building in Public",
+    "content": "Sharing the process of creating this website from scratch, step by step.",
+    "tag": "Tech",
+    "date": "2026-04-19"
+  }
+]

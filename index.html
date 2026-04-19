@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,95 +10,127 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <canvas id="particles"></canvas>
+
     <nav class="navbar">
         <div class="nav-inner">
-            <a href="/" class="logo">My Space</a>
+            <a href="/" class="logo">✦ My Space</a>
             <div class="nav-links">
-                <a href="#blog" class="nav-link active" data-section="blog">Blog</a>
-                <a href="#games" class="nav-link" data-section="games">Games</a>
-                <a href="#tools" class="nav-link" data-section="tools">Tools</a>
+                <a href="#blog" class="nav-link active" data-section="blog" data-i18n="nav_blog">Blog</a>
+                <a href="#games" class="nav-link" data-section="games" data-i18n="nav_games">Games</a>
+                <a href="#tools" class="nav-link" data-section="tools" data-i18n="nav_tools">Tools</a>
             </div>
-            <button class="theme-toggle" aria-label="Toggle theme">
-                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </button>
+            <div class="nav-actions">
+                <button class="icon-btn" id="colorPickerBtn" aria-label="Theme color" title="Theme Color">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="13.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.1-.7-.4-1-.3-.3-.4-.7-.4-1.1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9.9-10-9.9z"/></svg>
+                </button>
+                <button class="icon-btn lang-toggle" aria-label="Language" title="Language">
+                    <span class="lang-label">EN</span>
+                </button>
+                <button class="icon-btn theme-toggle" aria-label="Toggle theme">
+                    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
         </div>
     </nav>
+
+    <div class="color-panel" id="colorPanel">
+        <div class="color-panel-header">
+            <span data-i18n="color_title">Theme Color</span>
+            <button class="color-panel-close" id="colorPanelClose">×</button>
+        </div>
+        <div class="color-presets">
+            <button class="color-swatch active" data-color="#10a37f" style="background:#10a37f"></button>
+            <button class="color-swatch" data-color="#6366f1" style="background:#6366f1"></button>
+            <button class="color-swatch" data-color="#ec4899" style="background:#ec4899"></button>
+            <button class="color-swatch" data-color="#f59e0b" style="background:#f59e0b"></button>
+            <button class="color-swatch" data-color="#ef4444" style="background:#ef4444"></button>
+            <button class="color-swatch" data-color="#3b82f6" style="background:#3b82f6"></button>
+            <button class="color-swatch" data-color="#8b5cf6" style="background:#8b5cf6"></button>
+            <button class="color-swatch" data-color="#14b8a6" style="background:#14b8a6"></button>
+        </div>
+        <div class="color-custom">
+            <label data-i18n="color_custom">Custom</label>
+            <input type="color" id="customColor" value="#10a37f">
+        </div>
+    </div>
 
     <main class="main">
         <section id="blog" class="section active">
             <div class="section-header">
-                <h2 class="section-title">Blog</h2>
-                <p class="section-desc">Thoughts, stories and ideas.</p>
+                <div class="section-header-row">
+                    <div>
+                        <h2 class="section-title" data-i18n="blog_title">Blog</h2>
+                        <p class="section-desc" data-i18n="blog_desc">Thoughts, stories and ideas.</p>
+                    </div>
+                    <button class="btn-primary" id="newPostBtn" data-i18n="blog_new">New Post</button>
+                </div>
             </div>
-            <div class="card-grid">
-                <article class="card">
-                    <div class="card-tag">Essay</div>
-                    <h3 class="card-title">First Post</h3>
-                    <p class="card-text">Welcome to my space. This is where I share my thoughts and ideas with the world.</p>
-                    <div class="card-footer">
-                        <span class="card-date">Apr 2026</span>
-                        <span class="card-arrow">→</span>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-tag">Tech</div>
-                    <h3 class="card-title">Building in Public</h3>
-                    <p class="card-text">Sharing the process of creating this website from scratch, step by step.</p>
-                    <div class="card-footer">
-                        <span class="card-date">Apr 2026</span>
-                        <span class="card-arrow">→</span>
-                    </div>
-                </article>
-                <article class="card card-placeholder">
-                    <div class="card-tag">Soon</div>
-                    <h3 class="card-title">More coming...</h3>
-                    <p class="card-text">Stay tuned for more articles and stories.</p>
-                    <div class="card-footer">
-                        <span class="card-date">—</span>
-                        <span class="card-arrow">→</span>
-                    </div>
-                </article>
+
+            <div class="post-compose" id="postCompose">
+                <div class="compose-header">
+                    <h3 data-i18n="compose_title">Write a new post</h3>
+                    <button class="compose-close" id="composeClose">×</button>
+                </div>
+                <input type="text" class="compose-input" id="postTitleInput" data-i18n-placeholder="compose_title_ph" placeholder="Post title...">
+                <textarea class="compose-textarea" id="postContentInput" data-i18n-placeholder="compose_content_ph" placeholder="What's on your mind..."></textarea>
+                <div class="compose-actions">
+                    <select class="compose-select" id="postTagSelect">
+                        <option value="Essay">Essay</option>
+                        <option value="Tech">Tech</option>
+                        <option value="Life">Life</option>
+                        <option value="Idea">Idea</option>
+                    </select>
+                    <button class="btn-primary" id="publishBtn" data-i18n="compose_publish">Publish</button>
+                </div>
+                <div class="compose-settings" id="composeSettings">
+                    <p class="compose-settings-hint" data-i18n="compose_token_hint">Enter your GitHub Personal Access Token (repo permission required). Stored locally only.</p>
+                    <input type="password" class="compose-input" id="githubTokenInput" placeholder="ghp_xxxxxxxxxxxx">
+                    <button class="btn-secondary" id="saveTokenBtn" data-i18n="compose_save_token">Save Token</button>
+                </div>
             </div>
+
+            <div class="card-grid" id="postGrid"></div>
         </section>
 
         <section id="games" class="section">
             <div class="section-header">
-                <h2 class="section-title">Games</h2>
-                <p class="section-desc">Mini games to pass the time.</p>
+                <h2 class="section-title" data-i18n="games_title">Games</h2>
+                <p class="section-desc" data-i18n="games_desc">Mini games to pass the time.</p>
             </div>
             <div class="card-grid">
-                <div class="card game-card" data-game="2048">
+                <div class="card game-card" data-game="2048" style="animation-delay:0.05s">
                     <div class="card-emoji">🎯</div>
                     <h3 class="card-title">2048</h3>
-                    <p class="card-text">Slide and merge tiles to reach 2048.</p>
+                    <p class="card-text" data-i18n="games_2048_desc">Slide and merge tiles to reach 2048.</p>
                     <div class="card-footer">
                         <span class="card-tag">Puzzle</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card game-card" data-game="snake">
+                <div class="card game-card" data-game="snake" style="animation-delay:0.1s">
                     <div class="card-emoji">🐍</div>
                     <h3 class="card-title">Snake</h3>
-                    <p class="card-text">Classic snake game. Eat and grow.</p>
+                    <p class="card-text" data-i18n="games_snake_desc">Classic snake game. Eat and grow.</p>
                     <div class="card-footer">
                         <span class="card-tag">Arcade</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card game-card" data-game="memory">
+                <div class="card game-card" data-game="memory" style="animation-delay:0.15s">
                     <div class="card-emoji">🧠</div>
                     <h3 class="card-title">Memory</h3>
-                    <p class="card-text">Flip cards and find matching pairs.</p>
+                    <p class="card-text" data-i18n="games_memory_desc">Flip cards and find matching pairs.</p>
                     <div class="card-footer">
                         <span class="card-tag">Brain</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card game-card" data-game="typing">
+                <div class="card game-card" data-game="typing" style="animation-delay:0.2s">
                     <div class="card-emoji">⌨️</div>
                     <h3 class="card-title">Typing Speed</h3>
-                    <p class="card-text">Test how fast you can type.</p>
+                    <p class="card-text" data-i18n="games_typing_desc">Test how fast you can type.</p>
                     <div class="card-footer">
                         <span class="card-tag">Skill</span>
                         <span class="card-arrow">→</span>
@@ -109,41 +141,41 @@
 
         <section id="tools" class="section">
             <div class="section-header">
-                <h2 class="section-title">Tools</h2>
-                <p class="section-desc">Handy utilities for daily use.</p>
+                <h2 class="section-title" data-i18n="tools_title">Tools</h2>
+                <p class="section-desc" data-i18n="tools_desc">Handy utilities for daily use.</p>
             </div>
             <div class="card-grid">
-                <div class="card tool-card" data-tool="timer">
+                <div class="card tool-card" data-tool="timer" style="animation-delay:0.05s">
                     <div class="card-emoji">⏱️</div>
-                    <h3 class="card-title">Pomodoro Timer</h3>
-                    <p class="card-text">Focus timer with work and break cycles.</p>
+                    <h3 class="card-title" data-i18n="tools_timer">Pomodoro Timer</h3>
+                    <p class="card-text" data-i18n="tools_timer_desc">Focus timer with work and break cycles.</p>
                     <div class="card-footer">
                         <span class="card-tag">Productivity</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card tool-card" data-tool="password">
+                <div class="card tool-card" data-tool="password" style="animation-delay:0.1s">
                     <div class="card-emoji">🔐</div>
-                    <h3 class="card-title">Password Generator</h3>
-                    <p class="card-text">Generate strong, random passwords instantly.</p>
+                    <h3 class="card-title" data-i18n="tools_password">Password Generator</h3>
+                    <p class="card-text" data-i18n="tools_password_desc">Generate strong, random passwords instantly.</p>
                     <div class="card-footer">
                         <span class="card-tag">Security</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card tool-card" data-tool="color">
+                <div class="card tool-card" data-tool="color" style="animation-delay:0.15s">
                     <div class="card-emoji">🎨</div>
-                    <h3 class="card-title">Color Picker</h3>
-                    <p class="card-text">Pick colors and copy HEX, RGB values.</p>
+                    <h3 class="card-title" data-i18n="tools_color">Color Picker</h3>
+                    <p class="card-text" data-i18n="tools_color_desc">Pick colors and copy HEX, RGB values.</p>
                     <div class="card-footer">
                         <span class="card-tag">Design</span>
                         <span class="card-arrow">→</span>
                     </div>
                 </div>
-                <div class="card tool-card" data-tool="converter">
+                <div class="card tool-card" data-tool="converter" style="animation-delay:0.2s">
                     <div class="card-emoji">📐</div>
-                    <h3 class="card-title">Unit Converter</h3>
-                    <p class="card-text">Convert between common measurement units.</p>
+                    <h3 class="card-title" data-i18n="tools_converter">Unit Converter</h3>
+                    <p class="card-text" data-i18n="tools_converter_desc">Convert between common measurement units.</p>
                     <div class="card-footer">
                         <span class="card-tag">Utility</span>
                         <span class="card-arrow">→</span>
@@ -153,8 +185,18 @@
         </section>
     </main>
 
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <button class="compose-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
     <footer class="footer">
-        <p>Built with care · 2026</p>
+        <p data-i18n="footer_text">Built with care · 2026</p>
     </footer>
 
     <script src="script.js"></script>
