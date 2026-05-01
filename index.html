@@ -3,114 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mySpace • A Digital Garden</title>
+    <title>mySpace • 数字花园</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="bg-canvas"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-noise"></div>
+
+    <nav class="nav">
+        <div class="nav-item active" data-section="home">Home</div>
+        <div class="nav-divider"></div>
+        <div class="nav-item" data-section="blog">Blog</div>
+        <div class="nav-item" data-section="games">Games</div>
+        <div class="nav-item" data-section="tools">Tools</div>
+    </nav>
+
     <main class="main">
         <section id="home" class="section active">
-            <div class="hero-center">
-                <div class="hero-badge">A Digital Garden</div>
-                <h1 class="hero-title">我沉溺代码<br>也热爱世界</h1>
+            <div class="hero">
+                <div class="hero-glow"></div>
+                <div class="hero-rings">
+                    <div class="hero-ring"></div>
+                    <div class="hero-ring"></div>
+                    <div class="hero-ring"></div>
+                </div>
+                
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                    <div class="shape shape-4"></div>
+                    <div class="shape shape-5"></div>
+                </div>
+
+                <div class="hero-badge">Digital Garden</div>
+                <h1 class="hero-title">
+                    <span class="hero-title-main">我沉溺代码</span>
+                    <span class="hero-title-sub">也热爱世界</span>
+                </h1>
                 <p class="hero-subtitle">I code, and I love the world.</p>
-                <p class="hero-desc">A bilingual space where technology meets creativity.</p>
-                <div class="hero-btns">
-                    <a href="#blog" class="btn-primary">Enter Blog</a>
-                    <a href="#games" class="btn-secondary">Explore</a>
+                <p class="hero-desc">一个技术与创意相遇的双语空间。A bilingual space where technology meets creativity.</p>
+                
+                <div class="hero-buttons">
+                    <a href="#blog" class="btn btn-primary">探索博客 Explore</a>
+                    <a href="#games" class="btn btn-secondary">开始游戏 Play</a>
                 </div>
             </div>
-            
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>Blog</h3>
-                    <p>Write, share, and grow.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎮</div>
-                    <h3>Games</h3>
-                    <p>Mini games & challenges.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛠️</div>
-                    <h3>Tools</h3>
-                    <p>Productivity utilities.</p>
+
+            <div class="features">
+                <div class="features-grid">
+                    <div class="feature-card" data-aos>
+                        <div class="feature-shine"></div>
+                        <div class="feature-icon">📝</div>
+                        <h3>Blog 博客</h3>
+                        <p>记录思考，分享成长。Write, share, and grow together.</p>
+                    </div>
+                    <div class="feature-card" data-aos>
+                        <div class="feature-shine"></div>
+                        <div class="feature-icon">🎮</div>
+                        <h3>Games 游戏</h3>
+                        <p>迷你游戏，随时娱乐。Mini games for endless fun.</p>
+                    </div>
+                    <div class="feature-card" data-aos>
+                        <div class="feature-shine"></div>
+                        <div class="feature-icon">🛠️</div>
+                        <h3>Tools 工具</h3>
+                        <p>实用工具，提升效率。Handy tools for daily productivity.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="blog" class="section">
             <div class="section-header">
-                <h2 class="section-title">Blog</h2>
-                <p class="section-desc">Thoughts, stories and ideas.</p>
+                <h2 class="section-title">Blog 博客</h2>
+                <p class="section-desc">Thoughts, stories and ideas. 记录思考与灵感。</p>
             </div>
             <div class="card-grid" id="postGrid"></div>
         </section>
 
         <section id="games" class="section">
             <div class="section-header">
-                <h2 class="section-title">Games</h2>
-                <p class="section-desc">Mini games to pass the time.</p>
+                <h2 class="section-title">Games 游戏</h2>
+                <p class="section-desc">Mini games to pass the time. 随时随地享受游戏乐趣。</p>
             </div>
             <div class="card-grid">
-                <a href="games/2048.html" class="card game-card">
-                    <div class="card-emoji">🎯</div>
-                    <h3 class="card-title">2048</h3>
-                    <p class="card-text">Slide and merge tiles.</p>
+                <a href="games/2048.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">🎯</span>
+                        <h3 class="card-title">2048</h3>
+                        <p class="card-text">滑动合并数字块。Slide and merge tiles to reach 2048.</p>
+                    </div>
                 </a>
-                <a href="games/snake.html" class="card game-card">
-                    <div class="card-emoji">🐍</div>
-                    <h3 class="card-title">Snake</h3>
-                    <p class="card-text">Classic snake game.</p>
+                <a href="games/snake.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">🐍</span>
+                        <h3 class="card-title">Snake 贪吃蛇</h3>
+                        <p class="card-text">经典蛇游戏。The classic snake game you know.</p>
+                    </div>
                 </a>
-                <a href="games/memory.html" class="card game-card">
-                    <div class="card-emoji">🧠</div>
-                    <h3 class="card-title">Memory</h3>
-                    <p class="card-text">Match the pairs.</p>
+                <a href="games/memory.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">🧠</span>
+                        <h3 class="card-title">Memory 记忆</h3>
+                        <p class="card-text">配对卡片游戏。Match pairs to test your memory.</p>
+                    </div>
                 </a>
-                <a href="games/typing.html" class="card game-card">
-                    <div class="card-emoji">⌨️</div>
-                    <h3 class="card-title">Typing</h3>
-                    <p class="card-text">Test your speed.</p>
+                <a href="games/typing.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">⌨️</span>
+                        <h3 class="card-title">Typing 打字</h3>
+                        <p class="card-text">测试你的速度。Test your typing speed.</p>
+                    </div>
                 </a>
             </div>
         </section>
 
         <section id="tools" class="section">
             <div class="section-header">
-                <h2 class="section-title">Tools</h2>
-                <p class="section-desc">Handy utilities for daily use.</p>
+                <h2 class="section-title">Tools 工具</h2>
+                <p class="section-desc">Handy utilities for daily use. 日常必备实用工具。</p>
             </div>
             <div class="card-grid">
-                <a href="tools/timer.html" class="card tool-card">
-                    <div class="card-emoji">⏱️</div>
-                    <h3 class="card-title">Pomodoro</h3>
-                    <p class="card-text">Focus timer.</p>
+                <a href="tools/timer.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">⏱️</span>
+                        <h3 class="card-title">Pomodoro 番茄钟</h3>
+                        <p class="card-text">专注计时器。Focus timer for productivity.</p>
+                    </div>
                 </a>
-                <a href="tools/password.html" class="card tool-card">
-                    <div class="card-emoji">🔐</div>
-                    <h3 class="card-title">Password</h3>
-                    <p class="card-text">Generate secure passwords.</p>
+                <a href="tools/password.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">🔐</span>
+                        <h3 class="card-title">Password 密码</h3>
+                        <p class="card-text">生成安全密码。Generate secure passwords.</p>
+                    </div>
                 </a>
-                <a href="tools/color.html" class="card tool-card">
-                    <div class="card-emoji">🎨</div>
-                    <h3 class="card-title">Color</h3>
-                    <p class="card-text">Pick and convert colors.</p>
+                <a href="tools/color.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">🎨</span>
+                        <h3 class="card-title">Color 颜色</h3>
+                        <p class="card-text">取色与转换。Pick and convert colors.</p>
+                    </div>
                 </a>
-                <a href="tools/converter.html" class="card tool-card">
-                    <div class="card-emoji">📐</div>
-                    <h3 class="card-title">Converter</h3>
-                    <p class="card-text">Convert units.</p>
+                <a href="tools/converter.html" class="card">
+                    <div class="card-content">
+                        <span class="card-emoji">📐</span>
+                        <h3 class="card-title">Converter 单位</h3>
+                        <p class="card-text">单位转换工具。Convert units easily.</p>
+                    </div>
                 </a>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>Built with precision • 2026</p>
+        <p>Crafted with precision • 2026 • <a href="https://github.com/ddsadasfdxc/bomm">GitHub</a></p>
     </footer>
 
     <script src="script.js"></script>
