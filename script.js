@@ -312,13 +312,7 @@
         });
     });
 
-    // Games & tools
-    document.querySelectorAll('.game-card, .tool-card').forEach(function (card) {
-        card.addEventListener('click', function () {
-            var name = this.getAttribute('data-game') || this.getAttribute('data-tool');
-            alert(i18n[lang].coming_soon + ' (' + name + ')');
-        });
-    });
+    // Games & tools (now handled by href links)
 
     // Particles
     var canvas = document.getElementById('particles');
