@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typing Speed Test</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.tt-app{max-width:720px;margin:0 auto}
+.tt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.tt-stats{display:flex;gap:8px}
+.tt-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;text-align:center;min-width:80px}
+.tt-stat-label{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px}
+.tt-stat-num{font-size:20px;font-weight:700;color:var(--accent)}
+.tt-btn{padding:8px 16px;font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);cursor:pointer;font-family:inherit;transition:all .2s}
+.tt-btn:hover{border-color:var(--accent)}
+.tt-btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tt-btn-primary:hover{opacity:.9}
+.tt-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;position:relative}
+.tt-box h3{font-size:16px;margin-bottom:12px;color:var(--text-secondary)}
+.tt-timer{font-size:48px;font-weight:600;color:var(--accent);text-align:center;margin:16px 0}
+.tt-textarea{width:100%;min-height:320px;padding:24px;font-size:18px;line-height:1.8;font-family:'Courier New',monospace;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;color:var(--text-primary);outline:none;resize:none;transition:border-color .2s;-webkit-appearance:none}
+.tt-textarea:focus{border-color:var(--accent)}
+.tt-textarea[readonly]{cursor:default;opacity:.95}
+.tt-textarea::placeholder{color:var(--text-tertiary)}
+.tt-target{font-size:18px;font-family:'Courier New',monospace;line-height:1.8;color:var(--text-primary);margin-bottom:24px;padding:24px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border)}
+.tt-target span{transition:background .1s,padding 0s}
+.tt-target span.correct{color:var(--accent);background:none}
+.tt-target span.incorrect{background:#ef4444;color:#fff;border-radius:2px}
+.tt-target span.current{background:var(--accent);color:#fff;border-radius:2px;padding:0 2px}
+.tt-diff{display:flex;gap:8px;margin-top:16px;justify-content:center}
+.tt-results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.tt-result{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.tt-result .value{font-size:28px;font-weight:700;color:var(--accent);margin:4px 0}
+.tt-result .label{font-size:12px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px}
+.tt-history{margin-top:32px}
+.tt-history h3{font-size:16px;margin-bottom:12px;color:var(--text-secondary)}
+.tt-history-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:12px}
+.tt-history-item{background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px}
+.tt-history-item .date{font-size:11px;color:var(--text-tertiary)}
+.tt-history-item .wpm{font-size:16px;font-weight:600;color:var(--accent)}
+.tt-history-item .acc{font-size:12px;color:var(--text-secondary)}
+@media(max-width:640px){.tt-box{padding:20px}.tt-textarea{min-height:240px;font-size:16px}.tt-timer{font-size:36px}.tt-stats{flex-wrap:wrap}.tt-results{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner"><a href="../" class="logo">&larr; Back</a><div style="font-weight:600;color:var(--text-primary)">Typing Speed Test</div><div></div></div></nav>
+<main class="main tt-app">
+<div class="tt-header">
+<div class="tt-stats">
+<div class="tt-stat"><div class="tt-stat-label">Best WPM</div><div class="tt-stat-num" id="bestWPM">0</div></div>
+<div class="tt-stat"><div class="tt-stat-label">Sessions</div><div class="tt-stat-num" id="sessions">0</div></div>
+<div class="tt-stat"><div class="tt-stat-label">Avg Acc</div><div class="tt-stat-num" id="avgAcc">0%</div></div>
+</div>
+<button class="tt-btn tt-btn-primary" id="newTest">New Test</button>
+</div>
+<div class="tt-box">
+<div id="preTest">
+<h3>Select Difficulty</h3>
+<div class="tt-diff">
+<button class="tt-btn" data-level="easy" style="background:var(--accent);color:#fff;border-color:var(--accent)">Easy</button>
+<button class="tt-btn" data-level="medium">Medium</button>
+<button class="tt-btn" data-level="hard">Hard</button>
+<button class="tt-btn" data-level="code">Code</button>
+</div>
+<p style="color:var(--text-tertiary);font-size:13px;text-align:center;margin-top:12px">Click Start to begin the 1‑minute test. Type the text exactly as shown.</p>
+</div>
+<div id="testActive" style="display:none">
+<div class="tt-timer" id="timer">1:00</div>
+<div class="tt-target" id="targetText"></div>
+<textarea class="tt-textarea" id="inputArea" placeholder="Start typing here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+</div>
+</div>
+<div class="tt-results" id="results" style="display:none">
+<div class="tt-result"><div class="value" id="wpmResult">0</div><div class="label">WPM</div></div>
+<div class="tt-result"><div class="value" id="accResult">0%</div><div class="label">Accuracy</div></div>
+<div class="tt-result"><div class="value" id="timeResult">0s</div><div class="label">Time</div></div>
+</div>
+<div class="tt-history" id="history" style="display:none">
+<h3>Recent Tests</h3>
+<div class="tt-history-grid" id="historyGrid"></div>
+</div>
+</main>
+<script>
+var texts={
+easy:[
+"The quick brown fox jumps over the lazy dog. This sentence contains all the letters of the English alphabet.",
+"A journey of a thousand miles begins with a single step. Every great achievement starts with an idea.",
+"Practice makes perfect. The more you type, the faster and more accurate you will become over time.",
+"Learning to type quickly is a valuable skill in today's digital world. It helps you work more efficiently.",
+"Typing is not just about speed, but also accuracy. Focus on hitting the right keys without looking."
+],
+medium:[
+"Software development requires attention to detail and logical thinking. Every bug is a puzzle to solve.",
+"Responsive web design ensures that websites look good on all devices, from phones to desktop computers.",
+"JavaScript is a versatile programming language that powers interactive elements on the modern web.",
+"Version control systems like Git help developers track changes and collaborate on projects effectively.",
+"Clean code is not just about working; it's about being readable, maintainable, and understandable by others."
+],
+hard:[
+"Quantum computing leverages quantum mechanical phenomena to perform computations exponentially faster than classical computers for specific problems.",
+"Machine learning algorithms can identify patterns in vast datasets without being explicitly programmed, enabling applications like image recognition.",
+"Blockchain technology provides a decentralized, immutable ledger for recording transactions across many computers.",
+"Artificial neural networks mimic the structure of the human brain to process information and learn from experience.",
+"Natural language processing enables computers to understand, interpret, and generate human language meaningfully."
+],
+code:[
+"function calculateTotal(items) { return items.reduce((sum, item) => sum + item.price, 0); } // Array reduce",
+"const user = { name: 'Alex', age: 30, greet() { return `Hello, ${this.name}!`; } }; // Object method",
+"if (score >= 90) grade = 'A'; else if (score >= 80) grade = 'B'; else grade = 'C'; // Conditional",
+"for (let i = 0; i < array.length; i++) { console.log(array[i]); } // Traditional loop",
+"const doubled = numbers.map(n => n * 2); // Arrow function and map"
+]
+};
+
+var level='easy',text='',timer=60,interval,running=false,startTime,typedChars=0,errors=0,history=JSON.parse(localStorage.getItem('typing_history')||'[]');
+updateStats();
+
+function updateStats(){if(history.length===0)return;var best=Math.max.apply(Math,history.map(h=>h.wpm));var avgAcc=Math.round(history.reduce((s,h)=>s+h.accuracy,0)/history.length);document.getElementById('bestWPM').textContent=best;document.getElementById('sessions').textContent=history.length;document.getElementById('avgAcc').textContent=avgAcc+'%'}
+
+function newText(){var arr=texts[level];text=arr[Math.floor(Math.random()*arr.length)];renderTarget()}
+
+function renderTarget(){var target=document.getElementById('targetText');target.innerHTML=text.split('').map(ch=>'<span>'+ch+'</span>').join('')}
+
+function startTest(){document.getElementById('preTest').style.display='none';document.getElementById('testActive').style.display='block';var input=document.getElementById('inputArea');input.value='';input.focus();typedChars=0;errors=0;running=true;startTime=Date.now();updateTimer();interval=setInterval(updateTimer,100);updateTyping();}
+
+function updateTyping(){var input=document.getElementById('inputArea').value;typedChars=input.length;var spans=document.querySelectorAll('#targetText span');spans.forEach((span,i)=>{span.className='';if(i<input.length)span.className=input[i]===text[i]?'correct':'incorrect';if(i===input.length)span.className='current'});if(input.length>=text.length)finishTest()}
+
+function updateTimer(){var elapsed=Date.now()-startTime;var timeLeft=Math.max(0,timer*1000-elapsed);var sec=Math.ceil(timeLeft/1000);document.getElementById('timer').textContent=Math.floor(sec/60)+':'+(sec%60<10?'0':'')+sec%60;if(timeLeft<=0)finishTest()}
+
+function finishTest(){running=false;clearInterval(interval);var input=document.getElementById('inputArea').value;var words=text.split(' ').length;var testTime=Math.max(1,Math.min(timer,(Date.now()-startTime)/1000));var wpm=Math.round((typedChars/5)/(testTime/60));var accuracy=typedChars>0?Math.round((typedChars-errors)/typedChars*100):0;displayResults(wpm,accuracy,Math.round(testTime));saveHistory({wpm:wpm,accuracy:accuracy,time:Math.round(testTime),level:level,date:new Date().toLocaleDateString()})}
+
+function displayResults(wpm,acc,time){document.getElementById('testActive').style.display='none';document.getElementById('results').style.display='grid';document.getElementById('wpmResult').textContent=wpm;document.getElementById('accResult').textContent=acc+'%';document.getElementById('timeResult').textContent=time+'s'}
+
+function saveHistory(test){history.unshift(test);if(history.length>10)history.pop();localStorage.setItem('typing_history',JSON.stringify(history));updateStats();renderHistory()}
+
+function renderHistory(){if(history.length===0){document.getElementById('history').style.display='none';return}document.getElementById('history').style.display='block';var grid=document.getElementById('historyGrid');grid.innerHTML=history.slice(0,6).map(t=>'<div class="tt-history-item"><div class="date">'+t.date+' • '+t.level+'</div><div class="wpm">'+t.wpm+' WPM</div><div class="acc">'+t.accuracy+'% accuracy</div></div>').join('')}
+
+document.querySelectorAll('[data-level]').forEach(btn=>btn.addEventListener('click',function(){level=this.dataset.level;document.querySelectorAll('[data-level]').forEach(b=>{b.style.background='';b.style.color='';b.style.borderColor=''});this.style.background='var(--accent)';this.style.color='#fff';this.style.borderColor='var(--accent)';newText()}));
+
+document.getElementById('newTest').addEventListener('click',function(){if(running)return;newText();startTest()});
+
+document.getElementById('inputArea').addEventListener('input',function(){if(!running)startTest();updateTyping()});
+
+newText();
+renderHistory();
+</script>
+</body>
+</html>
