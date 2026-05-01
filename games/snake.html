@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Snake</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.sn-app{max-width:480px;margin:0 auto}
+.sn-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sn-score-box{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;text-align:center;min-width:72px}
+.sn-score-label{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px}
+.sn-score-num{font-size:20px;font-weight:700;color:var(--accent)}
+.sn-canvas-wrap{position:relative;background:var(--bg-secondary);border-radius:16px;overflow:hidden;aspect-ratio:1;border:1px solid var(--border)}
+.sn-canvas-wrap canvas{width:100%;height:100%;display:block}
+.sn-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:10;border-radius:16px}
+.sn-overlay h2{color:#fff;font-size:28px}
+.sn-overlay p{color:rgba(255,255,255,.8);font-size:16px}
+.sn-btn{padding:10px 24px;font-size:14px;font-weight:500;border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:all .2s}
+.sn-btn-primary{background:var(--accent);color:#fff}
+.sn-btn-primary:hover{opacity:.9}
+.sn-controls{display:grid;grid-template-areas:"_ up _" "left down right";grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:200px;margin:16px auto 0}
+.sn-ctrl-btn{width:56px;height:56px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto;transition:all .15s;user-select:none;-webkit-user-select:none}
+.sn-ctrl-btn:active{background:var(--accent);color:#fff;transform:scale(.95)}
+.sn-ctrl-up{grid-area:up}.sn-ctrl-down{grid-area:down}.sn-ctrl-left{grid-area:left}.sn-ctrl-right{grid-area:right}
+.sn-tip{margin-top:12px;font-size:13px;color:var(--text-tertiary);text-align:center}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner"><a href="../" class="logo">&larr; Back</a><div style="font-weight:600;color:var(--text-primary)">Snake</div><div></div></div></nav>
+<main class="main sn-app">
+<div class="sn-header">
+<div class="sn-score-box"><div class="sn-score-label">Score</div><div class="sn-score-num" id="score">0</div></div>
+<button class="sn-btn sn-btn-primary" id="startBtn">Start</button>
+<div class="sn-score-box"><div class="sn-score-label">Best</div><div class="sn-score-num" id="best">0</div></div>
+</div>
+<div class="sn-canvas-wrap" id="wrap">
+<canvas id="cvs"></canvas>
+<div class="sn-overlay" id="overlay"><h2 id="olTitle">Snake</h2><p id="olMsg">Press Start to play</p><button class="sn-btn sn-btn-primary" id="olBtn">Start</button></div>
+</div>
+<div class="sn-controls">
+<button class="sn-ctrl-btn sn-ctrl-up" data-dir="up">&#9650;</button>
+<button class="sn-ctrl-btn sn-ctrl-left" data-dir="left">&#9664;</button>
+<button class="sn-ctrl-btn sn-ctrl-down" data-dir="down">&#9660;</button>
+<button class="sn-ctrl-btn sn-ctrl-right" data-dir="right">&#9654;</button>
+</div>
+<p class="sn-tip">Arrow keys or swipe to move</p>
+</main>
+<script>
+var cvs=document.getElementById('cvs'),ctx=cvs.getContext('2d');
+var wrap=document.getElementById('wrap');
+var cols=20,rows=20,cellSize,snake,food,dir,score,best=parseInt(localStorage.getItem('snake_best'))||0,interval,running=false;
+document.getElementById('best').textContent=best;
+
+function resize(){var w=wrap.clientWidth;cvs.width=w;cvs.height=w;cellSize=w/cols}
+resize();window.addEventListener('resize',function(){resize();if(!running)draw()});
+
+function init(){snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dir='right';score=0;document.getElementById('score').textContent=0;placeFood();running=true;document.getElementById('overlay').classList.remove('show');if(interval)clearInterval(interval);interval=setInterval(step,120)}
+
+function placeFood(){var empty=[];for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){var onSnake=snake.some(function(s){return s.x===c&&s.y===r});if(!onSnake)empty.push({x:c,y:r})}food=empty[Math.floor(Math.random()*empty.length)]}
+
+function step(){var head={x:snake[0].x,y:snake[0].y};if(dir==='up')head.y--;else if(dir==='down')head.y++;else if(dir==='left')head.x--;else if(dir==='right')head.x++;if(head.x<0||head.x>=cols||head.y<0||head.y>=rows||snake.some(function(s){return s.x===head.x&&s.y===head.y})){gameOver();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score++;document.getElementById('score').textContent=score;placeFood()}else{snake.pop()}draw()}
+
+function draw(){var isDark=document.documentElement.getAttribute('data-theme')==='dark';ctx.fillStyle=isDark?'#1a1a1a':'#f7f7f8';ctx.fillRect(0,0,cvs.width,cvs.height);
+// grid lines
+ctx.strokeStyle=isDark?'#252525':'#e8e8e8';ctx.lineWidth=0.5;for(var i=0;i<=cols;i++){ctx.beginPath();ctx.moveTo(i*cellSize,0);ctx.lineTo(i*cellSize,cvs.height);ctx.stroke()}for(var i=0;i<=rows;i++){ctx.beginPath();ctx.moveTo(0,i*cellSize);ctx.lineTo(cvs.width,i*cellSize);ctx.stroke()}
+// food
+ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(food.x*cellSize+cellSize/2,food.y*cellSize+cellSize/2,cellSize/2-2,0,Math.PI*2);ctx.fill();
+// snake
+snake.forEach(function(s,i){var accent=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#10a37f';ctx.fillStyle=i===0?accent:(isDark?'#2a6d5a':'#a3e4c8');ctx.beginPath();ctx.roundRect(s.x*cellSize+1,s.y*cellSize+1,cellSize-2,cellSize-2,4);ctx.fill()})}
+
+function gameOver(){running=false;clearInterval(interval);if(score>best){best=score;localStorage.setItem('snake_best',best);document.getElementById('best').textContent=best}document.getElementById('olTitle').textContent='Game Over';document.getElementById('olMsg').textContent='Score: '+score;document.getElementById('olBtn').textContent='Retry';document.getElementById('overlay').classList.add('show')}
+
+document.addEventListener('keydown',function(e){if(!running)return;var map={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};if(map[e.key]){e.preventDefault();var opp={up:'down',down:'up',left:'right',right:'left'};if(map[e.key]!==opp[dir])dir=map[e.key]}});
+
+var tx,ty;wrap.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY});
+wrap.addEventListener('touchend',function(e){if(!running)return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;var opp={up:'down',down:'up',left:'right',right:'left'};if(Math.abs(dx)>Math.abs(dy)){if(Math.abs(dx)>20&&dx>0&&dir!=='left')dir='right';else if(Math.abs(dx)>20&&dx<0&&dir!=='right')dir='left'}else{if(Math.abs(dy)>20&&dy>0&&dir!=='up')dir='down';else if(Math.abs(dy)>20&&dy<0&&dir!=='down')dir='up'}});
+
+document.querySelectorAll('.sn-ctrl-btn').forEach(function(btn){btn.addEventListener('click',function(){if(!running)return;var d=this.dataset.dir;var opp={up:'down',down:'up',left:'right',right:'left'};if(d!==opp[dir])dir=d})});
+
+document.getElementById('startBtn').addEventListener('click',init);
+document.getElementById('olBtn').addEventListener('click',init);
+draw();
+</script>
+</body>
+</html>

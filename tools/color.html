@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Picker</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.cp-app{max-width:720px;margin:0 auto}
+.cp-area{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;cursor:crosshair;margin-bottom:16px;border:1px solid var(--border)}
+.cp-area canvas{width:100%;height:100%;display:block}
+.cp-cursor{position:absolute;width:20px;height:20px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.3),inset 0 0 0 1px rgba(0,0,0,.3);pointer-events:none;transform:translate(-50%,-50%)}
+.cp-hue{position:relative;width:100%;height:24px;border-radius:12px;background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);cursor:pointer;margin-bottom:24px;border:1px solid var(--border)}
+.cp-hue-thumb{position:absolute;top:50%;width:8px;height:28px;background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translate(-50%,-50%);pointer-events:none}
+.cp-row{display:flex;gap:16px;margin-bottom:24px}
+.cp-swatch{width:120px;height:120px;border-radius:16px;border:1px solid var(--border);flex-shrink:0;box-shadow:var(--shadow-md);transition:background .15s}
+.cp-vals{flex:1;display:flex;flex-direction:column;gap:8px}
+.cp-vrow{display:flex;align-items:center;gap:8px}
+.cp-vlabel{font-size:12px;font-weight:600;color:var(--text-tertiary);width:36px;flex-shrink:0}
+.cp-vinput{flex:1;padding:8px 12px;font-size:14px;font-family:'Courier New',monospace;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);outline:none;transition:border-color .2s}
+.cp-vinput:focus{border-color:var(--accent)}
+.cp-cbtn{padding:8px 12px;font-size:12px;font-weight:500;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
+.cp-cbtn:hover{border-color:var(--accent);color:var(--accent)}
+.cp-section{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
+.cp-section h3{font-size:15px;margin-bottom:16px;color:var(--text-secondary)}
+.cp-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px}
+.cp-pc{aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.cp-pc:hover{transform:scale(1.1);border-color:var(--text-primary)}
+.cp-saved-grid{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+.cp-sc{width:48px;height:48px;border-radius:10px;cursor:pointer;border:1px solid var(--border);transition:all .2s;position:relative}
+.cp-sc:hover{transform:scale(1.1)}
+.cp-sc .rm{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#ef4444;color:#fff;border-radius:50%;font-size:10px;display:none;align-items:center;justify-content:center;border:none;cursor:pointer;line-height:1}
+.cp-sc:hover .rm{display:flex}
+.cp-add{width:48px;height:48px;border-radius:10px;border:2px dashed var(--border);background:none;cursor:pointer;color:var(--text-tertiary);font-size:20px;transition:all .2s;font-family:inherit}
+.cp-add:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:640px){.cp-row{flex-direction:column;align-items:stretch}.cp-swatch{width:100%;height:80px}}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner"><a href="../" class="logo">&larr; Back</a><div style="font-weight:600;color:var(--text-primary)">Color Picker</div><div></div></div></nav>
+<main class="main cp-app">
+<div class="cp-area" id="pickerArea"><canvas id="pickerCanvas"></canvas><div class="cp-cursor" id="pickerCursor"></div></div>
+<div class="cp-hue" id="hueBar"><div class="cp-hue-thumb" id="hueThumb"></div></div>
+<div class="cp-row">
+<div class="cp-swatch" id="preview" style="background:#10a37f"></div>
+<div class="cp-vals">
+<div class="cp-vrow"><span class="cp-vlabel">HEX</span><input class="cp-vinput" id="hexVal" value="#10a37f" readonly><button class="cp-cbtn" data-copy="hex">Copy</button></div>
+<div class="cp-vrow"><span class="cp-vlabel">RGB</span><input class="cp-vinput" id="rgbVal" value="rgb(16,163,127)" readonly><button class="cp-cbtn" data-copy="rgb">Copy</button></div>
+<div class="cp-vrow"><span class="cp-vlabel">HSL</span><input class="cp-vinput" id="hslVal" value="hsl(165,82%,35%)" readonly><button class="cp-cbtn" data-copy="hsl">Copy</button></div>
+</div>
+</div>
+<div class="cp-section"><h3>Preset Palette</h3><div class="cp-palette" id="palette"></div></div>
+<div class="cp-section"><h3>Saved Colors</h3><div class="cp-saved-grid" id="savedGrid"></div></div>
+</main>
+<script>
+var hue=165,sat=0.82,val=0.64;
+var canvas=document.getElementById('pickerCanvas'),ctx=canvas.getContext('2d');
+var area=document.getElementById('pickerArea'),cursor=document.getElementById('pickerCursor');
+var hueBar=document.getElementById('hueBar'),hueThumb=document.getElementById('hueThumb');
+
+function hsvToRgb(h,s,v){var c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c,r,g,b;if(h<60){r=c;g=x;b=0}else if(h<120){r=x;g=c;b=0}else if(h<180){r=0;g=c;b=x}else if(h<240){r=0;g=x;b=c}else if(h<300){r=x;g=0;b=c}else{r=c;g=0;b=x}return[Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)]}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min(r,g,b),h,s,l=(mx+mn)/2;if(mx===mn){h=s=0}else{var d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);if(mx===r)h=((g-b)/d+(g<b?6:0))/6;else if(mx===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6}return[Math.round(h*360),Math.round(s*100),Math.round(l*100)]}
+
+function updateColor(){
+  var rgb=hsvToRgb(hue,sat,val),hex=rgbToHex(rgb[0],rgb[1],rgb[2]),hsl=rgbToHsl(rgb[0],rgb[1],rgb[2]);
+  document.getElementById('preview').style.background=hex;
+  document.getElementById('hexVal').value=hex;
+  document.getElementById('rgbVal').value='rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+  document.getElementById('hslVal').value='hsl('+hsl[0]+','+hsl[1]+'%,'+hsl[2]+'%)';
+}
+
+function drawSV(){
+  var rect=area.getBoundingClientRect();
+  canvas.width=rect.width;canvas.height=rect.height;
+  var w=canvas.width,h=canvas.height;
+  for(var x=0;x<w;x++){var grad=ctx.createLinearGradient(x,0,x,h);grad.addColorStop(0,'#fff');var rr=hsvToRgb(hue,1,1);grad.addColorStop(1,rgbToHex(rr[0],rr[1],rr[2]));ctx.fillStyle=grad;ctx.fillRect(x,0,1,h)}
+  var grad2=ctx.createLinearGradient(0,0,0,h);grad2.addColorStop(0,'rgba(0,0,0,0)');grad2.addColorStop(1,'rgba(0,0,0,1)');ctx.fillStyle=grad2;ctx.fillRect(0,0,w,h);
+  cursor.style.left=(sat*100)+'%';cursor.style.top=((1-val)*100)+'%';
+}
+
+function drawHueThumb(){hueThumb.style.left=(hue/360*100)+'%'}
+
+area.addEventListener('mousedown',function(e){var r=area.getBoundingClientRect();sat=(e.clientX-r.left)/r.width;val=1-(e.clientY-r.top)/r.height;updateColor();drawSV();function mv(ev){sat=Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width));val=Math.max(0,Math.min(1,1-(ev.clientY-r.top)/r.height));updateColor();drawSV()}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)}document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
+area.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0],r=area.getBoundingClientRect();sat=(t.clientX-r.left)/r.width;val=1-(t.clientY-r.top)/r.height;updateColor();drawSV();function mv(ev){ev.preventDefault();var tc=ev.touches[0];sat=Math.max(0,Math.min(1,(tc.clientX-r.left)/r.width));val=Math.max(0,Math.min(1,1-(tc.clientY-r.top)/r.height));updateColor();drawSV()}function up(){document.removeEventListener('touchmove',mv);document.removeEventListener('touchend',up)}document.addEventListener('touchmove',mv);document.addEventListener('touchend',up)});
+
+hueBar.addEventListener('mousedown',function(e){var r=hueBar.getBoundingClientRect();hue=(e.clientX-r.left)/r.width*360;updateColor();drawSV();drawHueThumb();function mv(ev){hue=Math.max(0,Math.min(360,(ev.clientX-r.left)/r.width*360));updateColor();drawSV();drawHueThumb()}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)}document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
+
+document.querySelectorAll('.cp-cbtn').forEach(function(btn){btn.addEventListener('click',function(){var id=this.dataset.copy;var inp=document.getElementById(id==='hex'?'hexVal':id==='rgb'?'rgbVal':'hslVal');navigator.clipboard.writeText(inp.value).then(function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy'},1500)})})});
+
+var presets=['#ef4444','#f97316','#f59e0b','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef','#ec4899','#f43f5e','#0d0d0d','#404040','#737373','#a3a3a3','#d4d4d4','#fafafa','#ffffff'];
+var palEl=document.getElementById('palette');
+presets.forEach(function(c){var d=document.createElement('div');d.className='cp-pc';d.style.background=c;d.addEventListener('click',function(){var r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);var mx=Math.max(r,g,b)/255,mn=Math.min(r,g,b)/255,d2=mx-mn;val=mx;if(d2===0){hue=0;sat=0}else{sat=d2/mx;if(mx===r)hue=((g-b)/255/d2*60+360)%360;else if(mx===g)hue=(b-r)/255/d2*60+120;else hue=(r-g)/255/d2*60+240}updateColor();drawSV();drawHueThumb()});palEl.appendChild(d)});
+
+var saved=JSON.parse(localStorage.getItem('cp_saved')||'[]');
+function renderSaved(){var g=document.getElementById('savedGrid');g.innerHTML='';saved.forEach(function(c,i){var d=document.createElement('div');d.className='cp-sc';d.style.background=c;d.innerHTML='<button class="rm" data-i="'+i+'">&times;</button>';d.addEventListener('click',function(e){if(e.target.classList.contains('rm')){saved.splice(i,1);localStorage.setItem('cp_saved',JSON.stringify(saved));renderSaved();return}navigator.clipboard.writeText(c)});g.appendChild(d)});var addBtn=document.createElement('button');addBtn.className='cp-add';addBtn.textContent='+';addBtn.addEventListener('click',function(){saved.push(document.getElementById('hexVal').value);localStorage.setItem('cp_saved',JSON.stringify(saved));renderSaved()});g.appendChild(addBtn)}
+renderSaved();
+
+window.addEventListener('resize',function(){drawSV()});
+drawSV();drawHueThumb();updateColor();
+</script>
+</body>
+</html>

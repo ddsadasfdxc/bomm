@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.uc-app{max-width:640px;margin:0 auto}
+.uc-cats{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.uc-cat{padding:8px 16px;font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:var(--bg-card);color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
+.uc-cat:hover{border-color:var(--accent);color:var(--text-primary)}
+.uc-cat.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.uc-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
+.uc-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.uc-row:last-child{margin-bottom:0}
+.uc-input{flex:1;padding:12px 16px;font-size:18px;font-family:'Courier New',monospace;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);outline:none;transition:border-color .2s}
+.uc-input:focus{border-color:var(--accent)}
+.uc-select{padding:12px 16px;font-size:14px;font-family:inherit;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);outline:none;cursor:pointer;min-width:120px}
+.uc-swap{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;margin:0 auto}
+.uc-swap:hover{border-color:var(--accent);color:var(--accent);transform:rotate(180deg)}
+.uc-result{font-size:32px;font-weight:700;color:var(--accent);text-align:center;padding:16px 0;word-break:break-all}
+.uc-formula{font-size:13px;color:var(--text-tertiary);text-align:center;margin-top:8px}
+.uc-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.uc-quick-item{background:var(--bg-secondary);border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.uc-quick-item:hover{border-color:var(--accent)}
+.uc-quick-item span{display:block;color:var(--text-tertiary);font-size:11px}
+.uc-quick-item strong{color:var(--accent);font-weight:600}
+@media(max-width:640px){.uc-row{flex-wrap:wrap}.uc-input{width:100%}.uc-select{width:100%}.uc-result{font-size:24px}}
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner"><a href="../" class="logo">&larr; Back</a><div style="font-weight:600;color:var(--text-primary)">Unit Converter</div><div></div></div></nav>
+<main class="main uc-app">
+<div class="uc-cats" id="cats"></div>
+<div class="uc-box">
+<div class="uc-row">
+<input class="uc-input" id="fromVal" type="number" value="1" step="any">
+<select class="uc-select" id="fromUnit"></select>
+</div>
+<button class="uc-swap" id="swapBtn">&#8645;</button>
+<div class="uc-row" style="margin-top:16px">
+<div class="uc-result" id="result">--</div>
+</div>
+<div class="uc-row">
+<select class="uc-select" id="toUnit"></select>
+</div>
+<div class="uc-formula" id="formula"></div>
+</div>
+<div class="uc-quick" id="quickGrid"></div>
+</main>
+<script>
+var data={
+length:{name:'Length',units:{m:'Meters',km:'Kilometers',cm:'Centimeters',mm:'Millimeters',mi:'Miles',yd:'Yards',ft:'Feet',in:'Inches'},base:'m',toBase:{m:1,km:1000,cm:0.01,mm:0.001,mi:1609.344,yd:0.9144,ft:0.3048,'in':0.0254}},
+weight:{name:'Weight',units:{kg:'Kilograms',g:'Grams',mg:'Milligrams',lb:'Pounds',oz:'Ounces',t:'Tonnes'},base:'kg',toBase:{kg:1,g:0.001,mg:0.000001,lb:0.453592,oz:0.0283495,t:1000}},
+temperature:{name:'Temperature',units:{c:'Celsius',f:'Fahrenheit',k:'Kelvin'},base:'c',custom:true},
+speed:{name:'Speed',units:{ms:'m/s',kmh:'km/h',mph:'mph',knot:'Knots'},base:'ms',toBase:{ms:1,kmh:0.277778,mph:0.44704,knot:0.514444}},
+area:{name:'Area',units:{m2:'m\u00b2',km2:'km\u00b2',ft2:'ft\u00b2',acre:'Acres',ha:'Hectares'},base:'m2',toBase:{m2:1,km2:1e6,ft2:0.092903,acre:4046.86,ha:10000}},
+data:{name:'Data',units:{b:'Bytes',kb:'KB',mb:'MB',gb:'GB',tb:'TB'},base:'b',toBase:{b:1,kb:1024,mb:1048576,gb:1073741824,tb:1099511627776}},
+time:{name:'Time',units:{s:'Seconds',min:'Minutes',h:'Hours',d:'Days',w:'Weeks',mo:'Months',y:'Years'},base:'s',toBase:{s:1,min:60,h:3600,d:86400,w:604800,mo:2592000,y:31536000}}
+};
+
+var currentCat='length';
+var catsEl=document.getElementById('cats');
+var fromVal=document.getElementById('fromVal');
+var fromUnit=document.getElementById('fromUnit');
+var toUnit=document.getElementById('toUnit');
+var resultEl=document.getElementById('result');
+var formulaEl=document.getElementById('formula');
+
+function renderCats(){
+catsEl.innerHTML='';
+Object.keys(data).forEach(function(k){var b=document.createElement('button');b.className='uc-cat'+(k===currentCat?' active':'');b.textContent=data[k].name;b.addEventListener('click',function(){currentCat=k;renderCats();renderUnits();convert()});catsEl.appendChild(b)});
+}
+
+function renderUnits(){
+var u=data[currentCat].units;
+fromUnit.innerHTML='';toUnit.innerHTML='';
+Object.keys(u).forEach(function(k){var o1=document.createElement('option');o1.value=k;o1.textContent=u[k];fromUnit.appendChild(o1);var o2=document.createElement('option');o2.value=k;o2.textContent=u[k];toUnit.appendChild(o2)});
+var keys=Object.keys(u);toUnit.value=keys.length>1?keys[1]:keys[0];
+}
+
+function convertTemp(v,from,to){
+if(from===to)return v;
+if(from==='c'){if(to==='f')return v*9/5+32;if(to==='k')return v+273.15}
+if(from==='f'){if(to==='c')return(v-32)*5/9;if(to==='k')return(v-32)*5/9+273.15}
+if(from==='k'){if(to==='c')return v-273.15;if(to==='f')return(v-273.15)*9/5+32}
+return v;
+}
+
+function convert(){
+var v=parseFloat(fromVal.value);
+if(isNaN(v)){resultEl.textContent='--';formulaEl.textContent='';return}
+var from=fromUnit.value,to=toUnit.value;
+var d=data[currentCat],res;
+if(d.custom){res=convertTemp(v,from,to)}else{var base=v*d.toBase[from];res=base/d.toBase[to]}
+var display=res<0.001||res>999999?res.toExponential(4):parseFloat(res.toPrecision(8));
+resultEl.textContent=display+' '+to;
+if(d.custom){
+formulaEl.textContent=v+' '+d.units[from]+' = '+display+' '+d.units[to];
+}else{
+var factor=d.toBase[from]/d.toBase[to];
+formulaEl.textContent='1 '+d.units[from]+' = '+parseFloat(factor.toPrecision(6))+' '+d.units[to];
+}
+renderQuick(v,from);
+}
+
+function renderQuick(v,from){
+var grid=document.getElementById('quickGrid');
+var d=data[currentCat];
+var keys=Object.keys(d.units).filter(function(k){return k!==from});
+grid.innerHTML='';
+keys.slice(0,6).forEach(function(k){
+var res;
+if(d.custom){res=convertTemp(v,from,k)}else{res=v*d.toBase[from]/d.toBase[k]}
+var display=res<0.001||res>999999?res.toExponential(3):parseFloat(res.toPrecision(6));
+var item=document.createElement('div');item.className='uc-quick-item';
+item.innerHTML='<span>'+d.units[k]+'</span><strong>'+display+'</strong>';
+item.addEventListener('click',function(){fromUnit.value=from;toUnit.value=k;convert()});
+grid.appendChild(item);
+});
+}
+
+document.getElementById('swapBtn').addEventListener('click',function(){var tmp=fromUnit.value;fromUnit.value=toUnit.value;toUnit.value=tmp;convert()});
+fromVal.addEventListener('input',convert);
+fromUnit.addEventListener('change',convert);
+toUnit.addEventListener('change',convert);
+
+renderCats();renderUnits();convert();
+</script>
+</body>
+</html>

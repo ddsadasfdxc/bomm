@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .timer-app {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .timer-clock {
+            font-family: 'Inter', monospace;
+            font-size: 80px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 12px 0;
+            text-shadow: 0 4px 12px rgba(16, 163, 127, 0.2);
+        }
+
+        .timer-label {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .timer-btn {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timer-btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .timer-btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .timer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .timer-settings {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .timer-settings h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .timer-slider {
+            margin: 20px 0;
+        }
+
+        .timer-slider label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .timer-slider-value {
+            float: right;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 4px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            letter-spacing: 0.5px;
+        }
+
+        .work-mode {
+            background: #10a37f10;
+            border: 1px solid #10a37f20;
+        }
+
+        .break-mode {
+            background: #3b82f610;
+            border: 1px solid #3b82f620;
+        }
+
+        @media (max-width: 640px) {
+            .timer-clock {
+                font-size: 64px;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+                max-width: 280px;
+                margin: 0 auto 40px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../" class="logo">← Back</a>
+            <div style="font-weight:600;color:var(--text-primary)">Pomodoro Timer</div>
+            <div></div>
+        </div>
+    </nav>
+
+    <main class="main timer-app">
+        <div class="timer-display">
+            <div class="timer-clock" id="timerDisplay">25:00</div>
+            <div class="timer-label" id="timerLabel">Focus Time • Work Session</div>
+        </div>
+
+        <div class="timer-controls">
+            <button class="timer-btn timer-btn-primary" id="startBtn">Start</button>
+            <button class="timer-btn timer-btn-secondary" id="pauseBtn" disabled>Pause</button>
+            <button class="timer-btn timer-btn-secondary" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="timer-settings">
+            <h3>Timer Settings</h3>
+            
+            <div class="timer-slider">
+                <label>Work Duration <span class="timer-slider-value" id="workValue">25</span> min</label>
+                <input type="range" id="workSlider" min="5" max="90" value="25" step="5">
+            </div>
+            
+            <div class="timer-slider">
+                <label>Break Duration <span class="timer-slider-value" id="breakValue">5</span> min</label>
+                <input type="range" id="breakSlider" min="1" max="30" value="5" step="1">
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="sessionsCount">0</div>
+                <div class="stat-label">Sessions Completed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="totalFocusTime">0</div>
+                <div class="stat-label">Total Focus Time</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="breaksTaken">0</div>
+                <div class="stat-label">Breaks Taken</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 番茄钟状态
+        let isRunning = false;
+        let isWorkMode = true;
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let workDuration = 25 * 60;
+        let breakDuration = 5 * 60;
+        let intervalId = null;
+        let sessionsCompleted = 0;
+        let totalFocusTime = 0; // in minutes
+        let breaksTaken = 0;
+
+        // DOM元素
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerLabel = document.getElementById('timerLabel');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const workSlider = document.getElementById('workSlider');
+        const breakSlider = document.getElementById('breakSlider');
+        const workValue = document.getElementById('workValue');
+        const breakValue = document.getElementById('breakValue');
+        const sessionsCount = document.getElementById('sessionsCount');
+        const totalFocusTimeEl = document.getElementById('totalFocusTime');
+        const breaksTakenEl = document.getElementById('breaksTaken');
+
+        // 更新时间显示
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const root = document.documentElement;
+            if (isWorkMode) {
+                timerLabel.textContent = 'Focus Time • Work Session';
+                root.classList.add('work-mode');
+                root.classList.remove('break-mode');
+            } else {
+                timerLabel.textContent = 'Relax • Break Time';
+                root.classList.add('break-mode');
+                root.classList.remove('work-mode');
+            }
+        }
+
+        // 计时器逻辑
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            
+            intervalId = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(intervalId);
+                    timerComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            clearInterval(intervalId);
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = isWorkMode ? workDuration : breakDuration;
+            updateDisplay();
+        }
+
+        function timerComplete() {
+            // 播放提示音（浏览器安全限制，只更新UI）
+            timerDisplay.style.animation = 'pulse 0.5s ease 3';
+            
+            if (isWorkMode) {
+                sessionsCompleted++;
+                totalFocusTime += workDuration / 60;
+                sessionsCount.textContent = sessionsCompleted;
+                totalFocusTimeEl.textContent = Math.round(totalFocusTime);
+                
+                // 切换到休息模式
+                isWorkMode = false;
+                timeLeft = breakDuration;
+                updateDisplay();
+                setTimeout(() => {
+                    startTimer();
+                }, 2000);
+            } else {
+                breaksTaken++;
+                breaksTakenEl.textContent = breaksTaken;
+                
+                // 切换回工作模式
+                isWorkMode = true;
+                timeLeft = workDuration;
+                updateDisplay();
+            }
+        }
+
+        // 滑块事件
+        workSlider.addEventListener('input', function() {
+            const minutes = this.value;
+            workValue.textContent = minutes;
+            workDuration = minutes * 60;
+            
+            if (!isRunning && isWorkMode) {
+                timeLeft = workDuration;
+                updateDisplay();
+            }
+        });
+
+        breakSlider.addEventListener('input', function() {
+            const minutes = this.value;
+            breakValue.textContent = minutes;
+            breakDuration = minutes * 60;
+            
+            if (!isRunning && !isWorkMode) {
+                timeLeft = breakDuration;
+                updateDisplay();
+            }
+        });
+
+        // 按钮事件
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        // 从localStorage加载数据
+        function loadStats() {
+            const saved = localStorage.getItem('pomodoroStats');
+            if (saved) {
+                const stats = JSON.parse(saved);
+                sessionsCompleted = stats.sessions || 0;
+                totalFocusTime = stats.totalFocus || 0;
+                breaksTaken = stats.breaks || 0;
+                
+                sessionsCount.textContent = sessionsCompleted;
+                totalFocusTimeEl.textContent = Math.round(totalFocusTime);
+                breaksTakenEl.textContent = breaksTaken;
+            }
+        }
+
+        // 保存数据到localStorage
+        function saveStats() {
+            const stats = {
+                sessions: sessionsCompleted,
+                totalFocus: totalFocusTime,
+                breaks: breaksTaken
+            };
+            localStorage.setItem('pomodoroStats', JSON.stringify(stats));
+        }
+
+        // 页面关闭时保存
+        window.addEventListener('beforeunload', saveStats);
+
+        // 初始化
+        loadStats();
+        updateDisplay();
+
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
