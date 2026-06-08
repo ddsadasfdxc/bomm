@@ -4,8 +4,7 @@
     widget.className = 'music-widget';
     widget.innerHTML = 
         '<div class="music-panel" id="musicPanel">' +
-            // 网易云音乐 iframe，这里默认使用一个热门歌单，用户可以替换 data-id
-            '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="110" src="https://music.163.com/outchain/player?type=0&id=3778678&auto=0&height=90" style="width: 100%; height: 100%; display: block;"></iframe>' +
+            '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="90" src="https://music.163.com/outchain/player?type=0&id=3779629&auto=0&height=90" style="width: 100%; height: 90px; display: block;"></iframe>' +
         '</div>' +
         '<button class="music-btn" id="musicBtn" title="Music Player">🎵</button>';
     document.body.appendChild(widget);
