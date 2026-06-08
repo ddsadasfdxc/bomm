@@ -129,8 +129,6 @@
     });
 
     // ================================
-    // LOAD BLOG POSTS
-    // ================================
     fetch('posts.json')
         .then(function(r) { return r.json(); })
         .then(function(posts) {
