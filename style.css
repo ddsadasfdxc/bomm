@@ -137,8 +137,9 @@ body {
     z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
     background: rgba(18, 18, 24, 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -813,8 +814,8 @@ body {
 
 .palette-btn {
     position: fixed;
-    top: 24px;
-    right: 88px;
+    top: 88px;
+    right: 24px;
     z-index: 1001;
     width: 52px;
     height: 52px;
@@ -1156,15 +1157,15 @@ body {
     }
     
     .palette-btn {
-        top: 16px;
-        right: 72px;
+        top: 72px;
+        right: 16px;
         width: 44px;
         height: 44px;
         font-size: 17px;
     }
     
     .palette-panel {
-        top: 72px;
+        top: 128px;
         right: -260px;
         width: 220px;
         padding: 16px;

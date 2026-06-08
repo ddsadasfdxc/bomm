@@ -199,6 +199,7 @@
     var paletteBtn = document.createElement('button');
     paletteBtn.className = 'palette-btn';
     paletteBtn.title = 'Theme Colors';
+    paletteBtn.innerHTML = '🎨';
     document.body.appendChild(paletteBtn);
 
     var panel = document.createElement('div');
