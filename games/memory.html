@@ -25,6 +25,26 @@
 .mm-card.matched{pointer-events:none}
 .mm-card.flipped{pointer-events:none}
 .mm-diff{display:flex;gap:8px;margin-top:12px;justify-content:center}
+
+@keyframes mm-spawn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.mm-card.mm-spawning{animation:mm-spawn .4s ease-out}
+
+@keyframes mm-match-bounce{0%{transform:rotateY(180deg) scale(1)}50%{transform:rotateY(180deg) scale(1.12);box-shadow:0 0 24px rgba(255,215,0,.5)}100%{transform:rotateY(180deg) scale(1);box-shadow:none}}
+.mm-card.mm-match .mm-card-inner{animation:mm-match-bounce .5s ease}
+
+@keyframes mm-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.mm-card.mm-shake{animation:mm-shake .4s ease}
+
+@keyframes mm-win-pulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.06);filter:brightness(1.2)}}
+.mm-win .mm-card{animation:mm-win-pulse .6s ease infinite}
+
+@keyframes mm-stat-pop{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+.mm-stat-pop{animation:mm-stat-pop .3s ease}
+
+@keyframes mm-btn-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.15)}}
+.mm-btn-active{animation:mm-btn-pulse 2s ease infinite}
+
+.mm-card:hover .mm-card-inner{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.15)}
 </style>
 </head>
 <body>
@@ -40,7 +60,7 @@
 </div>
 <div class="mm-grid" id="grid"></div>
 <div class="mm-diff">
-<button class="mm-btn" data-size="4" style="background:var(--accent);color:#fff;border-color:var(--accent)">4x4</button>
+<button class="mm-btn mm-btn-active" data-size="4" style="background:var(--accent);color:#fff;border-color:var(--accent)">4x4</button>
 <button class="mm-btn" data-size="6">6x6</button>
 </div>
 </main>
@@ -50,15 +70,17 @@ var gridSize=4,totalPairs,flipped=[],matched=[],moves,pairsFound,timerInterval,s
 
 function shuffle(a){var arr=a.slice();for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t}return arr}
 
+function popStat(id){var el=document.getElementById(id);el.classList.add('mm-stat-pop');setTimeout(function(){el.classList.remove('mm-stat-pop')},300)}
+
 function initGame(){if(timerInterval)clearInterval(timerInterval);totalPairs=(gridSize*gridSize)/2;var picks=shuffle(emojis).slice(0,totalPairs);var cards=shuffle(picks.concat(picks));moves=0;pairsFound=0;flipped=[];matched=[];locked=false;document.getElementById('moves').textContent=0;document.getElementById('pairs').textContent='0/'+totalPairs;document.getElementById('timer').textContent='0:00';
-var grid=document.getElementById('grid');grid.style.gridTemplateColumns='repeat('+gridSize+',1fr)';grid.innerHTML='';
-cards.forEach(function(emoji,i){var card=document.createElement('div');card.className='mm-card';card.dataset.index=i;card.dataset.emoji=emoji;card.innerHTML='<div class="mm-card-inner"><div class="mm-card-front">?</div><div class="mm-card-back">'+emoji+'</div></div>';card.addEventListener('click',function(){if(locked||flipped.length>=2||flipped.indexOf(i)>=0||matched.indexOf(i)>=0)return;card.classList.add('flipped');flipped.push(i);if(flipped.length===2){moves++;document.getElementById('moves').textContent=moves;checkMatch()}});grid.appendChild(card)});
+var grid=document.getElementById('grid');grid.style.gridTemplateColumns='repeat('+gridSize+',1fr)';grid.innerHTML='';grid.classList.remove('mm-win');
+cards.forEach(function(emoji,i){var card=document.createElement('div');card.className='mm-card';card.dataset.index=i;card.dataset.emoji=emoji;card.innerHTML='<div class="mm-card-inner"><div class="mm-card-front">?</div><div class="mm-card-back">'+emoji+'</div></div>';card.addEventListener('click',function(){if(locked||flipped.length>=2||flipped.indexOf(i)>=0||matched.indexOf(i)>=0)return;card.classList.add('flipped');flipped.push(i);if(flipped.length===2){moves++;document.getElementById('moves').textContent=moves;popStat('moves');checkMatch()}});card.style.animationDelay=(i*0.04)+'s';card.classList.add('mm-spawning');grid.appendChild(card)});
 startTime=Date.now();timerInterval=setInterval(function(){var s=Math.floor((Date.now()-startTime)/1000);var m=Math.floor(s/60);var sec=s%60;document.getElementById('timer').textContent=m+':'+(sec<10?'0':'')+sec},1000)}
 
-function checkMatch(){locked=true;var i1=flipped[0],i2=flipped[1];var grid=document.getElementById('grid');var c1=grid.children[i1],c2=grid.children[i2];if(c1.dataset.emoji===c2.dataset.emoji){matched.push(i1,i2);c1.classList.add('matched');c2.classList.add('matched');pairsFound++;document.getElementById('pairs').textContent=pairsFound+'/'+totalPairs;flipped=[];locked=false;if(pairsFound===totalPairs){clearInterval(timerInterval);setTimeout(function(){alert('You won in '+moves+' moves!')},300)}}else{setTimeout(function(){c1.classList.remove('flipped');c2.classList.remove('flipped');flipped=[];locked=false},800)}}
+function checkMatch(){locked=true;var i1=flipped[0],i2=flipped[1];var grid=document.getElementById('grid');var c1=grid.children[i1],c2=grid.children[i2];if(c1.dataset.emoji===c2.dataset.emoji){matched.push(i1,i2);c1.classList.add('matched');c2.classList.add('matched');c1.classList.add('mm-match');c2.classList.add('mm-match');setTimeout(function(){c1.classList.remove('mm-match');c2.classList.remove('mm-match')},500);pairsFound++;document.getElementById('pairs').textContent=pairsFound+'/'+totalPairs;popStat('pairs');flipped=[];locked=false;if(pairsFound===totalPairs){clearInterval(timerInterval);grid.classList.add('mm-win');Array.from(grid.children).forEach(function(c,idx){c.style.animationDelay=(idx*0.06)+'s'});setTimeout(function(){alert('You won in '+moves+' moves!')},500)}}else{c1.classList.add('mm-shake');c2.classList.add('mm-shake');setTimeout(function(){c1.classList.remove('mm-shake');c2.classList.remove('mm-shake');c1.classList.remove('flipped');c2.classList.remove('flipped');flipped=[];locked=false},800)}}
 
 document.getElementById('newGame').addEventListener('click',initGame);
-document.querySelectorAll('[data-size]').forEach(function(btn){btn.addEventListener('click',function(){gridSize=parseInt(this.dataset.size);document.querySelectorAll('[data-size]').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor=''});this.style.background='var(--accent)';this.style.color='#fff';this.style.borderColor='var(--accent)';initGame()})});
+document.querySelectorAll('[data-size]').forEach(function(btn){btn.addEventListener('click',function(){gridSize=parseInt(this.dataset.size);document.querySelectorAll('[data-size]').forEach(function(b){b.style.background='';b.style.color='';b.style.borderColor='';b.classList.remove('mm-btn-active')});this.style.background='var(--accent)';this.style.color='#fff';this.style.borderColor='var(--accent)';this.classList.add('mm-btn-active');initGame()})});
 
 initGame();
 </script>
