@@ -3,8 +3,8 @@
     widget.className = 'music-widget';
     widget.innerHTML = 
         '<div class="music-panel" id="musicPanel">' +
-            '<div class="music-panel-inner">' +
-                '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="370" src="https://music.163.com/outchain/player?type=0&id=12675557343&auto=0&height=370" style="width:100%;height:370px;display:block;border-radius:12px;"></iframe>' +
+            '<div class="music-panel-inner" id="musicInner">' +
+                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-tertiary);font-size:14px;">Click to load songs</div>' +
             '</div>' +
         '</div>' +
         '<button class="music-btn" id="musicBtn" title="Music Player">🎵</button>';
@@ -12,6 +12,8 @@
 
     var btn = document.getElementById('musicBtn');
     var panel = document.getElementById('musicPanel');
+    var inner = document.getElementById('musicInner');
+    var loaded = false;
 
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -22,6 +24,10 @@
         } else {
             panel.classList.add('show');
             btn.classList.add('active');
+            if (!loaded) {
+                inner.innerHTML = '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="370" src="https://music.163.com/outchain/player?type=0&id=12675557343&auto=0&height=370" style="width:100%;height:100%;display:block;border-radius:12px;"></iframe>';
+                loaded = true;
+            }
         }
     });
 
