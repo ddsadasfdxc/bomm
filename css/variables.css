@@ -1,0 +1,12 @@
+:root {
+  --bg-primary: #0c0f0a;
+  --bg-ink-1: #1a1f18;
+  --bg-ink-2: #2a3328;
+  --text-paper: #f5f0e6;
+  --text-muted: rgba(245, 240, 230, 0.65);
+  --accent-cinnabar: #c45a4a;
+  --accent-indigo: #5b7a76;
+  --font-serif: 'Noto Serif SC', 'Songti SC', serif;
+  --font-display: 'Cinzel', 'Noto Serif SC', serif;
+  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+}
