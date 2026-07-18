@@ -1,0 +1,23 @@
+{
+  "site": {
+    "title": "温若 · 个人小站",
+    "lang": "zh-CN"
+  },
+  "intro": {
+    "name": "温若",
+    "subtitle": "散修 · 剑修",
+    "quote": "一缕清风，半卷残云。"
+  },
+  "character": {
+    "title": "独行",
+    "info": [
+      { "label": "出身", "value": "散修，无门无派" },
+      { "label": "境界", "value": "筑基后期" },
+      { "label": "性格", "value": "清冷寡言，剑心通明" }
+    ]
+  },
+  "outro": {
+    "line": "道未成，行不止。",
+    "hint": "更多画卷、法宝、功法，待续。"
+  }
+}
