@@ -11,23 +11,87 @@
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/sections.css">
   <link rel="stylesheet" href="/css/music-player.css">
+  <link rel="stylesheet" href="/css/nav.css">
 </head>
 <body>
   <div id="webgl-bg"></div>
   <canvas id="cursor-aura"></canvas>
 
+  <nav class="ios-nav">
+    <div class="ios-nav-inner">
+      <button class="ios-nav-tab active" data-page="home">首页</button>
+      <button class="ios-nav-sep"></button>
+      <button class="ios-nav-tab" data-page="explore">探索</button>
+    </div>
+  </nav>
+
   <main id="scroll-container">
-    <section id="intro" class="section section-intro">
-      <div class="intro-content">
-        <svg class="intro-title" viewBox="0 0 400 160" aria-label="温若">
-          <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen">温</text>
-          <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo">若</text>
-        </svg>
-        <p class="intro-subtitle">散修 · 剑修</p>
-        <p class="intro-quote">一缕清风，半卷残云。</p>
-        <p class="intro-desc">技术测试站 · 个人 OC 站</p>
-      </div>
-    </section>
+    <div class="page page-home active" id="page-home">
+      <section id="intro" class="section section-intro">
+        <div class="intro-content">
+          <svg class="intro-title" viewBox="0 0 400 160" aria-label="温若">
+            <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen">温</text>
+            <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo">若</text>
+          </svg>
+          <p class="intro-subtitle">散修 · 剑修</p>
+          <p class="intro-quote">一缕清风，半卷残云。</p>
+          <p class="intro-desc">技术测试站 · 个人 OC 站</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="page page-explore" id="page-explore">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">探索</h2>
+          <p class="explore-desc">笔墨之间，趣味无穷</p>
+        </div>
+
+        <div class="explore-grid">
+          <div class="explore-card" data-tool="ink-brush">
+            <div class="explore-card-icon">🖌</div>
+            <h3>水墨画板</h3>
+            <p>挥毫泼墨，自由创作</p>
+            <div class="explore-card-brush"></div>
+          </div>
+
+          <div class="explore-card" data-tool="poem">
+            <div class="explore-card-icon">📜</div>
+            <h3>随机诗词</h3>
+            <p>古韵流转，墨香扑面</p>
+            <div class="explore-card-brush"></div>
+          </div>
+
+          <div class="explore-card" data-tool="seal">
+            <div class="explore-card-icon">🔖</div>
+            <h3>灵感印章</h3>
+            <p>一键生成箴言语录</p>
+            <div class="explore-card-brush"></div>
+          </div>
+
+          <div class="explore-card" data-tool="countdown">
+            <div class="explore-card-icon">⏳</div>
+            <h3>时光沙漏</h3>
+            <p>专注倒计时，静心凝神</p>
+            <div class="explore-card-brush"></div>
+          </div>
+
+          <div class="explore-card" data-tool="dice">
+            <div class="explore-card-icon">🎲</div>
+            <h3>墨骰占卜</h3>
+            <p>掷骰问心，随缘而定</p>
+            <div class="explore-card-brush"></div>
+          </div>
+
+          <div class="explore-card" data-tool="palette">
+            <div class="explore-card-icon">🎨</div>
+            <h3>墨色谱</h3>
+            <p>调出你的专属墨色</p>
+            <div class="explore-card-brush"></div>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <script type="module" src="/js/main.js"></script>
