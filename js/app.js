@@ -10,6 +10,27 @@ import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.j
 
 export async function initApp() {
   const content = await loadContent();
+
+  const infoMap = {
+    '出身': 'char-origin',
+    '境界': 'char-realm',
+    '性格': 'char-personality'
+  };
+
+  content.character.info.forEach((item) => {
+    const id = infoMap[item.label];
+    if (id) {
+      document.getElementById(id).textContent = item.value;
+    }
+  });
+
+  document.querySelector('.section-character .section-title').textContent = content.character.title;
+  document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;
+  document.querySelector('.intro-quote').textContent = content.intro.quote;
+  document.querySelector('.outro-line').textContent = content.outro.line;
+  document.querySelector('.outro-hint').textContent = content.outro.hint;
+  document.title = content.site.title;
+
   const webglContainer = document.getElementById('webgl-bg');
   const cursorCanvas = document.getElementById('cursor-aura');
 
