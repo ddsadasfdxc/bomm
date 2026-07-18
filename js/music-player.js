@@ -197,15 +197,12 @@ async function loadRemainingTracks(trackIds) {
 }
 
 async function fetchSongUrl(id) {
-  try {
-    const res = await fetch(`${API_BASE}/song/url?id=${id}`);
-    const data = await res.json();
-    if (data.code === 200 && data.data?.[0]?.url) {
-      return data.data[0].url;
-    }
-  } catch (e) { /* silent */ }
-  // 降级：使用网易云直链
-  return `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+  const res = await fetch(`${API_BASE}/song/url?id=${id}`);
+  const data = await res.json();
+  if (data.code === 200 && data.data?.[0]?.url) {
+    return data.data[0].url;
+  }
+  throw new Error('URL not available');
 }
 
 // ── Rendering ──
@@ -284,7 +281,14 @@ async function playSong(index) {
   const item = musicList.querySelector(`[data-index="${index}"]`);
   if (item) item.classList.add('loading');
 
-  const url = await fetchSongUrl(song.id);
+  let url;
+  try {
+    url = await fetchSongUrl(song.id);
+  } catch {
+    if (item) item.classList.remove('loading');
+    showTrackError();
+    return;
+  }
 
   if (item) item.classList.remove('loading');
 
