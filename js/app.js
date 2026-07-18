@@ -7,6 +7,7 @@ import { initOutroScene } from './scenes/outro-scene.js';
 import { initInkTransitions } from './effects/ink-transition.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
+import * as THREE from 'three';
 
 export async function initApp() {
   const content = await loadContent();
@@ -40,22 +41,27 @@ export async function initApp() {
   let animationId = null;
 
   if (!prefersReducedMotion()) {
-    inkParticles = new InkParticles(webglContainer);
-    cloudLayer = new CloudLayer(inkParticles.scene, { count: isMobile() ? 3 : 6 });
+    try {
+      inkParticles = new InkParticles(webglContainer);
+      cloudLayer = new CloudLayer(inkParticles.scene, { count: isMobile() ? 3 : 6 });
 
-    if (!isMobile()) {
-      cursorAura = new CursorAura(cursorCanvas);
+      if (!isMobile()) {
+        cursorAura = new CursorAura(cursorCanvas);
+      }
+
+      const clock = new THREE.Clock();
+      const renderLoop = () => {
+        const elapsed = clock.getElapsedTime();
+        const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        inkParticles.animate();
+        if (cloudLayer) cloudLayer.update(elapsed, scrollProgress);
+        animationId = requestAnimationFrame(renderLoop);
+      };
+      renderLoop();
+    } catch (error) {
+      console.warn('WebGL effects unavailable, falling back to static content:', error);
+      webglContainer.style.background = 'radial-gradient(ellipse at center, #1a1f18 0%, #0c0f0a 100%)';
     }
-
-    const clock = new THREE.Clock();
-    const renderLoop = () => {
-      const elapsed = clock.getElapsedTime();
-      const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      inkParticles.animate();
-      if (cloudLayer) cloudLayer.update(elapsed, scrollProgress);
-      animationId = requestAnimationFrame(renderLoop);
-    };
-    renderLoop();
   }
 
   initIntroScene(content.intro);
