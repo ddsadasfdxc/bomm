@@ -204,7 +204,8 @@ async function fetchSongUrl(id) {
       return data.data[0].url;
     }
   } catch (e) { /* silent */ }
-  return null;
+  // 降级：使用网易云直链
+  return `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
 }
 
 // ── Rendering ──
@@ -280,12 +281,12 @@ async function playSong(index) {
   const song = songs[index];
   updateTrackInfo(song);
 
-  // 先尝试从缓存获取，或直接调 API
+  const item = musicList.querySelector(`[data-index="${index}"]`);
+  if (item) item.classList.add('loading');
+
   const url = await fetchSongUrl(song.id);
-  if (!url) {
-    showTrackError();
-    return;
-  }
+
+  if (item) item.classList.remove('loading');
 
   audio = new Audio(url);
   audio.addEventListener('canplay', () => {

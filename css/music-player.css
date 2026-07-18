@@ -231,6 +231,18 @@
   font-size: 10px;
 }
 
+/* 加载中标记 */
+.music-list-item.loading .music-item-num::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent-cinnabar);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: inkSpin 0.8s linear infinite;
+}
+
 /* ── 序号/均衡器 ── */
 
 .music-item-num {
