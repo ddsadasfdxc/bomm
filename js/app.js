@@ -4,6 +4,7 @@ import { CursorAura } from './effects/cursor-aura.js';
 import { initIntroScene } from './scenes/intro-scene.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
+import { initMusicPlayer } from './music-player.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -47,6 +48,7 @@ export async function initApp() {
   }
 
   initIntroScene(content.intro);
+  initMusicPlayer();
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);
