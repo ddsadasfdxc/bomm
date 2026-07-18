@@ -1,12 +1,10 @@
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function initIntroScene(content) {
   const titleChars = document.querySelectorAll('.intro-title .brush-text');
   const subtitle = document.querySelector('.intro-subtitle');
   const quote = document.querySelector('.intro-quote');
+  const desc = document.querySelector('.intro-desc');
 
   titleChars.forEach((char) => {
     const length = char.getComputedTextLength();
@@ -25,19 +23,6 @@ export function initIntroScene(content) {
     ease: 'power2.inOut'
   })
   .to(subtitle, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, '-=1')
-  .to(quote, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, '-=0.6');
-
-  ScrollTrigger.create({
-    trigger: '#intro',
-    start: 'top top',
-    end: 'bottom top',
-    scrub: 1,
-    onUpdate: (self) => {
-      gsap.to('.intro-content', {
-        opacity: 1 - self.progress,
-        y: self.progress * -80,
-        duration: 0.1
-      });
-    }
-  });
+  .to(quote, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, '-=0.6')
+  .to(desc, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, '-=0.6');
 }

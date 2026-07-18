@@ -2,9 +2,6 @@ import { InkParticles } from './effects/ink-particles.js';
 import { CloudLayer } from './effects/clouds.js';
 import { CursorAura } from './effects/cursor-aura.js';
 import { initIntroScene } from './scenes/intro-scene.js';
-import { initCharacterScene } from './scenes/character-scene.js';
-import { initOutroScene } from './scenes/outro-scene.js';
-import { initInkTransitions } from './effects/ink-transition.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
 import * as THREE from 'three';
@@ -12,24 +9,9 @@ import * as THREE from 'three';
 export async function initApp() {
   const content = await loadContent();
 
-  const infoMap = {
-    '出身': 'char-origin',
-    '境界': 'char-realm',
-    '性格': 'char-personality'
-  };
-
-  content.character.info.forEach((item) => {
-    const id = infoMap[item.label];
-    if (id) {
-      document.getElementById(id).textContent = item.value;
-    }
-  });
-
-  document.querySelector('.section-character .section-title').textContent = content.character.title;
   document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;
   document.querySelector('.intro-quote').textContent = content.intro.quote;
-  document.querySelector('.outro-line').textContent = content.outro.line;
-  document.querySelector('.outro-hint').textContent = content.outro.hint;
+  document.querySelector('.intro-desc').textContent = content.intro.desc;
   document.title = content.site.title;
 
   const webglContainer = document.getElementById('webgl-bg');
@@ -65,9 +47,6 @@ export async function initApp() {
   }
 
   initIntroScene(content.intro);
-  initCharacterScene(content.character);
-  initOutroScene(content.outro);
-  initInkTransitions();
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);
