@@ -5,7 +5,7 @@ import { initIntroScene } from './scenes/intro-scene.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
 import { initMusicPlayer } from './music-player.js';
-import { initExplore } from './explore.js';
+import { initNotes } from './notes.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -50,11 +50,38 @@ export async function initApp() {
 
   initIntroScene(content.intro);
   initMusicPlayer();
-  initExplore();
+  initNav();
+  initNotes();
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);
     if (inkParticles) inkParticles.destroy();
     if (cursorAura) cursorAura.destroy();
   };
+}
+
+function initNav() {
+  const tabs = document.querySelectorAll('.ios-nav-tab');
+  const pages = document.querySelectorAll('.page');
+  const navInner = document.querySelector('.ios-nav-inner');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const pageName = tab.dataset.page;
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      pages.forEach(p => {
+        p.classList.toggle('active', p.id === `page-${pageName}`);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  if (navInner) {
+    const onScroll = () => {
+      navInner.classList.toggle('scrolled', window.scrollY > 10);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 }

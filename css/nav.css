@@ -1,8 +1,6 @@
 /* ================================
-   iOS 风格导航栏 + 探索界面
+   iOS 风格导航栏 + 页面
    ================================ */
-
-/* ── 导航栏 ── */
 
 .ios-nav {
   position: fixed;
@@ -71,8 +69,6 @@
   padding: 0;
 }
 
-/* ── 页面容器 ── */
-
 .page {
   display: none;
   animation: pageIn 0.5s var(--ease-brush);
@@ -115,79 +111,76 @@
   letter-spacing: 0.2em;
 }
 
-/* ── 探索卡片网格 ── */
-
 .explore-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.explore-card {
+/* ── 笔记卡片 ── */
+
+.note-card {
   position: relative;
   background: rgba(245, 240, 230, 0.03);
   border: 1px solid rgba(245, 240, 230, 0.06);
   border-radius: 20px;
-  padding: 32px 24px;
+  padding: 28px 24px;
   cursor: pointer;
   transition: all 0.4s var(--ease-brush);
   overflow: hidden;
 }
 
-.explore-card::before {
+.note-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 80% at 50% 0%, rgba(196, 90, 74, 0.08) 0%, transparent 60%);
+  background: radial-gradient(ellipse 80% 80% at 50% 0%, rgba(196, 90, 74, 0.06) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.4s ease;
 }
 
-.explore-card:hover {
+.note-card:hover {
   transform: translateY(-4px);
   border-color: rgba(196, 90, 74, 0.2);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
-.explore-card:hover::before {
+.note-card:hover::before {
   opacity: 1;
 }
 
-.explore-card:active {
-  transform: scale(0.97);
-}
-
-.explore-card-icon {
+.note-card-icon {
   position: relative;
-  font-size: 32px;
-  margin-bottom: 16px;
+  font-size: 28px;
+  margin-bottom: 12px;
   display: inline-block;
   transition: transform 0.4s var(--ease-brush);
 }
 
-.explore-card:hover .explore-card-icon {
-  transform: scale(1.15) rotate(-3deg);
+.note-card:hover .note-card-icon {
+  transform: scale(1.1) rotate(-3deg);
 }
 
-.explore-card h3 {
+.note-card h3 {
   position: relative;
   font-family: var(--font-serif);
   font-size: 16px;
   font-weight: 600;
   color: var(--text-paper);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   letter-spacing: 0.05em;
 }
 
-.explore-card p {
+.note-card p {
   position: relative;
   font-size: 13px;
   color: var(--text-muted);
   line-height: 1.6;
 }
 
-/* 水墨刷过动画 */
-.explore-card-brush {
+.note-card-brush {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -200,13 +193,13 @@
   opacity: 0.5;
 }
 
-.explore-card:hover .explore-card-brush {
+.note-card:hover .note-card-brush {
   transform: scaleX(1);
 }
 
-/* ── 弹窗容器 ── */
+/* ── 笔记弹窗 ── */
 
-.explore-modal-overlay {
+.note-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
@@ -225,15 +218,17 @@
   to { opacity: 1; }
 }
 
-.explore-modal {
+.note-modal {
   background: rgba(26, 31, 24, 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(245, 240, 230, 0.1);
   border-radius: 24px;
-  padding: 32px;
+  padding: 36px 32px;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
   position: relative;
   animation: modalIn 0.4s var(--ease-brush);
 }
@@ -243,7 +238,7 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.explore-modal-close {
+.note-modal-close {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -261,348 +256,63 @@
   transition: all 0.25s ease;
 }
 
-.explore-modal-close:hover {
+.note-modal-close:hover {
   background: rgba(196, 90, 74, 0.15);
   color: var(--text-paper);
 }
 
-.explore-modal h3 {
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-paper);
-  margin-bottom: 20px;
-  letter-spacing: 0.05em;
-}
-
-/* ── 水墨画板 ── */
-
-.ink-canvas-wrap {
-  position: relative;
-  border: 1px solid rgba(245, 240, 230, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  background: var(--bg-primary);
-  touch-action: none;
-}
-
-.ink-canvas-wrap canvas {
-  display: block;
-  width: 100%;
-  height: 260px;
-}
-
-.ink-toolbar {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.ink-toolbar button {
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 240, 230, 0.1);
-  background: rgba(245, 240, 230, 0.04);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 12px;
-  transition: all 0.25s ease;
-  letter-spacing: 0.05em;
-}
-
-.ink-toolbar button:hover {
-  border-color: rgba(196, 90, 74, 0.3);
-  color: var(--text-paper);
-}
-
-/* ── 诗词展示 ── */
-
-.poem-display {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.poem-lines {
-  font-family: var(--font-serif);
-  font-size: 18px;
-  line-height: 2.2;
-  color: var(--text-paper);
-  letter-spacing: 0.1em;
-  margin-bottom: 16px;
-}
-
-.poem-author {
-  font-size: 13px;
-  color: var(--accent-indigo);
-  letter-spacing: 0.2em;
-}
-
-.poem-refresh {
-  display: block;
-  margin: 24px auto 0;
-  padding: 10px 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 240, 230, 0.12);
-  background: rgba(245, 240, 230, 0.04);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  transition: all 0.25s ease;
-}
-
-.poem-refresh:hover {
-  border-color: var(--accent-indigo);
-  color: var(--text-paper);
-}
-
-/* ── 印章/语录 ── */
-
-.seal-display {
-  text-align: center;
-  padding: 24px 0;
-}
-
-.seal-stamp {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-  height: 120px;
-  border: 3px solid var(--accent-cinnabar);
-  border-radius: 12px;
-  transform: rotate(-3deg);
-  margin-bottom: 20px;
-  color: var(--accent-cinnabar);
+.note-modal-title {
   font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: 0.3em;
-  writing-mode: vertical-rl;
-  box-shadow: 0 4px 24px rgba(196, 90, 74, 0.2);
-}
-
-.seal-quote {
-  font-family: var(--font-serif);
-  font-size: 16px;
   color: var(--text-paper);
+  margin-bottom: 8px;
   letter-spacing: 0.08em;
-  line-height: 1.8;
-  margin-bottom: 20px;
 }
 
-.seal-refresh {
-  display: block;
-  margin: 0 auto;
-  padding: 10px 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 240, 230, 0.12);
-  background: rgba(245, 240, 230, 0.04);
+.note-modal-meta {
+  font-size: 12px;
   color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  transition: all 0.25s ease;
-}
-
-.seal-refresh:hover {
-  border-color: var(--accent-cinnabar);
-  color: var(--text-paper);
-}
-
-/* ── 倒计时 ── */
-
-.countdown-display {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.countdown-time {
-  font-family: var(--font-display);
-  font-size: 56px;
-  font-weight: 600;
-  color: var(--text-paper);
-  letter-spacing: 0.05em;
   margin-bottom: 24px;
-  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
 }
 
-.countdown-controls {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.countdown-controls button {
-  padding: 10px 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(245, 240, 230, 0.1);
-  background: rgba(245, 240, 230, 0.04);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 13px;
-  letter-spacing: 0.05em;
-  transition: all 0.25s ease;
-}
-
-.countdown-controls button:hover {
-  border-color: rgba(196, 90, 74, 0.3);
-  color: var(--text-paper);
-}
-
-.countdown-controls button.btn-start {
-  background: var(--accent-cinnabar);
-  border-color: var(--accent-cinnabar);
-  color: #fff;
-}
-
-/* ── 骰子 ── */
-
-.dice-display {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.dice-result {
-  font-size: 72px;
-  margin-bottom: 16px;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.dice-result.rolling {
-  animation: diceShake 0.5s ease;
-}
-
-@keyframes diceShake {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(15deg) scale(1.1); }
-  50% { transform: rotate(-10deg) scale(1.05); }
-  75% { transform: rotate(5deg) scale(1.08); }
-}
-
-.dice-fortune {
+.note-modal-body {
   font-family: var(--font-serif);
   font-size: 15px;
+  line-height: 2;
   color: var(--text-paper);
-  letter-spacing: 0.08em;
-  margin-bottom: 20px;
+  letter-spacing: 0.05em;
 }
 
-.dice-roll-btn {
-  display: block;
-  margin: 0 auto;
-  padding: 12px 32px;
-  border-radius: 999px;
-  border: none;
-  background: var(--accent-cinnabar);
-  color: #fff;
-  cursor: pointer;
-  font-family: var(--font-serif);
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  transition: all 0.25s ease;
+.note-modal-body p {
+  margin-bottom: 1em;
+  text-indent: 2em;
 }
 
-.dice-roll-btn:hover {
-  background: #d4685a;
-  transform: scale(1.05);
-}
-
-/* ── 墨色谱 ── */
-
-.palette-display {
-  padding: 8px 0;
-}
-
-.palette-color-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.palette-swatch {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  position: relative;
-}
-
-.palette-swatch:hover {
-  transform: scale(1.15);
-}
-
-.palette-swatch.selected {
-  border-color: var(--text-paper);
-  box-shadow: 0 0 0 3px var(--bg-primary);
-}
-
-.palette-preview {
-  height: 80px;
-  border-radius: 12px;
-  transition: background 0.3s ease;
-  margin-bottom: 16px;
-}
-
-.palette-info {
+.note-modal-body .note-sep {
   text-align: center;
-  font-family: var(--font-serif);
-  font-size: 13px;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
+  color: var(--accent-cinnabar);
+  margin: 1.5em 0;
+  letter-spacing: 0.3em;
+  font-size: 14px;
 }
-
-/* ── 响应式 ── */
 
 @media (max-width: 640px) {
   .explore-area {
     padding: 60px 16px 80px;
   }
 
-  .explore-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .explore-card {
-    padding: 24px 16px;
-  }
-
-  .explore-card-icon {
-    font-size: 26px;
-    margin-bottom: 12px;
-  }
-
-  .explore-card h3 {
-    font-size: 14px;
-  }
-
-  .explore-card p {
-    font-size: 11px;
-  }
-
-  .explore-modal {
-    padding: 24px;
+  .note-modal {
+    padding: 24px 20px;
     max-width: calc(100vw - 32px);
   }
 
-  .countdown-time {
-    font-size: 40px;
+  .note-modal-title {
+    font-size: 18px;
   }
-}
 
-@media (max-width: 400px) {
-  .explore-grid {
-    grid-template-columns: 1fr;
+  .note-modal-body {
+    font-size: 14px;
   }
 }
