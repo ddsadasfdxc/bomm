@@ -298,6 +298,122 @@
   font-size: 14px;
 }
 
+/* ── Gmail 别名生成器 ── */
+
+.alias-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.alias-form input {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 14px;
+  border: 1px solid rgba(245, 240, 230, 0.12);
+  border-radius: 10px;
+  background: rgba(245, 240, 230, 0.04);
+  color: var(--text-paper);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.25s;
+}
+
+.alias-form input:focus {
+  border-color: var(--accent-cinnabar);
+}
+
+.alias-domain {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.alias-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 240, 230, 0.12);
+  background: var(--accent-cinnabar);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.alias-btn:hover {
+  background: #d4685a;
+}
+
+.alias-btn-copy {
+  background: rgba(245, 240, 230, 0.06);
+  color: var(--text-muted);
+}
+
+.alias-btn-copy:hover {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.alias-btn-export {
+  background: rgba(245, 240, 230, 0.06);
+  color: var(--text-muted);
+}
+
+.alias-btn-export:hover {
+  background: rgba(196, 90, 74, 0.15);
+  color: var(--accent-cinnabar);
+}
+
+.alias-results {
+  margin-bottom: 20px;
+}
+
+.alias-section {
+  margin-bottom: 14px;
+}
+
+.alias-section-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.alias-section textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(245, 240, 230, 0.08);
+  border-radius: 10px;
+  background: rgba(245, 240, 230, 0.03);
+  color: var(--text-paper);
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  resize: vertical;
+  outline: none;
+}
+
+.alias-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.alias-btns .alias-btn {
+  flex: 1;
+  min-width: 80px;
+  text-align: center;
+}
+
 @media (max-width: 640px) {
   .explore-area {
     padding: 60px 16px 80px;
@@ -314,5 +430,13 @@
 
   .note-modal-body {
     font-size: 14px;
+  }
+
+  .alias-form {
+    flex-direction: column;
+  }
+
+  .alias-form input {
+    width: 100%;
   }
 }

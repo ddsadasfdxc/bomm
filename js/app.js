@@ -6,6 +6,7 @@ import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
 import { initMusicPlayer } from './music-player.js';
 import { initNotes } from './notes.js';
+import { openGmailAlias } from './tools.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -52,6 +53,7 @@ export async function initApp() {
   initMusicPlayer();
   initNav();
   initNotes();
+  initTools();
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);
@@ -83,5 +85,12 @@ function initNav() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  }
+}
+
+function initTools() {
+  const card = document.querySelector('[data-tool="gmail-alias"]');
+  if (card) {
+    card.addEventListener('click', () => openGmailAlias());
   }
 }
