@@ -7,6 +7,7 @@ import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.j
 import { initMusicPlayer } from './music-player.js';
 import { initNotes } from './notes.js';
 import { openGmailAlias } from './tools.js';
+import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -54,6 +55,10 @@ export async function initApp() {
   initNav();
   initNotes();
   initTools();
+  initMessageBoard();
+  initContactForm();
+  trackVisit();
+  loadStats(document.getElementById('statsBar'));
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);

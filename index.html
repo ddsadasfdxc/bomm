@@ -22,6 +22,10 @@
       <button class="ios-nav-tab active" data-page="home">首页</button>
       <button class="ios-nav-sep"></button>
       <button class="ios-nav-tab" data-page="explore">探索</button>
+      <button class="ios-nav-sep"></button>
+      <button class="ios-nav-tab" data-page="board">留言</button>
+      <button class="ios-nav-sep"></button>
+      <button class="ios-nav-tab" data-page="contact">联系</button>
     </div>
   </nav>
 
@@ -59,6 +63,33 @@
           <p class="explore-desc">OC 手记，随想随记</p>
         </div>
         <div class="explore-grid" id="notesGrid"></div>
+        <div class="stats-bar" id="statsBar"></div>
+      </section>
+    </div>
+
+    <div class="page page-board" id="page-board">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">留言板</h2>
+          <p class="explore-desc">留下你的足迹</p>
+        </div>
+        <div class="board-container" id="messageBoard"></div>
+      </section>
+    </div>
+
+    <div class="page page-contact" id="page-contact">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">联系</h2>
+          <p class="explore-desc">有话想说，写封信给我</p>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <input type="text" id="contactName" placeholder="你的名字" required>
+          <input type="email" id="contactEmail" placeholder="你的邮箱" required>
+          <input type="text" id="contactSubject" placeholder="主题">
+          <textarea id="contactMessage" placeholder="想说的话…" rows="5" required></textarea>
+          <button type="submit" class="contact-submit">发送</button>
+        </form>
       </section>
     </div>
   </main>
