@@ -220,11 +220,10 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 48px 24px 24px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 24px;
+  overflow: hidden;
   animation: overlayIn 0.3s ease;
 }
 
@@ -242,8 +241,10 @@
   padding: 36px 32px;
   width: 100%;
   max-width: 480px;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   position: relative;
   animation: modalIn 0.4s var(--ease-brush);
 }
@@ -254,9 +255,10 @@
 }
 
 .note-modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  position: sticky;
+  float: right;
+  top: 0;
+  margin: -20px -16px -20px 0;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -269,6 +271,7 @@
   justify-content: center;
   font-size: 16px;
   transition: all 0.25s ease;
+  z-index: 1;
 }
 
 .note-modal-close:hover {
