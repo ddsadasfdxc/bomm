@@ -128,8 +128,13 @@
   border-radius: 20px;
   padding: 28px 24px;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   transition: all 0.4s var(--ease-brush);
   overflow: hidden;
+  min-height: 100px;
 }
 
 .note-card::before {
@@ -139,12 +144,18 @@
   background: radial-gradient(ellipse 80% 80% at 50% 0%, rgba(196, 90, 74, 0.06) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .note-card:hover {
   transform: translateY(-4px);
   border-color: rgba(196, 90, 74, 0.2);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.note-card:active {
+  transform: scale(0.97);
+  background: rgba(245, 240, 230, 0.05);
 }
 
 .note-card:hover::before {
@@ -157,6 +168,7 @@
   margin-bottom: 12px;
   display: inline-block;
   transition: transform 0.4s var(--ease-brush);
+  pointer-events: none;
 }
 
 .note-card:hover .note-card-icon {
@@ -191,6 +203,7 @@
   transform-origin: left;
   transition: transform 0.5s var(--ease-brush);
   opacity: 0.5;
+  pointer-events: none;
 }
 
 .note-card:hover .note-card-brush {
@@ -207,9 +220,11 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px;
+  padding: 48px 24px 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: overlayIn 0.3s ease;
 }
 
