@@ -15,7 +15,9 @@ export function initChat() {
   const page = document.getElementById('page-chat');
   if (!page) return;
 
-  const modelSelect = document.getElementById('chatModel');
+  const modelBtn = document.getElementById('chatModelBtn');
+  const modelText = document.getElementById('chatModelText');
+  const modelMenu = document.getElementById('chatModelMenu');
   const settingsBtn = document.getElementById('chatSettings');
   const settingsPanel = document.getElementById('chatSettingsPanel');
   const messagesEl = document.getElementById('chatMessages');
@@ -26,7 +28,7 @@ export function initChat() {
   const maxTokensInput = document.getElementById('chatMaxTokens');
   const clearBtn = document.getElementById('chatClear');
 
-  if (!modelSelect || !messagesEl || !inputEl) return;
+  if (!modelBtn || !modelMenu || !messagesEl || !inputEl) return;
 
   const state = loadState();
   let models = [];
@@ -40,13 +42,33 @@ export function initChat() {
 
   fetchModels().then((list) => {
     models = list;
-    populateModels(modelSelect, models, state.model);
+    populateModels(modelMenu, modelText, models, state.model, (id) => {
+      state.model = id;
+      saveState(state);
+    });
   }).catch(() => {
-    modelSelect.innerHTML = '<option value="">模型加载失败</option>';
+    modelText.textContent = '模型加载失败';
   });
 
-  settingsBtn.addEventListener('click', () => {
+  modelBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modelMenu.classList.toggle('open');
+    settingsPanel.classList.remove('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!modelBtn.contains(e.target) && !modelMenu.contains(e.target)) {
+      modelMenu.classList.remove('open');
+    }
+    if (!settingsBtn.contains(e.target) && !settingsPanel.contains(e.target)) {
+      settingsPanel.classList.remove('open');
+    }
+  });
+
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     settingsPanel.classList.toggle('open');
+    modelMenu.classList.remove('open');
   });
 
   tempInput.addEventListener('input', () => {
@@ -61,10 +83,7 @@ export function initChat() {
     saveState(state);
   });
 
-  modelSelect.addEventListener('change', () => {
-    state.model = modelSelect.value;
-    saveState(state);
-  });
+
 
   clearBtn.addEventListener('click', () => {
     state.messages = [];
@@ -88,7 +107,7 @@ export function initChat() {
     const text = inputEl.value.trim();
     if (!text) return;
 
-    const model = modelSelect.value || state.model;
+    const model = state.model;
     if (!model) {
       appendSystemMessage(messagesEl, '请先选择模型');
       return;
@@ -190,22 +209,40 @@ async function fetchModels() {
   return list;
 }
 
-function populateModels(select, models, selectedId) {
-  select.innerHTML = '';
+function populateModels(menu, textEl, models, selectedId, onSelect) {
+  menu.innerHTML = '';
   if (models.length === 0) {
-    select.innerHTML = '<option value="">无可用模型</option>';
+    textEl.textContent = '无可用模型';
     return;
   }
+
+  const finalId = selectedId || models[0].id;
+  const selectedModel = models.find((m) => m.id === finalId) || models[0];
+  textEl.textContent = formatModelName(selectedModel.name);
+
   models.forEach((m) => {
-    const opt = document.createElement('option');
-    opt.value = m.id;
-    opt.textContent = m.name;
-    if (m.id === selectedId) opt.selected = true;
-    select.appendChild(opt);
+    const item = document.createElement('button');
+    item.className = 'chat-model-item';
+    item.type = 'button';
+    if (m.id === finalId) item.classList.add('active');
+    item.innerHTML = `
+      <span class="chat-model-name">${escapeHtml(formatModelName(m.name))}</span>
+      <span class="chat-model-id">${escapeHtml(m.id)}</span>`;
+    item.addEventListener('click', () => {
+      menu.querySelectorAll('.chat-model-item').forEach((el) => el.classList.remove('active'));
+      item.classList.add('active');
+      textEl.textContent = formatModelName(m.name);
+      onSelect(m.id);
+      menu.classList.remove('open');
+    });
+    menu.appendChild(item);
   });
-  if (!selectedId && models[0]) {
-    select.value = models[0].id;
-  }
+}
+
+function formatModelName(name) {
+  if (!name) return '';
+  const max = 18;
+  return name.length > max ? name.slice(0, max) + '…' : name;
 }
 
 function buildContext(messages) {
