@@ -1,0 +1,17 @@
+{
+  "name": "wenruo-api",
+  "version": "1.0.0",
+  "description": "温若个人小站后端 API：留言板、联系表单、访问统计",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}

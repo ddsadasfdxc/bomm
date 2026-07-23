@@ -1,8 +1,6 @@
 /**
- * 我的笔记系统 — 连接后端 API
+ * 我的笔记系统 — 从本地 content.json 加载
  */
-
-const API = 'https://wenruo-api.vercel.app';
 
 let notesCache = [];
 
@@ -14,7 +12,7 @@ export function initNotes() {
 
 async function fetchNotes() {
   try {
-    const res = await fetch(`${API}/api/notes`);
+    const res = await fetch('/data/content.json');
     const data = await res.json();
     notesCache = data.notes || [];
   } catch (e) {

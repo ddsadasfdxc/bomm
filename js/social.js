@@ -1,5 +1,6 @@
 /**
  * 留言板 + 联系表单 + 访问统计
+ * 部署 wenruo-api 后，把下面 API 地址替换为你的 Vercel 域名
  */
 
 const API = 'https://wenruo-api.vercel.app';
