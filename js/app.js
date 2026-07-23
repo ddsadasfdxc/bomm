@@ -19,6 +19,7 @@ export async function initApp() {
   document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;
   document.querySelector('.intro-quote').textContent = content.intro.quote;
   document.querySelector('.intro-desc').textContent = content.intro.desc;
+  loadHitokoto(document.querySelector('.intro-quote'), content.intro.quote);
   document.title = content.site.title;
 
   const webglContainer = document.getElementById('webgl-bg');
@@ -68,6 +69,20 @@ export async function initApp() {
     if (inkParticles) inkParticles.destroy();
     if (cursorAura) cursorAura.destroy();
   };
+}
+
+async function loadHitokoto(el, fallback) {
+  try {
+    const res = await fetch('https://v1.hitokoto.cn');
+    if (!res.ok) throw new Error('Hitokoto API error');
+    const data = await res.json();
+    if (data && data.hitokoto) {
+      el.textContent = data.hitokoto;
+    }
+  } catch (err) {
+    console.warn('Hitokoto load failed:', err);
+    el.textContent = fallback;
+  }
 }
 
 function initNav() {
