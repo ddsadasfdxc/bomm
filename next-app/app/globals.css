@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0c0f0a;
+  --foreground: #f5f0e6;
+  --bg-primary: #0c0f0a;
+  --bg-ink-1: #151913;
+  --bg-ink-2: #1f251d;
+  --bg-ink-3: #2a3328;
+  --text-paper: #f5f0e6;
+  --text-muted: rgba(245, 240, 230, 0.62);
+  --accent-cinnabar: #c45a4a;
+  --accent-cinnabar-light: #d4685a;
+  --accent-indigo: #5b7a76;
+  --accent-indigo-light: #6d8f8a;
+  --accent-gold: #b8a07a;
+  --glass-bg: rgba(245, 240, 230, 0.04);
+  --glass-border: rgba(245, 240, 230, 0.08);
+  --glass-border-hover: rgba(245, 240, 230, 0.16);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 16px 48px rgba(0, 0, 0, 0.35);
+  --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-ink-1: var(--bg-ink-1);
+  --color-bg-ink-2: var(--bg-ink-2);
+  --color-bg-ink-3: var(--bg-ink-3);
+  --color-text-paper: var(--text-paper);
+  --color-text-muted: var(--text-muted);
+  --color-accent-cinnabar: var(--accent-cinnabar);
+  --color-accent-cinnabar-light: var(--accent-cinnabar-light);
+  --color-accent-indigo: var(--accent-indigo);
+  --color-accent-indigo-light: var(--accent-indigo-light);
+  --color-accent-gold: var(--accent-gold);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --font-serif: "Noto Serif SC", "Songti SC", serif;
+  --font-display: "Cinzel", "Noto Serif SC", serif;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-serif);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 240, 230, 0.1);
+  border-radius: 3px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(196, 90, 74, 0.3);
+  color: var(--text-paper);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
