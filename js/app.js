@@ -9,6 +9,7 @@ import { initMusicPlayer } from './music-player.js';
 import { initNotes } from './notes.js';
 import { openGmailAlias } from './tools.js';
 import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
+import { initChat } from './chat.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -61,6 +62,7 @@ export async function initApp() {
   initTools();
   initMessageBoard();
   initContactForm();
+  initChat();
   trackVisit();
   loadStats(document.getElementById('statsBar'));
 
