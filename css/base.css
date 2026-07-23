@@ -20,7 +20,7 @@ body {
 #bg-image {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   background-color: var(--bg-primary);
   background-repeat: no-repeat;
@@ -43,21 +43,21 @@ body {
 #webgl-bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
 #cursor-aura {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   opacity: 0.6;
 }
 
 #scroll-container {
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 .section {
