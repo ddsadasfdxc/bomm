@@ -3,7 +3,7 @@
  * 连接自部署的 NeteaseCloudMusicApi (Vercel)
  */
 
-const API_BASE = 'https://ncm-dhfsvnkeb-ddsadasfdxcs-projects.vercel.app';
+const API_BASE = 'https://ncm-api-ochre.vercel.app';
 const PLAYLIST_ID = '12675557343';
 
 let songs = [];
