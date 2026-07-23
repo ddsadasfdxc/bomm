@@ -300,12 +300,17 @@ function populateModels(list, textEl, models, selectedId, onSelect) {
   textEl.textContent = formatModelName(selectedModel.name);
 
   models.forEach((m) => {
+    const provider = detectProvider(m.id);
+    const icon = provider ? getProviderIcon(provider) : '';
     const item = document.createElement('button');
     item.className = 'chat-model-item';
     item.type = 'button';
     if (m.id === finalId) item.classList.add('active');
     item.innerHTML = `
-      <span class="chat-model-name">${escapeHtml(formatModelName(m.name))}</span>
+      <div class="chat-model-item-main">
+        ${icon}
+        <span class="chat-model-name">${escapeHtml(formatModelName(m.name))}</span>
+      </div>
       <span class="chat-model-id">${escapeHtml(m.id)}</span>`;
     item.addEventListener('click', () => {
       list.querySelectorAll('.chat-model-item').forEach((el) => el.classList.remove('active'));
@@ -315,6 +320,25 @@ function populateModels(list, textEl, models, selectedId, onSelect) {
     });
     list.appendChild(item);
   });
+}
+
+function detectProvider(id) {
+  const lower = id.toLowerCase();
+  if (lower.includes('deepseek')) return 'deepseek';
+  if (lower.includes('claude') || lower.includes('anthropic')) return 'anthropic';
+  if (lower.includes('gpt') || lower.includes('openai') || lower.includes('o1-') || lower.includes('o3-')) return 'chatgpt';
+  if (lower.includes('gemini') || lower.includes('google')) return 'gemini';
+  return null;
+}
+
+function getProviderIcon(provider) {
+  const icons = {
+    deepseek: `<svg class="chat-model-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4D6BFA" d="M21.2 11c-.5-1.8-2.2-3.2-4.2-3.4-.4 0-.8-.3-1-.7-.2-.4-.1-.9.3-1.2.3-.3.9-.4 1.3-.2.3.2.6.5.7.8 0 .1.1.1.2.1.1 0 .2-.1.2-.2 0-.1-.1-.2-.2-.3-.5-.4-1.2-.4-1.8-.2-.8.3-1.4 1-1.5 1.8-.1.5 0 1.1.4 1.5.3.3.8.5 1.2.6.5.2 1.1.3 1.7.5.7.3 1.3.8 1.6 1.5.3.7.2 1.5-.2 2.1-.4.7-1.1 1.2-1.9 1.3-.7.1-1.5 0-2.1-.4-.6-.4-1.1-1-1.2-1.7-.1-.5 0-1 .3-1.3.3-.4.8-.5 1.2-.5.2 0 .5 0 .7.1.1 0 .2 0 .2-.1 0-.1 0-.2-.1-.2-.1-.1-.3-.2-.4-.2-.7-.2-1.5 0-2 .6-.5.6-.7 1.4-.5 2.1.2.9.8 1.7 1.6 2.1.8.4 1.8.5 2.7.2.9-.3 1.7-1.1 2-2 .3-.8.1-1.7-.4-2.4zM12 2.5c-4.4 0-8 3.4-8 7.8 0 4 2.9 7.3 6.8 8 .5.1 1.1 0 1.6-.3.4-.3.8-.7.9-1.2.1-.5 0-1-.4-1.3-.3-.3-.9-.5-1.3-.3-.4.1-.8.5-.9.8-.1.4-.1.8.2 1 .2.2.5.3.7.3.1 0 .3.2.2.4 0 .1-.1.3-.3.3-.3.2-.7.2-1.1.1-3-1-5.2-3.7-5.2-7 0-3.6 2.9-6.5 6.5-6.5 3.1 0 5.7 2.1 6.4 5 .1.4.5.7.9.8.4.1.9 0 1.2-.3.3-.3.4-.8.2-1.2C19.2 4.8 15.9 2.5 12 2.5z"/></svg>`,
+    anthropic: `<svg class="chat-model-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#D97757" d="M12 2L4 20h2.5l2-5h7l2 5H20L12 2zm1.5 11h-3l1.5-3.8 1.5 3.8z"/></svg>`,
+    chatgpt: `<svg class="chat-model-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#10A37F" d="M12 2L4 6v12l8 4 8-4V6l-8-4zm0 2.2L17.5 7 12 9.8 6.5 7 12 4.2zM6 8.5l5 2.8v5.4l-5-2.5V8.5zm7 8.2v-5.4l5-2.8v5.7l-5 2.5z"/></svg>`,
+    gemini: `<svg class="chat-model-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M12 1l2.5 7.5L12 12l-2.5-3.5L12 1z"/><path fill="#EA4335" d="M23 12l-7.5 2.5L12 12l3.5-2.5L23 12z"/><path fill="#FBBC05" d="M12 23l-2.5-7.5L12 12l2.5 3.5L12 23z"/><path fill="#34A853" d="M1 12l7.5-2.5L12 12l-3.5 2.5L1 12z"/></svg>`,
+  };
+  return icons[provider] || '';
 }
 
 function formatModelName(name) {

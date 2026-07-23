@@ -11,6 +11,7 @@ let currentIndex = -1;
 let audio = null;
 let isPlaying = false;
 let panelOpen = false;
+let dragMoved = false;
 
 // ── DOM refs ──
 let musicBtn, musicPanel, musicList, playerBar, playBtn;
@@ -88,7 +89,13 @@ function createWidget() {
 }
 
 function bindEvents() {
+  initDraggable();
+
   musicBtn.addEventListener('click', (e) => {
+    if (dragMoved) {
+      dragMoved = false;
+      return;
+    }
     e.stopPropagation();
     togglePanel();
   });
@@ -117,6 +124,121 @@ function bindEvents() {
       togglePlay();
     }
   });
+}
+
+function initDraggable() {
+  const widget = musicBtn.closest('.music-widget');
+  if (!widget) return;
+
+  const STORAGE_KEY = 'wenruo_music_pos';
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let startLeft = 0;
+  let startTop = 0;
+  let moved = false;
+  const threshold = 4;
+
+  function getClientPos(e) {
+    const t = e.touches && e.touches[0] ? e.touches[0] : e;
+    return { x: t.clientX, y: t.clientY };
+  }
+
+  function onStart(e) {
+    isDragging = true;
+    moved = false;
+    const pos = getClientPos(e);
+    startX = pos.x;
+    startY = pos.y;
+    const rect = widget.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+    widget.classList.add('dragging');
+    widget.style.transition = 'none';
+    document.body.style.userSelect = 'none';
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    const pos = getClientPos(e);
+    const dx = pos.x - startX;
+    const dy = pos.y - startY;
+    if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+      moved = true;
+      dragMoved = true;
+    }
+
+    const rect = widget.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = startLeft + dx;
+    let top = startTop + dy;
+    left = Math.max(0, Math.min(left, vw - rect.width));
+    top = Math.max(0, Math.min(top, vh - rect.height));
+
+    widget.style.right = 'auto';
+    widget.style.bottom = 'auto';
+    widget.style.left = left + 'px';
+    widget.style.top = top + 'px';
+  }
+
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    widget.classList.remove('dragging');
+    widget.style.transition = '';
+    document.body.style.userSelect = '';
+    savePosition();
+    if (moved) {
+      setTimeout(() => { dragMoved = false; }, 50);
+    }
+  }
+
+  function savePosition() {
+    try {
+      const rect = widget.getBoundingClientRect();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ left: rect.left, top: rect.top }));
+    } catch (e) {}
+  }
+
+  function restorePosition() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const pos = JSON.parse(raw);
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const rect = widget.getBoundingClientRect();
+      let left = pos.left;
+      let top = pos.top;
+      left = Math.max(0, Math.min(left, vw - rect.width));
+      top = Math.max(0, Math.min(top, vh - rect.height));
+      widget.style.right = 'auto';
+      widget.style.bottom = 'auto';
+      widget.style.left = left + 'px';
+      widget.style.top = top + 'px';
+    } catch (e) {}
+  }
+
+  musicBtn.addEventListener('mousedown', onStart);
+  musicBtn.addEventListener('touchstart', onStart, { passive: true });
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, { passive: true });
+  window.addEventListener('mouseup', onEnd);
+  window.addEventListener('touchend', onEnd);
+  window.addEventListener('resize', () => {
+    const rect = widget.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = rect.left;
+    let top = rect.top;
+    left = Math.max(0, Math.min(left, vw - rect.width));
+    top = Math.max(0, Math.min(top, vh - rect.height));
+    widget.style.left = left + 'px';
+    widget.style.top = top + 'px';
+  });
+
+  restorePosition();
 }
 
 function togglePanel() {

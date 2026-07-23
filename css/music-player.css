@@ -23,7 +23,7 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(245, 240, 230, 0.12);
-  cursor: pointer;
+  cursor: grab;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,6 +31,14 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   transition: all 0.4s var(--ease-brush);
   padding: 0;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.music-widget.dragging .music-btn {
+  cursor: grabbing;
+  transition: none;
 }
 
 .music-btn:hover {
