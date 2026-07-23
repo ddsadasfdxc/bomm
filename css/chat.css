@@ -558,6 +558,71 @@
   color: var(--text-primary);
 }
 
+.settings-row-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.settings-toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.settings-toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.settings-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.settings-toggle-track {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(245, 240, 230, 0.15);
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.settings-toggle-track:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.settings-toggle input:checked + .settings-toggle-track {
+  background-color: var(--accent-cinnabar);
+}
+
+.settings-toggle input:checked + .settings-toggle-track:before {
+  transform: translateX(20px);
+}
+
+.settings-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .chat-secondary-btn {
   width: 100%;
   padding: 0.7rem;

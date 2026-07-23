@@ -10,6 +10,8 @@ const STORAGE_KEY = 'wenruo_chat';
 const DEFAULT_TEMPERATURE = 0.7;
 const DEFAULT_MAX_TOKENS = 2048;
 const DEFAULT_MODEL = '';
+const DEFAULT_OC_MODE = true;
+const OC_SYSTEM_PROMPT = '你是温若，一位清冷淡雅的剑修。请用简短、优美、古风的方式回答。';
 
 export function initChat() {
   const page = document.getElementById('page-chat');
@@ -31,7 +33,10 @@ export function initChat() {
   const tempInput = document.getElementById('chatTemp');
   const tempVal = document.getElementById('chatTempVal');
   const maxTokensInput = document.getElementById('chatMaxTokens');
+  const ocModeInput = document.getElementById('chatOcMode');
   const clearBtn = document.getElementById('chatClear');
+  const clearHeaderBtn = document.getElementById('chatClearHeader');
+  const exportBtn = document.getElementById('chatExport');
 
   if (!modelBtn || !modelMenu || !modelList || !messagesEl || !inputEl) return;
 
@@ -44,6 +49,7 @@ export function initChat() {
   updateTempLabel(state.temperature);
   tempInput.value = Math.round(state.temperature * 10);
   maxTokensInput.value = state.maxTokens;
+  if (ocModeInput) ocModeInput.checked = state.ocMode;
 
   fetchModels().then((list) => {
     models = list;
@@ -153,12 +159,40 @@ export function initChat() {
 
 
 
+  if (ocModeInput) {
+    ocModeInput.addEventListener('change', () => {
+      state.ocMode = ocModeInput.checked;
+      saveState(state);
+    });
+  }
+
+  function clearMessages() {
+    if (!confirm('确定要清空当前对话吗？')) return;
+    state.messages = [];
+    saveState(state);
+    renderMessages(messagesEl, state.messages);
+  }
+
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
-      state.messages = [];
-      saveState(state);
-      renderMessages(messagesEl, state.messages);
+      clearMessages();
       closeSettings();
+    });
+  }
+
+  if (clearHeaderBtn) {
+    clearHeaderBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      clearMessages();
+    });
+  }
+
+  if (exportBtn) {
+    exportBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      exportChat(state.messages);
     });
   }
 
@@ -213,7 +247,7 @@ export function initChat() {
         },
         body: JSON.stringify({
           model,
-          messages: buildContext(state.messages),
+          messages: buildContext(state.messages, state.ocMode),
           temperature: state.temperature,
           max_tokens: state.maxTokens,
           stream: true,
@@ -347,10 +381,32 @@ function formatModelName(name) {
   return name.length > max ? name.slice(0, max) + '…' : name;
 }
 
-function buildContext(messages) {
-  const system = { role: 'system', content: '你是温若，一位清冷淡雅的剑修。请用简短、优美、古风的方式回答。' };
+function buildContext(messages, ocMode) {
   const recent = messages.slice(-20);
-  return [system, ...recent.map((m) => ({ role: m.role, content: m.content }))];
+  const context = recent.map((m) => ({ role: m.role, content: m.content }));
+  if (ocMode) {
+    return [{ role: 'system', content: OC_SYSTEM_PROMPT }, ...context];
+  }
+  return context;
+}
+
+function exportChat(messages) {
+  if (!messages || messages.length === 0) {
+    alert('当前没有对话记录可导出');
+    return;
+  }
+  const text = messages
+    .map((msg) => `${msg.role === 'user' ? '你' : '温若'}：${msg.content}`)
+    .join('\n\n');
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `灵犀对话-${new Date().toISOString().slice(0, 10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function renderMessages(container, messages) {
@@ -435,9 +491,10 @@ function loadState() {
       model: parsed.model || DEFAULT_MODEL,
       temperature: typeof parsed.temperature === 'number' ? parsed.temperature : DEFAULT_TEMPERATURE,
       maxTokens: parsed.maxTokens || DEFAULT_MAX_TOKENS,
+      ocMode: typeof parsed.ocMode === 'boolean' ? parsed.ocMode : DEFAULT_OC_MODE,
     };
   } catch (e) {
-    return { messages: [], model: DEFAULT_MODEL, temperature: DEFAULT_TEMPERATURE, maxTokens: DEFAULT_MAX_TOKENS };
+    return { messages: [], model: DEFAULT_MODEL, temperature: DEFAULT_TEMPERATURE, maxTokens: DEFAULT_MAX_TOKENS, ocMode: DEFAULT_OC_MODE };
   }
 }
 

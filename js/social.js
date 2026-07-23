@@ -43,11 +43,12 @@ async function renderMessages(board) {
       btn.disabled = true;
       btn.textContent = '发送中…';
       try {
-        await fetch(`${API}/api/messages`, {
+        const res = await fetch(`${API}/api/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, message }),
         });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         renderMessages(board);
       } catch (e) {
         btn.textContent = '发送失败，重试';
