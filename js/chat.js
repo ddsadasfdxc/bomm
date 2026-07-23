@@ -18,8 +18,13 @@ export function initChat() {
   const modelBtn = document.getElementById('chatModelBtn');
   const modelText = document.getElementById('chatModelText');
   const modelMenu = document.getElementById('chatModelMenu');
+  const modelOverlay = document.getElementById('chatModelOverlay');
+  const modelList = document.getElementById('chatModelList');
+  const modelClose = document.getElementById('chatModelClose');
   const settingsBtn = document.getElementById('chatSettings');
   const settingsPanel = document.getElementById('chatSettingsPanel');
+  const settingsOverlay = document.getElementById('chatSettingsOverlay');
+  const settingsClose = document.getElementById('chatSettingsClose');
   const messagesEl = document.getElementById('chatMessages');
   const inputEl = document.getElementById('chatInput');
   const sendBtn = document.getElementById('chatSend');
@@ -28,7 +33,7 @@ export function initChat() {
   const maxTokensInput = document.getElementById('chatMaxTokens');
   const clearBtn = document.getElementById('chatClear');
 
-  if (!modelBtn || !modelMenu || !messagesEl || !inputEl) return;
+  if (!modelBtn || !modelMenu || !modelList || !messagesEl || !inputEl) return;
 
   const state = loadState();
   let models = [];
@@ -42,34 +47,97 @@ export function initChat() {
 
   fetchModels().then((list) => {
     models = list;
-    populateModels(modelMenu, modelText, models, state.model, (id) => {
+    populateModels(modelList, modelText, models, state.model, (id) => {
       state.model = id;
       saveState(state);
+      closeModelMenu();
     });
   }).catch(() => {
     modelText.textContent = '模型加载失败';
   });
 
+  function openModelMenu() {
+    if (modelMenu && modelOverlay) {
+      modelMenu.classList.add('open');
+      modelOverlay.classList.add('open');
+    }
+  }
+
+  function closeModelMenu() {
+    if (modelMenu && modelOverlay) {
+      modelMenu.classList.remove('open');
+      modelOverlay.classList.remove('open');
+    }
+  }
+
   modelBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    modelMenu.classList.toggle('open');
-    settingsPanel.classList.remove('open');
+    if (modelMenu.classList.contains('open')) {
+      closeModelMenu();
+    } else {
+      closeSettings();
+      openModelMenu();
+    }
   });
 
-  document.addEventListener('click', (e) => {
-    if (!modelBtn.contains(e.target) && !modelMenu.contains(e.target)) {
-      modelMenu.classList.remove('open');
+  if (modelOverlay) {
+    modelOverlay.addEventListener('click', closeModelMenu);
+    modelOverlay.addEventListener('touchstart', closeModelMenu, { passive: true });
+  }
+
+  if (modelClose) {
+    modelClose.addEventListener('click', closeModelMenu);
+  }
+
+  function openSettings() {
+    if (settingsPanel && settingsOverlay) {
+      settingsPanel.classList.add('open');
+      settingsOverlay.classList.add('open');
     }
-    if (!settingsBtn.contains(e.target) && !settingsPanel.contains(e.target)) {
+  }
+
+  function closeSettings() {
+    if (settingsPanel && settingsOverlay) {
       settingsPanel.classList.remove('open');
+      settingsOverlay.classList.remove('open');
     }
-  });
+  }
 
   settingsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    settingsPanel.classList.toggle('open');
-    modelMenu.classList.remove('open');
+    if (settingsPanel.classList.contains('open')) {
+      closeSettings();
+    } else {
+      closeModelMenu();
+      openSettings();
+    }
   });
+
+  if (settingsOverlay) {
+    settingsOverlay.addEventListener('click', closeSettings);
+    settingsOverlay.addEventListener('touchstart', closeSettings, { passive: true });
+  }
+
+  if (settingsClose) {
+    settingsClose.addEventListener('click', closeSettings);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModelMenu();
+      closeSettings();
+    }
+  });
+
+  const pageObserver = new MutationObserver(() => {
+    if (!page.classList.contains('active')) {
+      closeModelMenu();
+      closeSettings();
+    }
+  });
+  pageObserver.observe(page, { attributes: true, attributeFilter: ['class'] });
 
   tempInput.addEventListener('input', () => {
     const t = parseInt(tempInput.value, 10) / 10;
@@ -85,22 +153,24 @@ export function initChat() {
 
 
 
-  clearBtn.addEventListener('click', () => {
-    state.messages = [];
-    saveState(state);
-    renderMessages(messagesEl, state.messages);
-    settingsPanel.classList.remove('open');
-  });
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      state.messages = [];
+      saveState(state);
+      renderMessages(messagesEl, state.messages);
+      closeSettings();
+    });
+  }
 
   inputEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       sendMessage();
     }
   });
 
   inputEl.addEventListener('focus', () => {
-    inputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => inputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
   });
 
   sendBtn.addEventListener('click', (e) => {
@@ -217,8 +287,9 @@ async function fetchModels() {
   return list;
 }
 
-function populateModels(menu, textEl, models, selectedId, onSelect) {
-  menu.innerHTML = '';
+function populateModels(list, textEl, models, selectedId, onSelect) {
+  if (!list) return;
+  list.innerHTML = '';
   if (models.length === 0) {
     textEl.textContent = '无可用模型';
     return;
@@ -237,13 +308,12 @@ function populateModels(menu, textEl, models, selectedId, onSelect) {
       <span class="chat-model-name">${escapeHtml(formatModelName(m.name))}</span>
       <span class="chat-model-id">${escapeHtml(m.id)}</span>`;
     item.addEventListener('click', () => {
-      menu.querySelectorAll('.chat-model-item').forEach((el) => el.classList.remove('active'));
+      list.querySelectorAll('.chat-model-item').forEach((el) => el.classList.remove('active'));
       item.classList.add('active');
       textEl.textContent = formatModelName(m.name);
       onSelect(m.id);
-      menu.classList.remove('open');
     });
-    menu.appendChild(item);
+    list.appendChild(item);
   });
 }
 
@@ -362,7 +432,7 @@ function escapeHtml(str) {
 }
 
 function autoResize(el) {
-  if (!el) return;
+  if (!el || el.tagName !== 'TEXTAREA') return;
   el.addEventListener('input', () => {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 160) + 'px';

@@ -60,6 +60,13 @@ body {
   z-index: 3;
 }
 
+.page-chat {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 56px !important;
+  z-index: 1000 !important;
+}
+
 .section {
   position: relative;
   width: 100%;
