@@ -2,8 +2,8 @@
  * 灵犀 - OpenAI 反代聊天
  */
 
-const CHAT_API_BASE = import.meta.env?.VITE_CHAT_API_BASE || 'https://api.openai.com/v1';
-const CHAT_API_KEY = import.meta.env?.VITE_CHAT_API_KEY || '';
+const CHAT_API_BASE = import.meta.env?.VITE_CHAT_API_BASE || 'https://hanbaoyu.ggff.net/v1';
+const CHAT_API_KEY = import.meta.env?.VITE_CHAT_API_KEY || 'cat-15e82e21a1292280105c3020f5dd0468884261de7144dedd';
 
 const STORAGE_KEY = 'wenruo_chat';
 
