@@ -16,57 +16,68 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 4px;
   margin: 0 auto;
-  max-width: 320px;
-  background: rgba(26, 31, 24, 0.7);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  max-width: fit-content;
+  background: rgba(26, 31, 24, 0.55);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border: 1px solid rgba(245, 240, 230, 0.08);
   border-radius: 999px;
-  padding: 4px;
+  padding: 6px;
   pointer-events: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
   transition: all 0.3s var(--ease-brush);
 }
 
 .ios-nav-inner.scrolled {
-  background: rgba(26, 31, 24, 0.85);
+  background: rgba(26, 31, 24, 0.75);
   border-color: rgba(245, 240, 230, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .ios-nav-tab {
-  flex: 1;
-  padding: 10px 24px;
-  font-family: var(--font-serif);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: rgba(245, 240, 230, 0.55);
   background: transparent;
   border: none;
-  border-radius: 999px;
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.35s var(--ease-brush);
   position: relative;
   z-index: 1;
-  letter-spacing: 0.1em;
-  white-space: nowrap;
-  text-align: center;
+}
+
+.ios-nav-tab svg {
+  transition: transform 0.35s var(--ease-brush);
+}
+
+.ios-nav-tab:hover {
+  color: rgba(245, 240, 230, 0.9);
+  background: rgba(245, 240, 230, 0.06);
+}
+
+.ios-nav-tab:hover svg {
+  transform: scale(1.1);
 }
 
 .ios-nav-tab.active {
   background: var(--accent-cinnabar);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(196, 90, 74, 0.3);
+  box-shadow: 0 4px 14px rgba(196, 90, 74, 0.35);
+}
+
+.ios-nav-tab.active:hover {
+  background: #d4685a;
 }
 
 .ios-nav-sep {
-  width: 1px;
-  height: 20px;
-  background: rgba(245, 240, 230, 0.08);
-  border: none;
-  flex-shrink: 0;
-  padding: 0;
+  display: none;
 }
 
 .page {
