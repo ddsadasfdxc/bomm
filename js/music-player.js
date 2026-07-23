@@ -139,15 +139,24 @@ function closePanel() {
 async function loadPlaylist() {
   musicList.innerHTML = '<div class="music-loading"><div class="ink-spinner"></div><span>墨滴晕开中…</span></div>';
   try {
-    const res = await fetch(`${API_BASE}/playlist/detail?id=${PLAYLIST_ID}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.code !== 200 || !data.playlist) {
-      const msg = data.message || data.msg || 'API error';
+    // 同时请求歌单详情和全部歌曲
+    const [detailRes, tracksRes] = await Promise.all([
+      fetch(`${API_BASE}/playlist/detail?id=${PLAYLIST_ID}`),
+      fetch(`${API_BASE}/playlist/track/all?id=${PLAYLIST_ID}`),
+    ]);
+
+    if (!detailRes.ok) throw new Error(`HTTP ${detailRes.status}`);
+    if (!tracksRes.ok) throw new Error(`HTTP ${tracksRes.status}`);
+
+    const detailData = await detailRes.json();
+    const tracksData = await tracksRes.json();
+
+    if (detailData.code !== 200 || !detailData.playlist) {
+      const msg = detailData.message || detailData.msg || 'API error';
       throw new Error(msg);
     }
 
-    const pl = data.playlist;
+    const pl = detailData.playlist;
     playlistName.textContent = pl.name || '未知歌单';
     songCount.textContent = `${pl.trackCount || 0} 首`;
     if (pl.coverImgUrl) {
@@ -155,48 +164,13 @@ async function loadPlaylist() {
       musicCover.style.display = '';
     }
 
-    songs = pl.tracks || [];
+    songs = (tracksData.songs || tracksData.data || pl.tracks || []);
     renderSongList();
     updatePlayerBar();
-
-    // 尝试加载更多曲目（API 可能只返回部分）
-    if (pl.trackIds && pl.trackIds.length > songs.length) {
-      loadRemainingTracks(pl.trackIds);
-    }
   } catch (err) {
     musicList.innerHTML = `<div class="music-error">✦ ${err.message}，点击重试</div>`;
     musicList.querySelector('.music-error')?.addEventListener('click', loadPlaylist);
   }
-}
-
-async function loadRemainingTracks(trackIds) {
-  try {
-    const ids = trackIds.map(t => t.id);
-    const batchSize = 50;
-    const fetched = [];
-
-    for (let i = 0; i < ids.length; i += batchSize) {
-      const batch = ids.slice(i, i + batchSize);
-      const res = await fetch(`${API_BASE}/song/detail?ids=${batch.join(',')}`);
-      const data = await res.json();
-      if (data.code === 200 && data.songs) {
-        fetched.push(...data.songs);
-      }
-    }
-
-    if (fetched.length > 0) {
-      const existingIds = new Set(songs.map(s => s.id));
-      fetched.forEach(s => { if (!existingIds.has(s.id)) { songs.push(s); existingIds.add(s.id); } });
-
-      const idOrder = {};
-      ids.forEach((id, i) => { idOrder[id] = i; });
-      songs.sort((a, b) => (idOrder[a.id] ?? 9999) - (idOrder[b.id] ?? 9999));
-
-      renderSongList();
-      songCount.textContent = `${songs.length} 首`;
-      updatePlayerBar();
-    }
-  } catch (e) { /* silent fail */ }
 }
 
 async function fetchSongUrl(id) {
