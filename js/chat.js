@@ -99,7 +99,15 @@ export function initChat() {
     }
   });
 
-  sendBtn.addEventListener('click', sendMessage);
+  inputEl.addEventListener('focus', () => {
+    inputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  sendBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sendMessage();
+  });
 
   autoResize(inputEl);
 
