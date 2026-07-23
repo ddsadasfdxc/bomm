@@ -1,12 +1,23 @@
 :root {
   --bg-primary: #0c0f0a;
-  --bg-ink-1: #1a1f18;
-  --bg-ink-2: #2a3328;
+  --bg-ink-1: #151913;
+  --bg-ink-2: #1f251d;
+  --bg-ink-3: #2a3328;
   --text-paper: #f5f0e6;
-  --text-muted: rgba(245, 240, 230, 0.65);
+  --text-primary: #f5f0e6;
+  --text-muted: rgba(245, 240, 230, 0.62);
   --accent-cinnabar: #c45a4a;
+  --accent-cinnabar-light: #d4685a;
   --accent-indigo: #5b7a76;
+  --accent-indigo-light: #6d8f8a;
+  --accent-gold: #b8a07a;
+  --glass-bg: rgba(245, 240, 230, 0.04);
+  --glass-border: rgba(245, 240, 230, 0.08);
+  --glass-border-hover: rgba(245, 240, 230, 0.16);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 16px 48px rgba(0, 0, 0, 0.35);
   --font-serif: 'Noto Serif SC', 'Songti SC', serif;
   --font-display: 'Cinzel', 'Noto Serif SC', serif;
   --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk: cubic-bezier(0.16, 1, 0.3, 1);
 }

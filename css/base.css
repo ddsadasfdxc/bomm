@@ -27,8 +27,8 @@ body {
   background-position: center;
   background-size: cover;
   opacity: 0;
-  transition: opacity 1.6s ease;
-  filter: brightness(0.45) saturate(0.85);
+  transition: opacity 1.8s var(--ease-silk);
+  filter: brightness(0.42) saturate(0.82) contrast(1.05);
 }
 
 #bg-image.loaded,
@@ -37,7 +37,20 @@ body {
 }
 
 #bg-image.fallback {
-  background-image: radial-gradient(ellipse at center, #1a1f18 0%, #0c0f0a 100%);
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(196, 90, 74, 0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 80%, rgba(91, 122, 118, 0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at center, #1a1f18 0%, #0c0f0a 100%);
+}
+
+#bg-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(12, 15, 10, 0.2) 0%, transparent 30%, transparent 70%, rgba(12, 15, 10, 0.35) 100%),
+    radial-gradient(ellipse at 50% 0%, rgba(245, 240, 230, 0.03) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 #webgl-bg {
@@ -63,7 +76,7 @@ body {
 .page-chat {
   position: fixed !important;
   inset: 0 !important;
-  top: 56px !important;
+  top: 58px !important;
   z-index: 1000 !important;
 }
 
@@ -75,6 +88,12 @@ body {
   align-items: center;
   justify-content: center;
   padding: 4rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .page-chat {
+    top: 52px !important;
+  }
 }
 
 .brush-text {

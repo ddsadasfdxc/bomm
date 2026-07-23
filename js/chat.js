@@ -37,6 +37,9 @@ export function initChat() {
   const clearBtn = document.getElementById('chatClear');
   const clearHeaderBtn = document.getElementById('chatClearHeader');
   const exportBtn = document.getElementById('chatExport');
+  const welcomePanel = document.getElementById('chatWelcomePanel');
+  const welcomeOverlay = document.getElementById('chatWelcomeOverlay');
+  const welcomeClose = document.getElementById('chatWelcomeClose');
 
   if (!modelBtn || !modelMenu || !modelList || !messagesEl || !inputEl) return;
 
@@ -304,6 +307,45 @@ export function initChat() {
 
   function updateTempLabel(t) {
     tempVal.textContent = t.toFixed(1);
+  }
+
+  function openWelcome() {
+    if (localStorage.getItem('wenruo_chat_welcome') === '1') return;
+    if (welcomePanel && welcomeOverlay) {
+      welcomePanel.classList.add('open');
+      welcomeOverlay.classList.add('open');
+    }
+  }
+
+  function closeWelcome() {
+    if (welcomePanel && welcomeOverlay) {
+      welcomePanel.classList.remove('open');
+      welcomeOverlay.classList.remove('open');
+    }
+    try {
+      localStorage.setItem('wenruo_chat_welcome', '1');
+    } catch (e) {}
+  }
+
+  if (welcomeClose) {
+    welcomeClose.addEventListener('click', closeWelcome);
+  }
+
+  if (welcomeOverlay) {
+    welcomeOverlay.addEventListener('click', closeWelcome);
+  }
+
+  const welcomeObserver = new MutationObserver(() => {
+    if (page.classList.contains('active')) {
+      openWelcome();
+    } else {
+      closeWelcome();
+    }
+  });
+  welcomeObserver.observe(page, { attributes: true, attributeFilter: ['class'] });
+
+  if (page.classList.contains('active')) {
+    openWelcome();
   }
 }
 
