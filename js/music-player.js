@@ -142,7 +142,10 @@ async function loadPlaylist() {
     const res = await fetch(`${API_BASE}/playlist/detail?id=${PLAYLIST_ID}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (data.code !== 200 || !data.playlist) throw new Error('API error');
+    if (data.code !== 200 || !data.playlist) {
+      const msg = data.message || data.msg || 'API error';
+      throw new Error(msg);
+    }
 
     const pl = data.playlist;
     playlistName.textContent = pl.name || '未知歌单';
@@ -161,7 +164,7 @@ async function loadPlaylist() {
       loadRemainingTracks(pl.trackIds);
     }
   } catch (err) {
-    musicList.innerHTML = '<div class="music-error">✦ 加载失败，点击重试</div>';
+    musicList.innerHTML = `<div class="music-error">✦ ${err.message}，点击重试</div>`;
     musicList.querySelector('.music-error')?.addEventListener('click', loadPlaylist);
   }
 }
