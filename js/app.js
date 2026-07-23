@@ -1,6 +1,7 @@
 import { InkParticles } from './effects/ink-particles.js';
 import { CloudLayer } from './effects/clouds.js';
 import { CursorAura } from './effects/cursor-aura.js';
+import { loadBackgroundImage } from './effects/bg-image.js';
 import { initIntroScene } from './scenes/intro-scene.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
@@ -11,6 +12,8 @@ import { initMessageBoard, initContactForm, trackVisit, loadStats } from './soci
 import * as THREE from 'three';
 
 export async function initApp() {
+  loadBackgroundImage(document.getElementById('bg-image'));
+
   const content = await loadContent();
 
   document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;

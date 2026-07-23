@@ -17,6 +17,29 @@ body {
   background: var(--bg-primary);
 }
 
+#bg-image {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg-primary);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+  filter: brightness(0.45) saturate(0.85);
+}
+
+#bg-image.loaded,
+#bg-image.fallback {
+  opacity: 1;
+}
+
+#bg-image.fallback {
+  background-image: radial-gradient(ellipse at center, #1a1f18 0%, #0c0f0a 100%);
+}
+
 #webgl-bg {
   position: fixed;
   inset: 0;
