@@ -2,9 +2,7 @@ import { z } from "zod";
 
 export const CHAT_API_BASE =
   process.env.NEXT_PUBLIC_CHAT_API_BASE || "https://hanbaoyu.ggff.net/v1";
-export const CHAT_API_KEY =
-  process.env.NEXT_PUBLIC_CHAT_API_KEY ||
-  "cat-15e82e21a1292280105c3020f5dd0468884261de7144dedd";
+export const CHAT_API_KEY = process.env.NEXT_PUBLIC_CHAT_API_KEY;
 
 export const OC_SYSTEM_PROMPT =
   "你是温若，一位清冷淡雅的剑修。请用简短、优美、古风的方式回答。";
