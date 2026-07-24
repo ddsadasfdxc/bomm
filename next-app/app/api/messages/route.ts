@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
+import { redis } from "@/lib/redis";
 
 const KEY = "messages";
 const MAX_MESSAGES = 100;
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
+}
 
 export async function GET() {
   try {
@@ -23,7 +22,10 @@ export async function GET() {
       .filter(Boolean);
     return NextResponse.json({ messages });
   } catch (e) {
-    return NextResponse.json({ error: "Failed to load messages" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load messages" },
+      { status: 500 }
+    );
   }
 }
 
@@ -34,10 +36,16 @@ export async function POST(req: NextRequest) {
     const message = String(body.message || "").trim();
 
     if (!name || !message) {
-      return NextResponse.json({ error: "Name and message are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Name and message are required" },
+        { status: 400 }
+      );
     }
     if (name.length > 30 || message.length > 500) {
-      return NextResponse.json({ error: "Content too long" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Content too long" },
+        { status: 400 }
+      );
     }
 
     const entry = {
