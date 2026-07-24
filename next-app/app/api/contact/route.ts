@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
+import { redis } from "@/lib/redis";
 
 const KEY = "contacts";
-const MAX_CONTACTS = 200;
+const MAX_CONTACTS = 100;
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
 }
 
 export async function POST(req: NextRequest) {
@@ -22,13 +21,13 @@ export async function POST(req: NextRequest) {
     const message = String(body.message || "").trim();
 
     if (!name || !email || !message) {
-      return NextResponse.json({ error: "Name, email and message are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Name, email and message are required" },
+        { status: 400 }
+      );
     }
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
-    }
-    if (name.length > 30 || email.length > 100 || subject.length > 100 || message.length > 1000) {
-      return NextResponse.json({ error: "Content too long" }, { status: 400 });
     }
 
     const entry = {
@@ -36,13 +35,13 @@ export async function POST(req: NextRequest) {
       name: name.slice(0, 30),
       email: email.slice(0, 100),
       subject: subject.slice(0, 100),
-      message: message.slice(0, 1000),
+      message: message.slice(0, 2000),
       time: new Date().toISOString(),
     };
 
     await redis.lpush(KEY, JSON.stringify(entry));
     await redis.ltrim(KEY, 0, MAX_CONTACTS - 1);
-    return NextResponse.json({ success: true, entry });
+    return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
