@@ -7,26 +7,173 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-CxnzZPa2.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CwLpmsl2.css">
+  <script type="module" crossorigin src="./assets/index-DRN1zzts.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DeC7iw3m.css">
 </head>
 <body>
+  <div id="bg-image" aria-hidden="true"></div>
   <div id="webgl-bg"></div>
   <canvas id="cursor-aura"></canvas>
 
+  <nav class="ios-nav">
+    <div class="ios-nav-inner">
+      <button class="ios-nav-tab active" data-page="home" aria-label="首页" title="首页">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3l8 7h-3v9h-5v-6H9v6H4v-9H1z"/></svg>
+      </button>
+      <button class="ios-nav-tab" data-page="explore" aria-label="探索" title="探索">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+      </button>
+      <button class="ios-nav-tab" data-page="social" aria-label="互动" title="互动">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </button>
+      <button class="ios-nav-tab" data-page="chat" aria-label="聊天" title="聊天">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+      </button>
+    </div>
+  </nav>
+
   <main id="scroll-container">
-    <section id="intro" class="section section-intro">
-      <div class="intro-content">
-        <svg class="intro-title" viewBox="0 0 400 160" aria-label="温若">
-          <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen">温</text>
-          <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo">若</text>
-        </svg>
-        <p class="intro-subtitle">散修 · 剑修</p>
-        <p class="intro-quote">一缕清风，半卷残云。</p>
-        <p class="intro-desc">技术测试站 · 个人 OC 站</p>
-      </div>
-    </section>
+    <div class="page page-home active" id="page-home">
+      <section id="intro" class="section section-intro">
+        <div class="intro-content">
+          <svg class="intro-title" viewBox="0 0 400 160" aria-label="温若">
+            <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen">温</text>
+            <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo">若</text>
+          </svg>
+          <p class="intro-subtitle">散修 · 剑修</p>
+          <p class="intro-quote">一缕清风，半卷残云。</p>
+          <p class="intro-desc">技术测试站 · 个人 OC 站</p>
+          <div class="stats-bar" id="statsBarHome" style="min-height:60px;margin-top:24px">加载中…</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="page page-explore" id="page-explore">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">探索</h2>
+          <p class="explore-desc">笔墨之间，趣味无穷</p>
+        </div>
+        <div class="explore-grid" id="exploreGrid">
+          <div class="note-card" data-tool="gmail-alias">
+            <div class="note-card-icon">📧</div>
+            <h3>Gmail 别名生成器</h3>
+            <p>利用点号和加号生成无限邮箱别名</p>
+            <div class="note-card-brush"></div>
+          </div>
+        </div>
+        <div class="explore-header" style="margin-top:48px">
+          <h2 class="explore-title">我的笔记</h2>
+          <p class="explore-desc">OC 手记，随想随记</p>
+        </div>
+        <div class="explore-grid" id="notesGrid"></div>
+        <div class="stats-bar" id="statsBar" style="min-height:60px">加载中…</div>
+      </section>
+    </div>
+
+    <div class="page page-social" id="page-social">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">互动</h2>
+          <p class="explore-desc">留言 · 联系 · 皆可在此</p>
+        </div>
+        <div class="social-layout">
+          <div class="board-container" id="messageBoard"></div>
+          <form class="contact-form" id="contactForm">
+            <div class="contact-form-title">写信给我</div>
+            <input type="text" id="contactName" placeholder="你的名字" required>
+            <input type="email" id="contactEmail" placeholder="你的邮箱" required>
+            <input type="text" id="contactSubject" placeholder="主题">
+            <textarea id="contactMessage" placeholder="想说的话…" rows="5" required></textarea>
+            <button type="submit" class="contact-submit">发送</button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <div class="page page-chat" id="page-chat">
+      <section class="chat-area">
+        <div class="chat-header">
+          <div class="chat-title">灵犀</div>
+          <div class="chat-model-row">
+            <button id="chatModelBtn" class="chat-model-btn">
+              <span id="chatModelText">选择模型</span>
+              <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+            </button>
+            <button id="chatExport" class="chat-icon-btn" title="导出对话" aria-label="导出对话">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </button>
+            <button id="chatClearHeader" class="chat-icon-btn" title="清空对话" aria-label="清空对话">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+            <button id="chatSettings" class="chat-icon-btn" title="设置" aria-label="设置">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84a.484.484 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.27.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <div class="chat-input-wrap">
+            <input type="text" id="chatInput" placeholder="向温若提问…" autocomplete="off" inputmode="text">
+            <button id="chatSend" class="chat-send" aria-label="发送">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+          </div>
+          <div class="chat-hint">AI 生成内容仅供参考</div>
+        </div>
+      </section>
+    </div>
   </main>
+
+  <!-- Chat modals: placed at body level to escape any page stacking context -->
+  <div class="chat-model-overlay" id="chatModelOverlay"></div>
+  <div class="chat-model-menu" id="chatModelMenu" role="dialog" aria-modal="true" aria-label="选择模型">
+    <div class="chat-model-menu-hd">
+      <span class="chat-model-menu-title">选择模型</span>
+      <button class="chat-model-close" id="chatModelClose" aria-label="关闭">×</button>
+    </div>
+    <div class="chat-model-list" id="chatModelList"></div>
+  </div>
+
+  <div class="chat-welcome-overlay" id="chatWelcomeOverlay"></div>
+  <div class="chat-welcome-panel" id="chatWelcomePanel" role="dialog" aria-modal="true" aria-label="欢迎">
+    <div class="chat-welcome-content">
+      <div class="chat-welcome-icon">✦</div>
+      <h3 class="chat-welcome-title">灵犀初启</h3>
+      <p class="chat-welcome-text">欢迎体验业界最前沿的 LLM 模型，你可以对话、调试和导出聊天记录。</p>
+      <button id="chatWelcomeClose" class="chat-welcome-btn">开始体验</button>
+    </div>
+  </div>
+
+  <div class="chat-settings-overlay" id="chatSettingsOverlay"></div>
+  <div class="chat-settings-panel" id="chatSettingsPanel" role="dialog" aria-modal="true" aria-label="聊天设置">
+    <div class="chat-settings-hd">
+      <span class="chat-settings-title">设置</span>
+      <button class="chat-settings-close" id="chatSettingsClose" aria-label="关闭">×</button>
+    </div>
+    <div class="chat-settings-body">
+      <div class="settings-row settings-row-inline">
+        <label for="chatOcMode" class="settings-toggle-label">
+          <span>以 OC 人格对话</span>
+          <span class="settings-toggle">
+            <input type="checkbox" id="chatOcMode" checked>
+            <span class="settings-toggle-track"></span>
+          </span>
+        </label>
+        <p class="settings-hint">开启后温若会以清冷淡雅剑修的身份回答，关闭后使用默认助手模式。</p>
+      </div>
+      <div class="settings-row">
+        <label for="chatTemp">温度：温度越高，回答越有创意</label>
+        <input type="range" id="chatTemp" min="0" max="20" value="7">
+        <span id="chatTempVal">0.7</span>
+      </div>
+      <div class="settings-row">
+        <label for="chatMaxTokens">最大长度</label>
+        <input type="number" id="chatMaxTokens" value="2048" min="1" max="8192">
+      </div>
+      <button id="chatClear" class="chat-secondary-btn">清空对话</button>
+    </div>
+  </div>
 
 </body>
 </html>
