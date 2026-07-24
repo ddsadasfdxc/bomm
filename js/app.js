@@ -65,7 +65,6 @@ export async function initApp() {
   initChat();
   trackVisit();
   loadStats(document.getElementById('statsBar'));
-  loadStats(document.getElementById('statsBarHome'));
 
   return () => {
     if (animationId) cancelAnimationFrame(animationId);
