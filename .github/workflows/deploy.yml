@@ -2,19 +2,17 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
-jobs: 
+
+jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,9 +23,9 @@ jobs:
         run: npm run build
         env:
           VITE_CHAT_API_KEY: ${{ secrets.VITE_CHAT_API_KEY }}
-      - uses: actions/configure-pages@v4
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
