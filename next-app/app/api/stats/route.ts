@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
+import { redis } from "@/lib/redis";
 
 function getClientIp(req: NextRequest) {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -19,6 +14,10 @@ function hash(str: string) {
     h |= 0;
   }
   return String(h);
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204 });
 }
 
 export async function GET() {
