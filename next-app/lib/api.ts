@@ -1,0 +1,1 @@
+export const API_BASE = "https://next-app-one-navy.vercel.app";

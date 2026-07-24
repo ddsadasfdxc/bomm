@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Mail } from "lucide-react";
+import { API_BASE } from "../lib/api";
 
 interface Note {
   id: string;
@@ -30,7 +31,7 @@ export default function ExploreSection() {
       .then((data) => setNotes(data.notes || []))
       .catch(() => setNotes([]));
 
-    fetch("/api/stats")
+    fetch(`${API_BASE}/api/stats`)
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch(() => setStatsError(true));

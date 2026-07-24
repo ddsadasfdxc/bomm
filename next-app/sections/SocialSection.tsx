@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { API_BASE } from "../lib/api";
 
 interface Message {
   id: string;
@@ -33,7 +34,7 @@ export default function SocialSection() {
     setLoading(true);
     setError(false);
     try {
-      const res = await fetch("/api/messages");
+      const res = await fetch(`${API_BASE}/api/messages`);
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
       setMessages(data.messages || []);
@@ -55,7 +56,7 @@ export default function SocialSection() {
     if (!n || !m) return;
     setSubmitting(true);
     try {
-      const res = await fetch("/api/messages", {
+      const res = await fetch(`${API_BASE}/api/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: n, message: m }),
@@ -75,7 +76,7 @@ export default function SocialSection() {
     e.preventDefault();
     setCSubmitting(true);
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch(`${API_BASE}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
