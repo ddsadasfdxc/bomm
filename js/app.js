@@ -11,6 +11,7 @@ import { openGmailAlias } from './tools.js';
 import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
 import { initChat } from './chat.js';
 import { initPath } from './path.js';
+import { initFortune } from './fortune.js';
 import { initScrollReveal, initTilt, initProgressInk } from './utils/scroll-reveal.js';
 import { hideInkLoader } from './utils/ink-loader.js';
 import * as THREE from 'three';
@@ -74,6 +75,8 @@ export async function initApp() {
   initContactForm();
   initChat();
   initPath();
+  initFortune();
+  initCardGlow();
   initScrollReveal();
   initTilt();
   initProgressInk();
@@ -145,4 +148,15 @@ function initTools() {
   if (card) {
     card.addEventListener('click', () => openGmailAlias());
   }
+}
+
+/* 卡片光斑跟随鼠标 */
+function initCardGlow() {
+  document.querySelectorAll('.note-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+      card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+    });
+  });
 }
