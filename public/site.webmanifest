@@ -1,0 +1,17 @@
+{
+  "name": "温若 · 个人小站",
+  "short_name": "温若",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0f0a",
+  "theme_color": "#0c0f0a",
+  "description": "温若的个人 OC 站 · 散修剑修",
+  "icons": [
+    {
+      "src": "/manifest-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
