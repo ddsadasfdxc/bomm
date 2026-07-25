@@ -1,0 +1,107 @@
+/* 主题切换、返回顶部、留言骨架屏、引言过渡 */
+
+html, body, .section-card, .intro-desc, .ios-nav-inner, .explore-area, .note-card, .chat-area, .contact-form, .board-container {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 75;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  color: var(--text-paper);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-silk), background 0.3s, border-color 0.3s;
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg) scale(1.05);
+  border-color: var(--glass-border-hover);
+  background: rgba(245, 240, 230, 0.08);
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1.5rem;
+  z-index: 70;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  color: var(--text-paper);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.35s, transform 0.35s var(--ease-silk), background 0.3s;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top svg {
+  width: 20px;
+  height: 20px;
+}
+
+.back-to-top:hover {
+  background: rgba(245, 240, 230, 0.1);
+}
+
+.intro-quote {
+  transition: opacity 0.5s var(--ease-silk);
+}
+
+/* 留言板骨架屏 */
+.msg-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.25rem;
+}
+
+.msg-skeleton-item {
+  height: 76px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(245,240,230,0.05) 25%, rgba(245,240,230,0.12) 50%, rgba(245,240,230,0.05) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-flow 1.4s infinite ease-in-out;
+}
+
+@keyframes skeleton-flow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 640px) {
+  .theme-toggle {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+  .back-to-top {
+    right: 0.75rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
