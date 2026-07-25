@@ -1,0 +1,129 @@
+/* 大千世界 —— 全屏银河观想 */
+
+.cosmos-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: #03040c;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s var(--ease-silk), visibility 0.9s;
+}
+
+.cosmos-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 暗角，大师级收尾 */
+.cosmos-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 46%, rgba(2, 3, 10, 0.55) 100%),
+    linear-gradient(180deg, rgba(2,3,10,0.35) 0%, transparent 18%, transparent 82%, rgba(2,3,10,0.45) 100%);
+}
+
+.cosmos-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+.cosmos-canvas:active { cursor: grabbing; }
+
+.cosmos-ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cosmos-title {
+  position: absolute;
+  top: 13vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 6.5vw, 4.4rem);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: #f2eee6;
+  text-shadow:
+    0 0 22px rgba(150, 170, 255, 0.5),
+    0 0 64px rgba(255, 190, 130, 0.3);
+  animation: cosmos-breathe 7s ease-in-out infinite;
+  transition: opacity 1.2s var(--ease-silk);
+  white-space: nowrap;
+}
+
+.cosmos-sub {
+  position: absolute;
+  top: calc(13vh + clamp(3.4rem, 8vw, 6.2rem));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.88rem;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: rgba(242, 238, 230, 0.55);
+  transition: opacity 1.2s var(--ease-silk);
+  white-space: nowrap;
+}
+
+.cosmos-hint {
+  position: absolute;
+  bottom: 7vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  color: rgba(242, 238, 230, 0.38);
+  transition: opacity 1.2s var(--ease-silk);
+  white-space: nowrap;
+}
+
+.cosmos-ui.faded .cosmos-title,
+.cosmos-ui.faded .cosmos-sub,
+.cosmos-ui.faded .cosmos-hint {
+  opacity: 0;
+}
+
+.cosmos-close {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 11px 38px;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: #f2eee6;
+  background: rgba(242, 238, 230, 0.04);
+  border: 1px solid rgba(242, 238, 230, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s var(--ease-silk);
+}
+
+.cosmos-close:hover {
+  border-color: rgba(255, 214, 160, 0.7);
+  color: #ffd6a0;
+  box-shadow: 0 0 26px rgba(255, 190, 130, 0.28);
+}
+
+@keyframes cosmos-breathe {
+  0%, 100% { text-shadow: 0 0 22px rgba(150,170,255,0.5), 0 0 64px rgba(255,190,130,0.3); }
+  50%      { text-shadow: 0 0 34px rgba(170,190,255,0.7), 0 0 90px rgba(255,190,130,0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-title { animation: none; }
+}
