@@ -1,0 +1,190 @@
+
+/* ============================================================
+   FREE-CREATE ROUND 2 —— 剑意创意增强层
+   ============================================================ */
+
+/* ---- 1. 探索页工具卡：朱砂剑印 hover ---- */
+.note-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+}
+.note-card::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+    rgba(196, 90, 74, 0.16), transparent 42%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-silk);
+  z-index: -1;
+  pointer-events: none;
+}
+.note-card:hover::before { opacity: 1; }
+.note-card:hover .note-card-brush {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.note-card-brush {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent-cinnabar), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-brush);
+}
+
+/* ---- 2. 经脉连线（探索卡之间的呼吸线） ---- */
+.meridian-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+/* ---- 3. 留言条：入场飞墨 ---- */
+.msg-item {
+  animation: msg-ink-in 0.55s var(--ease-silk) backwards;
+  border-left: 2px solid transparent;
+  transition: border-color 0.3s, transform 0.3s var(--ease-silk), box-shadow 0.3s;
+}
+.msg-item:hover {
+  border-left-color: var(--accent-cinnabar);
+  transform: translateX(4px);
+}
+@keyframes msg-ink-in {
+  from { opacity: 0; transform: translateY(14px) rotate(-0.4deg); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); filter: blur(0); }
+}
+
+/* ---- 4. 写信表单：聚焦剑光 ---- */
+.contact-form input,
+.contact-form textarea {
+  transition: border-color 0.3s, box-shadow 0.35s var(--ease-silk), transform 0.25s;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-cinnabar-light) !important;
+  box-shadow: 0 0 0 3px rgba(196, 90, 74, 0.14), 0 6px 22px rgba(0,0,0,0.25);
+  transform: translateY(-1px);
+}
+.contact-submit {
+  position: relative;
+  overflow: hidden;
+}
+.contact-submit::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 60%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s var(--ease-silk);
+}
+.contact-submit:hover::after { left: 120%; }
+
+/* ---- 5. 灵签（新栏目） ---- */
+.fortune-section { margin-top: 56px; }
+.fortune-box {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 44px 32px 38px;
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184, 160, 122, 0.07), transparent 60%),
+    var(--glass-bg);
+  backdrop-filter: blur(12px);
+}
+.fortune-stick {
+  font-size: 2rem;
+  display: inline-block;
+  animation: stick-idle 3.2s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes stick-idle {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg) translateY(-3px); }
+}
+.fortune-box.shaking .fortune-stick {
+  animation: stick-shake 0.5s ease-in-out infinite;
+}
+@keyframes stick-shake {
+  0%, 100% { transform: rotate(-9deg) translateY(0); }
+  25% { transform: rotate(8deg) translateY(-4px); }
+  75% { transform: rotate(-7deg) translateY(2px); }
+}
+.fortune-result {
+  min-height: 5.6em;
+  margin-top: 20px;
+  font-size: 1.06rem;
+  line-height: 1.9;
+  color: var(--text-paper);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s var(--ease-silk), transform 0.6s var(--ease-silk);
+}
+.fortune-result.show { opacity: 1; transform: translateY(0); }
+.fortune-name {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: var(--accent-gold);
+}
+.fortune-btn {
+  margin-top: 22px;
+  padding: 10px 30px;
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.24em;
+  color: var(--text-paper);
+  background: transparent;
+  border: 1px solid var(--accent-gold);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.35s var(--ease-silk);
+}
+.fortune-btn:hover {
+  background: rgba(184, 160, 122, 0.12);
+  box-shadow: 0 0 18px rgba(184, 160, 122, 0.25);
+  letter-spacing: 0.3em;
+}
+.fortune-btn:disabled { opacity: 0.4; cursor: wait; }
+
+/* ---- 6. 页脚印记 ---- */
+.site-seal {
+  margin: 90px auto 60px;
+  text-align: center;
+  opacity: 0.75;
+}
+.site-seal svg { width: 54px; height: 54px; }
+.site-seal p {
+  margin-top: 10px;
+  font-size: 0.72rem;
+  letter-spacing: 0.42em;
+  color: var(--text-muted);
+}
+
+/* ---- 7. 墨晕页面切换（增强版 reveal） ---- */
+.page.active .section-card,
+.page.active .explore-header {
+  animation: card-ink-rise 0.7s var(--ease-silk) backwards;
+}
+.page.active .section-card:nth-of-type(2) { animation-delay: 0.08s; }
+
+@keyframes card-ink-rise {
+  from { opacity: 0; transform: translateY(26px); filter: blur(6px) saturate(0.6); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0) saturate(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fortune-stick, .msg-item, .page.active .section-card { animation: none !important; }
+}
