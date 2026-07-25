@@ -153,6 +153,269 @@ function buildGalaxy() {
   return { group, nebulas, brightMat: bmat };
 }
 
+
+/* ---- 太阳系：太阳 / 地球 / 月球 ---- */
+
+function makeSunTexture() {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(s/2, s/2, s*0.08, s/2, s/2, s/2);
+  g.addColorStop(0, '#fffbe8');
+  g.addColorStop(0.25, '#ffe9a8');
+  g.addColorStop(0.5, '#ffbe5a');
+  g.addColorStop(0.78, '#f07d2e');
+  g.addColorStop(1, '#8a2f08');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  // 表面米粒组织噪点
+  for (let i = 0; i < 900; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.pow(Math.random(), 0.6) * s * 0.48;
+    const x = s/2 + Math.cos(a) * r;
+    const y = s/2 + Math.sin(a) * r;
+    const rad = 1 + Math.random() * 3.2;
+    const bright = Math.random() > 0.5;
+    ctx.beginPath();
+    ctx.fillStyle = bright ? 'rgba(255,244,200,0.16)' : 'rgba(160,60,10,0.14)';
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+function makeCoronaTexture() {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+  g.addColorStop(0, 'rgba(255,236,180,0.85)');
+  g.addColorStop(0.22, 'rgba(255,190,110,0.42)');
+  g.addColorStop(0.5, 'rgba(255,140,60,0.14)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  // 日冕射流
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2 + Math.random() * 0.3;
+    const len = s * (0.32 + Math.random() * 0.16);
+    const x0 = s/2 + Math.cos(a) * s * 0.14;
+    const y0 = s/2 + Math.sin(a) * s * 0.14;
+    const x1 = s/2 + Math.cos(a) * len;
+    const y1 = s/2 + Math.sin(a) * len;
+    const lg = ctx.createLinearGradient(x0, y0, x1, y1);
+    lg.addColorStop(0, 'rgba(255,210,140,0.28)');
+    lg.addColorStop(1, 'rgba(255,140,60,0)');
+    ctx.strokeStyle = lg;
+    ctx.lineWidth = 2.5 + Math.random() * 3.5;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+function makeEarthTexture() {
+  const w = 512, h = 256;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  // 海洋：深浅渐变
+  const og = ctx.createLinearGradient(0, 0, 0, h);
+  og.addColorStop(0, '#16324e');
+  og.addColorStop(0.5, '#0d3d63');
+  og.addColorStop(1, '#122c46');
+  ctx.fillStyle = og;
+  ctx.fillRect(0, 0, w, h);
+  // 大陆斑块（多边形团簇）
+  const continents = [
+    [0.16, 0.32, 0.16], [0.34, 0.58, 0.11], [0.52, 0.26, 0.14],
+    [0.66, 0.48, 0.12], [0.82, 0.30, 0.10], [0.44, 0.74, 0.09], [0.12, 0.68, 0.08],
+  ];
+  continents.forEach(([cx, cy, size]) => {
+    for (let b = 0; b < 26; b++) {
+      const a = Math.random() * Math.PI * 2;
+      const rr = Math.pow(Math.random(), 0.7) * size * w;
+      const x = (cx * w + Math.cos(a) * rr + w) % w;
+      const y = Math.min(h - 6, Math.max(6, cy * h + Math.sin(a) * rr * 0.6));
+      const rad = 4 + Math.random() * 14;
+      const land = ctx.createRadialGradient(x, y, 0, x, y, rad);
+      const hue = Math.random();
+      const col = hue > 0.72 ? 'rgba(196,168,120,' : (hue > 0.3 ? 'rgba(84,128,72,' : 'rgba(60,102,60,');
+      land.addColorStop(0, col + '0.95)');
+      land.addColorStop(1, col + '0)');
+      ctx.fillStyle = land;
+      ctx.beginPath();
+      ctx.arc(x, y, rad, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  // 极地冰盖
+  const cap = ctx.createLinearGradient(0, 0, 0, h);
+  cap.addColorStop(0, 'rgba(235,244,250,0.95)');
+  cap.addColorStop(0.09, 'rgba(235,244,250,0)');
+  cap.addColorStop(0.91, 'rgba(235,244,250,0)');
+  cap.addColorStop(1, 'rgba(235,244,250,0.95)');
+  ctx.fillStyle = cap;
+  ctx.fillRect(0, 0, w, h);
+  return new THREE.CanvasTexture(c);
+}
+
+function makeCloudTexture() {
+  const w = 512, h = 256;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  for (let i = 0; i < 90; i++) {
+    const x = Math.random() * w;
+    const y = h * 0.12 + Math.random() * h * 0.76;
+    const cw = 20 + Math.random() * 70;
+    const ch = 6 + Math.random() * 16;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, cw);
+    g.addColorStop(0, 'rgba(255,255,255,0.5)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, ch / cw);
+    ctx.beginPath();
+    ctx.arc(0, 0, cw, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+function makeMoonTexture() {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(s/2, s/2, s*0.05, s/2, s/2, s/2);
+  g.addColorStop(0, '#d9d4cd');
+  g.addColorStop(0.7, '#b3ada5');
+  g.addColorStop(1, '#7d7873');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  // 环形山
+  for (let i = 0; i < 120; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.pow(Math.random(), 0.5) * s * 0.46;
+    const x = s/2 + Math.cos(a) * r;
+    const y = s/2 + Math.sin(a) * r;
+    const rad = 1.5 + Math.random() * 7;
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(70,66,62,0.35)';
+    ctx.arc(x, y, rad, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(230,226,220,0.28)';
+    ctx.arc(x - rad * 0.25, y - rad * 0.25, rad * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+function buildSolarSystem() {
+  const sys = new THREE.Group();   // 跟随银河慢转
+  const orbitR = 4.6;
+  sys.position.set(orbitR, 0.55, 0);
+
+  const local = new THREE.Group(); // 太阳系自身（公转演示）
+  sys.add(local);
+
+  // --- 太阳 ---
+  const sunR = 0.6;
+  const sun = new THREE.Mesh(
+    new THREE.SphereGeometry(sunR, 48, 32),
+    new THREE.MeshBasicMaterial({ map: makeSunTexture() })
+  );
+  local.add(sun);
+
+  const corona = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: makeCoronaTexture(),
+    transparent: true, opacity: 0.95,
+    depthWrite: false, blending: THREE.AdditiveBlending,
+  }));
+  corona.scale.set(4.4, 4.4, 1);
+  local.add(corona);
+
+  const sunLight = new THREE.PointLight(0xffe6b8, 90, 30, 1.6);
+  local.add(sunLight);
+
+  // --- 地球（含月球） ---
+  const earthOrbit = new THREE.Group();
+  local.add(earthOrbit);
+
+  const earthPivot = new THREE.Group();
+  earthPivot.position.set(1.75, 0, 0);
+  earthOrbit.add(earthPivot);
+
+  const earthR = 0.22;
+  const earth = new THREE.Mesh(
+    new THREE.SphereGeometry(earthR, 48, 32),
+    new THREE.MeshPhongMaterial({
+      map: makeEarthTexture(),
+      specular: new THREE.Color(0x2a4a66),
+      shininess: 14,
+    })
+  );
+  earth.rotation.z = 0.41; // 地轴倾角 ~23.5°
+  earthPivot.add(earth);
+
+  const clouds = new THREE.Mesh(
+    new THREE.SphereGeometry(earthR * 1.035, 48, 32),
+    new THREE.MeshLambertMaterial({
+      map: makeCloudTexture(),
+      transparent: true, opacity: 0.55, depthWrite: false,
+    })
+  );
+  clouds.rotation.z = 0.41;
+  earthPivot.add(clouds);
+
+  // 地球大气边缘辉光
+  const atmo = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: makeGlowTexture('rgba(120,180,255,0.55)', 'rgba(60,120,255,0.35)'),
+    transparent: true, opacity: 0.5,
+    depthWrite: false, blending: THREE.AdditiveBlending,
+  }));
+  atmo.scale.set(earthR * 3.4, earthR * 3.4, 1);
+  earthPivot.add(atmo);
+
+  // --- 月球 ---
+  const moonPivot = new THREE.Group();
+  earthPivot.add(moonPivot);
+  const moon = new THREE.Mesh(
+    new THREE.SphereGeometry(0.062, 32, 24),
+    new THREE.MeshPhongMaterial({ map: makeMoonTexture(), shininess: 4 })
+  );
+  moon.position.set(0.48, 0, 0);
+  moonPivot.add(moon);
+
+  // 地球公转轨道线
+  const orbitPts = [];
+  for (let i = 0; i <= 128; i++) {
+    const a = (i / 128) * Math.PI * 2;
+    orbitPts.push(new THREE.Vector3(Math.cos(a) * 1.75, 0, Math.sin(a) * 1.75));
+  }
+  const orbitLine = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(orbitPts),
+    new THREE.LineBasicMaterial({ color: 0x8899bb, transparent: true, opacity: 0.28 })
+  );
+  local.add(orbitLine);
+
+  // 环境补光，避免背光面死黑
+  const amb = new THREE.AmbientLight(0x334455, 1.6);
+  local.add(amb);
+
+  return { sys, sun, corona, sunLight, earthOrbit, earthPivot, earth, clouds, moonPivot, moon };
+}
+
 function buildBackgroundStars() {
   const COUNT = 2500;
   const pos = new Float32Array(COUNT * 3);
@@ -203,6 +466,9 @@ function buildCosmos() {
   scene.add(group);
   scene.add(buildBackgroundStars());
 
+  const solar = buildSolarSystem();
+  scene.add(solar.sys);
+
   const st = {
     overlay, ui, renderer, scene, camera,
     running: false,
@@ -240,6 +506,19 @@ function buildCosmos() {
       group.rotation.y += dt * 0.02;
       nebulas.forEach((n, i) => { n.material.rotation += dt * 0.02 * (i % 2 ? 1 : -1); });
       brightMat.opacity = 0.7 + Math.sin(st.elapsed * 2.1) * 0.25;
+
+      // 太阳系动态
+      solar.sys.rotation.y += dt * 0.02;              // 与银河同速公转漂移
+      solar.sun.rotation.y += dt * 0.06;              // 太阳自转
+      solar.corona.material.rotation += dt * 0.05;    // 日冕缓旋
+      const pulse = 1 + Math.sin(st.elapsed * 1.6) * 0.05;
+      solar.corona.scale.set(4.4 * pulse, 4.4 * pulse, 1);
+      solar.sunLight.intensity = 90 + Math.sin(st.elapsed * 1.6) * 12;
+      solar.earthOrbit.rotation.y += dt * 0.22;       // 地球公转
+      solar.earth.rotation.y += dt * 0.9;             // 地球自转
+      solar.clouds.rotation.y += dt * 1.05;           // 云层差速
+      solar.moonPivot.rotation.y += dt * 0.55;        // 月球绕地
+      solar.moon.rotation.y += dt * 0.55;             // 潮汐锁定
     }
     renderer.render(scene, camera);
     requestAnimationFrame(st.loop);
@@ -260,7 +539,7 @@ function buildCosmos() {
   canvas.addEventListener('pointerup', () => { st.dragging = false; });
   canvas.addEventListener('wheel', (e) => {
     e.preventDefault();
-    st.tgt.dist = Math.max(8, Math.min(32, st.tgt.dist + e.deltaY * 0.02));
+    st.tgt.dist = Math.max(4, Math.min(32, st.tgt.dist + e.deltaY * 0.02));
     ui.classList.add('faded');
   }, { passive: false });
 
