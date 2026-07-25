@@ -7,11 +7,11 @@ import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
 import { initMusicPlayer } from './music-player.js';
 import { initNotes } from './notes.js';
-import { openGmailAlias } from './tools.js';
 import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
 import { initChat } from './chat.js';
 import { initPath } from './path.js';
 import { initFortune } from './fortune.js';
+import { initCosmos } from './cosmos.js';
 import { initScrollReveal, initTilt, initProgressInk } from './utils/scroll-reveal.js';
 import { hideInkLoader } from './utils/ink-loader.js';
 import * as THREE from 'three';
@@ -70,12 +70,12 @@ export async function initApp() {
   initMusicPlayer();
   initNav();
   initNotes();
-  initTools();
   initMessageBoard();
   initContactForm();
   initChat();
   initPath();
   initFortune();
+  initCosmos();
   initCardGlow();
   initScrollReveal();
   initTilt();
@@ -143,12 +143,6 @@ function initNav() {
   }
 }
 
-function initTools() {
-  const card = document.querySelector('[data-tool="gmail-alias"]');
-  if (card) {
-    card.addEventListener('click', () => openGmailAlias());
-  }
-}
 
 /* 卡片光斑跟随鼠标 */
 function initCardGlow() {
