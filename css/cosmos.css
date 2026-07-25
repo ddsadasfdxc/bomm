@@ -263,10 +263,53 @@
 @media (max-width: 768px) {
   .mc-overlay {
     padding: 0;
+    z-index: 3200;
   }
   .mc-container {
-    height: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 100%;
     border-radius: 0;
     border: none;
+  }
+  .mc-header {
+    height: 44px;
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .mc-tab-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  .mc-ctrl-btn {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+  .mc-footer {
+    height: 32px;
+    padding: 0 8px;
+  }
+  .mc-tips {
+    font-size: 11px;
+  }
+  .cosmos-title {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+  }
+  .cosmos-sub {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-indent: 0.2em;
+  }
+  .cosmos-hint {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    bottom: 5vh;
+  }
+  .cosmos-close {
+    bottom: 10vh;
+    padding: 9px 28px;
+    font-size: 0.85rem;
   }
 }
