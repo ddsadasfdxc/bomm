@@ -1,9 +1,9 @@
 :root {
-  --bg-primary: #0c0f0a;
-  --bg-ink-1: #151913;
-  --bg-ink-2: #1f251d;
-  --bg-ink-3: #2a3328;
-  --text-paper: #f5f0e6;
+  --bg-primary: #0b0d09;
+  --bg-ink-1: #111410;
+  --bg-ink-2: #1a1e17;
+  --bg-ink-3: #242a21;
+  --text-paper: #e8e3da;
   --text-primary: #f5f0e6;
   --text-muted: rgba(245, 240, 230, 0.62);
   --accent-cinnabar: #c45a4a;
@@ -20,29 +20,4 @@
   --font-display: 'Cinzel', 'Noto Serif SC', serif;
   --ease-brush: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-silk: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* 浅色主题覆盖 */
-html[data-theme="light"] {
-  --bg-primary: #f5f0e6;
-  --bg-ink-1: #eee8db;
-  --bg-ink-2: #e6e0d1;
-  --bg-ink-3: #dcd5c5;
-  --text-paper: #1c231e;
-  --text-primary: #1c231e;
-  --text-muted: rgba(28, 35, 30, 0.62);
-  --accent-cinnabar: #b84a3b;
-  --accent-cinnabar-light: #c45848;
-  --accent-indigo: #4a6b66;
-  --accent-indigo-light: #5a837e;
-  --accent-gold: #8f7a51;
-  --glass-bg: rgba(28, 35, 30, 0.04);
-  --glass-border: rgba(28, 35, 30, 0.08);
-  --glass-border-hover: rgba(28, 35, 30, 0.16);
-  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 16px 48px rgba(0, 0, 0, 0.16);
-}
-
-html, body, .section-card, .intro-desc, .ios-nav-inner, .explore-area, .note-card, .chat-area, .contact-form, .board-container {
-  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
