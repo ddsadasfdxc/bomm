@@ -1,77 +1,65 @@
-/* 主题切换、返回顶部、留言骨架屏、引言过渡 */
-
-html, body, .section-card, .intro-desc, .ios-nav-inner, .explore-area, .note-card, .chat-area, .contact-form, .board-container {
-  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+:root .ui-dock {
+  --dock-size: 38px;
 }
 
-.theme-toggle {
+.ui-dock {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 75;
-  width: 42px;
-  height: 42px;
+  right: 0.8rem;
+  bottom: calc(0.8rem + env(safe-area-inset-bottom));
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  pointer-events: none;
+}
+
+.theme-toggle,
+.back-to-top {
+  width: var(--dock-size);
+  height: var(--dock-size);
   border: 1px solid var(--glass-border);
   border-radius: 50%;
   background: var(--glass-bg);
   color: var(--text-paper);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-soft);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
   cursor: pointer;
-  transition: transform 0.3s var(--ease-silk), background 0.3s, border-color 0.3s;
+  pointer-events: auto;
+  transition: transform 0.25s var(--ease-silk), border-color 0.3s, background 0.3s, opacity 0.35s, translate 0.35s;
 }
 
-.theme-toggle:hover {
-  transform: rotate(15deg) scale(1.05);
+.theme-toggle:hover,
+.back-to-top:hover {
+  transform: scale(1.08);
   border-color: var(--glass-border-hover);
   background: rgba(245, 240, 230, 0.08);
 }
 
+.theme-toggle svg,
+.back-to-top svg {
+  width: 18px;
+  height: 18px;
+}
+
 .back-to-top {
-  position: fixed;
-  right: 1rem;
-  bottom: 1.5rem;
-  z-index: 70;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  background: var(--glass-bg);
-  color: var(--text-paper);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(12px);
-  transition: opacity 0.35s, transform 0.35s var(--ease-silk), background 0.3s;
+  translate: 0 10px;
 }
 
 .back-to-top.visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
-}
-
-.back-to-top svg {
-  width: 20px;
-  height: 20px;
-}
-
-.back-to-top:hover {
-  background: rgba(245, 240, 230, 0.1);
+  translate: 0 0;
 }
 
 .intro-quote {
   transition: opacity 0.5s var(--ease-silk);
 }
 
-/* 留言板骨架屏 */
 .msg-skeleton {
   display: flex;
   flex-direction: column;
@@ -92,16 +80,8 @@ html, body, .section-card, .intro-desc, .ios-nav-inner, .explore-area, .note-car
   100% { background-position: -200% 0; }
 }
 
-@media (max-width: 640px) {
-  .theme-toggle {
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 38px;
-    height: 38px;
-    font-size: 1.1rem;
-  }
-  .back-to-top {
-    right: 0.75rem;
-    bottom: calc(1rem + env(safe-area-inset-bottom));
+@media (prefers-reduced-motion: reduce) {
+  .msg-skeleton-item {
+    animation: none;
   }
 }
