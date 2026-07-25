@@ -1,0 +1,52 @@
+/* Scroll reveal + skeleton + kinetics */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity 0.8s var(--ease-silk), transform 0.8s var(--ease-silk);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tilt-card {
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-card:hover::after {
+  opacity: 1;
+}
+
+/* skeleton */
+.msg-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.25rem;
+}
+
+.msg-skeleton-item {
+  height: 76px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(245,240,230,0.05) 25%, rgba(245,240,230,0.12) 50%, rgba(245,240,230,0.05) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-flow 1.4s infinite ease-in-out;
+}
+
+@keyframes skeleton-flow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .tilt-card,
+  .msg-skeleton-item {
+    transition: none;
+    animation: none;
+  }
+}
