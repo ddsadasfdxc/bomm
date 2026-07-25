@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0f0a">
   <title>温若 · 个人小站</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-D8N8OhG4.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-ld9LE8XK.css">
+  <link rel="manifest" href="./site.webmanifest">
+  <script type="module" crossorigin src="./assets/index-C4rt6tN1.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BsJB1TdW.css">
 </head>
 <body>
   <div id="bg-image" aria-hidden="true"></div>
@@ -32,6 +34,11 @@
     </div>
   </nav>
 
+  <button id="themeToggle" class="theme-toggle" aria-label="切换主题" title="切换主题">\u263D</button>
+  <button id="backToTop" class="back-to-top" aria-label="返回顶部" title="返回顶部">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 4l-8 8h6v8h4v-8h6L12 4z"/></svg>
+  </button>
+
   <main id="scroll-container">
     <div class="page page-home active" id="page-home">
       <section id="intro" class="section section-intro">
@@ -43,7 +50,7 @@
           <p class="intro-subtitle">散修 · 剑修</p>
           <p class="intro-quote">一缕清风，半卷残云。</p>
           <p class="intro-desc">技术测试站 · 个人 OC 站</p>
-                  </div>
+        </div>
       </section>
 
       <section id="about" class="section section-about">
@@ -81,7 +88,7 @@
         </div>
         <div class="explore-grid" id="exploreGrid">
           <div class="note-card" data-tool="gmail-alias">
-            <div class="note-card-icon">📧</div>
+            <div class="note-card-icon">\u2709\uFE0F</div>
             <h3>Gmail 别名生成器</h3>
             <p>利用点号和加号生成无限邮箱别名</p>
             <div class="note-card-brush"></div>
@@ -162,7 +169,7 @@
   <div class="chat-welcome-overlay" id="chatWelcomeOverlay"></div>
   <div class="chat-welcome-panel" id="chatWelcomePanel" role="dialog" aria-modal="true" aria-label="欢迎">
     <div class="chat-welcome-content">
-      <div class="chat-welcome-icon">✦</div>
+      <div class="chat-welcome-icon">\u2726</div>
       <h3 class="chat-welcome-title">灵犀初启</h3>
       <p class="chat-welcome-text">欢迎体验业界最前沿的 LLM 模型，你可以对话、调试和导出聊天记录。</p>
       <button id="chatWelcomeClose" class="chat-welcome-btn">开始体验</button>
