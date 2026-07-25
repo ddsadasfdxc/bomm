@@ -10,7 +10,9 @@ import { initNotes } from './notes.js';
 import { openGmailAlias } from './tools.js';
 import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
 import { initChat } from './chat.js';
-import { initTheme, initBackToTop, registerPWA } from './utils/home-widgets.js';
+import { initPath } from './path.js';
+import { initScrollReveal, initTilt, initProgressInk } from './utils/scroll-reveal.js';
+import { hideInkLoader } from './utils/ink-loader.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -71,9 +73,11 @@ export async function initApp() {
   initMessageBoard();
   initContactForm();
   initChat();
-  initTheme();
-  initBackToTop();
-  registerPWA();
+  initPath();
+  initScrollReveal();
+  initTilt();
+  initProgressInk();
+  hideInkLoader();
   trackVisit();
   loadStats(document.getElementById('statsBar'));
 
