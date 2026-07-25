@@ -2,7 +2,7 @@ export async function initPath() {
   const container = document.getElementById('pathTimeline');
   if (!container) return;
   try {
-    const res = await fetch('/data/content.json');
+    const res = await fetch('/data/content.json?v=' + Date.now());
     const data = await res.json();
     const items = (data.chronicle || []).slice().reverse();
     container.innerHTML = items.length === 0
@@ -18,7 +18,6 @@ export async function initPath() {
     container.innerHTML = '<div class=\"path-item\">剑谱加载失败</div>';
   }
 }
-
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
