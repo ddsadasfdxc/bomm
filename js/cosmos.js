@@ -445,7 +445,7 @@ function buildCosmos() {
     '<div class="cosmos-ui">' +
       '<h2 class="cosmos-title">大千世界</h2>' +
       '<p class="cosmos-sub">三千世界，不过一瞬光影</p>' +
-      '<p class="cosmos-hint">拖动环视 · 滚轮近观 · Esc 归来</p>' +
+      '<p class="cosmos-hint">拖动环视 · 双指近观 · Esc 归来</p>' +
       '<button class="cosmos-close" type="button">归 来</button>' +
     '</div>';
   document.body.appendChild(overlay);
@@ -478,6 +478,8 @@ function buildCosmos() {
     cur: { dist: 19 },
     tgt: { rx: 0.18, ry: 0, dist: 19 },
     dragging: false, px: 0, py: 0,
+    pointers: new Map(),
+    pinchDist: 0,
     elapsed: 0,
     reduced: prefersReducedMotion(),
     loop: null,
@@ -524,22 +526,70 @@ function buildCosmos() {
     requestAnimationFrame(st.loop);
   };
 
-  // 交互
+  // 交互：单指旋转 / 双指捏合缩放 / 滚轮缩放
+  const MIN_DIST = 2.2, MAX_DIST = 32;
+
+  const pinchDistance = () => {
+    const pts = Array.from(st.pointers.values());
+    if (pts.length < 2) return 0;
+    const dx = pts[0].x - pts[1].x;
+    const dy = pts[0].y - pts[1].y;
+    return Math.hypot(dx, dy);
+  };
+
   canvas.addEventListener('pointerdown', (e) => {
-    st.dragging = true; st.px = e.clientX; st.py = e.clientY;
     canvas.setPointerCapture(e.pointerId);
+    st.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (st.pointers.size === 1) {
+      st.dragging = true;
+      st.px = e.clientX; st.py = e.clientY;
+    } else if (st.pointers.size === 2) {
+      st.dragging = false;          // 双指时暂停旋转，纯缩放
+      st.pinchDist = pinchDistance();
+    }
     ui.classList.add('faded');
   });
+
   canvas.addEventListener('pointermove', (e) => {
+    if (!st.pointers.has(e.pointerId)) return;
+    st.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (st.pointers.size === 2) {
+      // 捏合缩放：按指距比例对数缩放，手感均匀
+      const nd = pinchDistance();
+      if (st.pinchDist > 0 && nd > 0) {
+        const ratio = nd / st.pinchDist;
+        st.tgt.dist = Math.max(MIN_DIST, Math.min(MAX_DIST, st.tgt.dist / ratio));
+      }
+      st.pinchDist = nd;
+      return;
+    }
+
     if (!st.dragging) return;
     st.tgt.ry += (e.clientX - st.px) * 0.0042;
     st.tgt.rx = Math.max(-0.85, Math.min(0.85, st.tgt.rx + (e.clientY - st.py) * 0.0026));
     st.px = e.clientX; st.py = e.clientY;
   });
-  canvas.addEventListener('pointerup', () => { st.dragging = false; });
+
+  const endPointer = (e) => {
+    st.pointers.delete(e.pointerId);
+    if (st.pointers.size === 1) {
+      // 双指抬起一指后，剩下一指无缝接管旋转
+      const p = Array.from(st.pointers.values())[0];
+      st.dragging = true;
+      st.px = p.x; st.py = p.y;
+      st.pinchDist = 0;
+    } else if (st.pointers.size === 0) {
+      st.dragging = false;
+      st.pinchDist = 0;
+    }
+  };
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+
   canvas.addEventListener('wheel', (e) => {
     e.preventDefault();
-    st.tgt.dist = Math.max(4, Math.min(32, st.tgt.dist + e.deltaY * 0.02));
+    st.tgt.dist = Math.max(MIN_DIST, Math.min(MAX_DIST, st.tgt.dist + e.deltaY * 0.02));
     ui.classList.add('faded');
   }, { passive: false });
 
