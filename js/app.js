@@ -12,6 +12,7 @@ import { initChat } from './chat.js';
 import { initPath } from './path.js';
 import { initFortune } from './fortune.js';
 import { initCosmos } from './cosmos.js';
+import { initMinecraft } from './minecraft.js';
 import { initScrollReveal, initTilt, initProgressInk } from './utils/scroll-reveal.js';
 import { hideInkLoader } from './utils/ink-loader.js';
 import * as THREE from 'three';
@@ -76,6 +77,7 @@ export async function initApp() {
   initPath();
   initFortune();
   initCosmos();
+  initMinecraft();
   initCardGlow();
   initScrollReveal();
   initTilt();
