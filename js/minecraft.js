@@ -62,7 +62,7 @@ export function initMinecraft() {
             overlay.querySelector('#mc-tips-content').textContent =
               "W/A/S/D 移动 · 空格跳跃 · 鼠标控制视角 | 左键破坏 · 右键放置 · 数字键 1-7 切换材质";
           } else {
-            frame.src = "https://turbowarp.org/10128407/embed";
+            frame.src = "https://turbowarp.org/662310182/embed";
             overlay.querySelector('#mc-tips-content').textContent =
               "W/A/S/D/方向键移动 · 鼠标点击挖掘/放置 · 1-9 工具切换 · E 打开背包";
           }
@@ -101,7 +101,7 @@ export function initMinecraft() {
       if (mode === '3d') {
         frame.src = "https://minecraft.kelvinzhang.ca";
       } else {
-        frame.src = "https://turbowarp.org/10128407/embed";
+        frame.src = "https://turbowarp.org/662310182/embed";
       }
     }
 
