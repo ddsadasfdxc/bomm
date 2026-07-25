@@ -9,15 +9,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="./site.webmanifest">
-  <script type="module" crossorigin src="./assets/index-BSTsDq6N.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BIm5Nip2.css">
+  <script type="module" crossorigin src="./assets/index-CO1OXI3N.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Cu2-Qbrn.css">
 </head>
 <body>
   <div id="bg-image" aria-hidden="true"></div>
   <div id="webgl-bg"></div>
   <canvas id="cursor-aura"></canvas>
 
-  <nav class="ios-nav">
+  <div class="ink-loader" id="inkLoader" aria-hidden="true">
+  <div class="ink-loader-drop"></div>
+  <div class="ink-loader-text">研墨</div>
+</div>
+
+<nav class="ios-nav">
     <div class="ios-nav-inner">
       <button class="ios-nav-tab active" data-page="home" aria-label="首页" title="首页">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3l8 7h-3v9h-5v-6H9v6H4v-9H1z"/></svg>
@@ -31,16 +36,11 @@
       <button class="ios-nav-tab" data-page="chat" aria-label="聊天" title="聊天">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
       </button>
+      <button class="ios-nav-tab" data-page="path" aria-label="剑谱" title="剑谱">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5-1 .5h.001l-1 .5-.5 1-.5 1z"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/></svg>
+      </button>
     </div>
   </nav>
-  <div class="ui-dock">
-    <button id="themeToggle" class="theme-toggle" aria-label="切换浅色主题" title="切换主题">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-    <button id="backToTop" class="back-to-top" aria-label="返回顶部" title="返回顶部">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-    </button>
-  </div>
 <main id="scroll-container">
     <div class="page page-home active" id="page-home">
       <section id="intro" class="section section-intro">
@@ -154,6 +154,16 @@
           </div>
           <div class="chat-hint">AI 生成内容仅供参考</div>
         </div>
+      </section>
+    </div>
+
+    <div class="page page-path" id="page-path">
+      <section class="explore-area">
+        <div class="explore-header">
+          <h2 class="explore-title">剑谱</h2>
+          <p class="explore-desc">一剑一岁月，一页一江湖</p>
+        </div>
+        <div class="path-timeline" id="pathTimeline"></div>
       </section>
     </div>
   </main>
