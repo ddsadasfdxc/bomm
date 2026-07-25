@@ -1,8 +1,3 @@
-/**
- * 留言板 + 联系表单 + 访问统计
- * 后端部署在 https://next-app-one-navy.vercel.app（已从 wenruo-api 迁移）
- */
-
 const API = 'https://next-app-one-navy.vercel.app';
 
 export function initMessageBoard() {
@@ -11,8 +6,16 @@ export function initMessageBoard() {
   renderMessages(board);
 }
 
+function skeletonHtml() {
+  return `<div class="msg-skeleton">
+    <div class="msg-skeleton-item"></div>
+    <div class="msg-skeleton-item"></div>
+    <div class="msg-skeleton-item" style="width:80%"></div>
+  </div>`;
+}
+
 async function renderMessages(board) {
-  board.innerHTML = '<div class="msg-loading"><div class="ink-spinner"></div></div>';
+  board.innerHTML = skeletonHtml();
   try {
     const res = await fetch(`${API}/api/messages`);
     const data = await res.json();
@@ -100,6 +103,7 @@ export function trackPlay() {
 }
 
 export async function loadStats(el) {
+  if (!el) return;
   try {
     const res = await fetch(`${API}/api/stats`);
     const data = await res.json();
