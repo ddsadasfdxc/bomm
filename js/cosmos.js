@@ -538,7 +538,7 @@ function buildCosmos() {
   };
 
   canvas.addEventListener('pointerdown', (e) => {
-    canvas.setPointerCapture(e.pointerId);
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
     st.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (st.pointers.size === 1) {
       st.dragging = true;
@@ -602,5 +602,6 @@ function buildCosmos() {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
+  window.__cosmosState = st;
   return st;
 }
