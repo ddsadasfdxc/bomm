@@ -10,6 +10,7 @@ import { initNotes } from './notes.js';
 import { openGmailAlias } from './tools.js';
 import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
 import { initChat } from './chat.js';
+import { initTheme, initBackToTop, registerPWA } from './utils/home-widgets.js';
 import * as THREE from 'three';
 
 export async function initApp() {
@@ -17,10 +18,17 @@ export async function initApp() {
 
   const content = await loadContent();
 
+  const quoteEl = document.querySelector('.intro-quote');
+  if (quoteEl && content.quotes && content.quotes.length) {
+    quoteEl.textContent = content.quotes[0].text;
+    startQuoteRotator(quoteEl, content.quotes);
+  } else if (quoteEl) {
+    quoteEl.textContent = content.intro.quote;
+    loadHitokoto(quoteEl, content.intro.quote);
+  }
+
   document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;
-  document.querySelector('.intro-quote').textContent = content.intro.quote;
   document.querySelector('.intro-desc').textContent = content.intro.desc;
-  loadHitokoto(document.querySelector('.intro-quote'), content.intro.quote);
   document.title = content.site.title;
 
   const webglContainer = document.getElementById('webgl-bg');
@@ -63,6 +71,9 @@ export async function initApp() {
   initMessageBoard();
   initContactForm();
   initChat();
+  initTheme();
+  initBackToTop();
+  registerPWA();
   trackVisit();
   loadStats(document.getElementById('statsBar'));
 
@@ -71,6 +82,18 @@ export async function initApp() {
     if (inkParticles) inkParticles.destroy();
     if (cursorAura) cursorAura.destroy();
   };
+}
+
+function startQuoteRotator(el, quotes) {
+  let idx = 0;
+  setInterval(() => {
+    idx = (idx + 1) % quotes.length;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = quotes[idx].text || quotes[idx];
+      el.style.opacity = '1';
+    }, 500);
+  }, 6000);
 }
 
 async function loadHitokoto(el, fallback) {
