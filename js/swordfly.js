@@ -254,7 +254,7 @@ export function initSwordfly() {
     G.over.style.display = 'none';
     G.hud.style.display = '';
     G.t = 0; G.elapsed = 0; G.dist = 0; G.stones = 0; G.streak = 0; G.streakT = 0;
-    G.speed = 260; G.spawnT = 1.3; G.invuln = 1.2;
+    G.speed = 240; G.spawnT = 1.6; G.invuln = 1.5;
     G.player.y = G.H * 0.45; G.player.vy = 0;
     G.spires.length = 0; G.clouds.length = 0; G.gems.length = 0; G.parts.length = 0;
     G._d = -1; G._s = -1; G._r = '';
@@ -289,7 +289,7 @@ export function initSwordfly() {
     const r = Math.random();
     if (r < 0.48) {
       // 浮峰对（上悬峰 + 下立峰，留隙）
-      const gap = clamp(215 - G.elapsed * 0.9, 168, 215);
+      const gap = clamp(260 - G.elapsed * 0.6, 195, 260);
       const gy = rand(G.H * 0.25, G.H * 0.68);
       const w = rand(54, 78);
       const x = G.W + 60;
@@ -317,7 +317,7 @@ export function initSwordfly() {
   /* ---------- 更新 ---------- */
   function update(dt) {
     G.elapsed += dt;
-    G.speed = Math.min(620, 260 + G.elapsed * 7);
+    G.speed = Math.min(600, 240 + G.elapsed * 6);
     const vx = G.speed * dt;
     G.worldX += vx;
     G.dist += vx / 40;
@@ -350,7 +350,7 @@ export function initSwordfly() {
     G.spawnT -= dt;
     if (G.spawnT <= 0) {
       spawnPattern();
-      G.spawnT = clamp(rand(1.15, 1.65) - G.elapsed * 0.007, 0.8, 1.7);
+      G.spawnT = clamp(rand(1.4, 1.9) - G.elapsed * 0.005, 1.0, 1.9);
     }
 
     // 移动与淘汰
@@ -375,7 +375,7 @@ export function initSwordfly() {
 
     // 碰撞
     if (G.invuln <= 0) {
-      const px = p.x, py = p.y, pr = 11;
+      const px = p.x, py = p.y, pr = 9;
       for (const s of G.spires) {
         if (px + pr > s.x && px - pr < s.x + s.w) {
           if (py - pr < s.topH || py + pr > s.botY) { die('浮峰'); return; }
@@ -383,7 +383,7 @@ export function initSwordfly() {
       }
       for (const c of G.clouds) {
         const dx = (px - c.x) / c.rx, dy = (py - c.y) / c.ry;
-        if (dx * dx + dy * dy < 0.82) { die('雷云'); return; }
+        if (dx * dx + dy * dy < 0.7) { die('雷云'); return; }
         if (c.state === 'bolt') {
           const bx = c.x + Math.sin(c.seed * 40) * 12;
           const by0 = c.y + c.ry * 0.7, by1 = by0 + 280;
@@ -394,7 +394,7 @@ export function initSwordfly() {
     // 灵石
     for (const g of G.gems) {
       const dx = g.x - p.x, dy = g.y - p.y;
-      if (dx * dx + dy * dy < 24 * 24) {
+      if (dx * dx + dy * dy < 28 * 28) {
         g.dead = true;
         G.stones++;
         G.streak = Math.min(G.streak + 1, 8);
