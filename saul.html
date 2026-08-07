@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Saul Goodman & Associates · 风骚律师</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Marhey:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+--bs-red:#D32F2F;--bs-blue:#17457C;--bs-white:#F5F0E1;
+--gold:#C5A059;--cactus:#5B6C5A;--yp:#F2C230;
+--pink:#FF2E88;--teal:#19E3C2;--orange:#E8621A;
+--ink:#1a1410;--paper:#efe6cf;
+--neon-p:0 0 6px #fff,0 0 14px var(--pink),0 0 34px var(--pink),0 0 60px var(--pink);
+--neon-t:0 0 6px #fff,0 0 14px var(--teal),0 0 34px var(--teal),0 0 60px var(--teal);
+}
+body.jimmy{--bs-red:var(--orange);--bs-blue:#B34A00;--gold:#FF9E2C;--yp:#FF7A00;--pink:#FF6A00}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+font-family:'Oswald',sans-serif;color:var(--ink);background:var(--bs-blue);
+background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 2px,transparent 2px 4px),linear-gradient(180deg,#122 0%,var(--bs-blue) 30%,var(--bs-blue) 100%);
+min-height:100vh;overflow-x:hidden;transition:background .5s;
+}
+::selection{background:var(--pink);color:#fff}
+h1,h2,h3{font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.marhey{font-family:'Marhey',cursive;text-transform:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+/* ===== 顶栏 ===== */
+.flag-bar{height:10px;background:repeating-linear-gradient(90deg,var(--bs-red) 0 60px,var(--bs-white) 60px 120px,var(--bs-blue) 120px 180px);opacity:.85;filter:sepia(.4) saturate(.8)}
+.topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#0d0b08,#1c1712);border-bottom:4px solid var(--gold);box-shadow:0 6px 0 rgba(0,0,0,.45)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;padding-top:10px;padding-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--yp);text-decoration:none}
+.brand .fa-scale-unbalanced{font-size:26px;color:var(--gold);transform:rotate(-14deg);filter:drop-shadow(0 2px 2px #000)}
+.brand b{font-size:18px;line-height:1.05;color:var(--bs-white)}
+.brand small{display:block;font-size:11px;color:var(--gold);letter-spacing:.22em}
+.topnav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
+.topnav a{color:#d8cbb0;text-decoration:none;font-size:13px;letter-spacing:.08em;padding:8px 10px;border:2px solid transparent;text-transform:uppercase}
+.topnav a:hover{color:var(--yp);border-color:var(--yp);background:#000}
+/* 吉米模式开关 */
+.jimmy-sw{display:flex;align-items:center;gap:8px;margin-left:10px;cursor:pointer;user-select:none}
+.jimmy-sw span{font-size:11px;color:var(--pink);letter-spacing:.1em;font-weight:600}
+.sw{position:relative;width:52px;height:26px;background:#3a2f22;border:2px solid var(--gold);border-radius:20px;transition:.3s}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--gold);transition:.25s;box-shadow:0 0 8px rgba(0,0,0,.6)}
+.jimmy-sw.on .sw{background:var(--orange);border-color:#ffd9a8}
+.jimmy-sw.on .sw::after{left:28px;background:#fff}
+/* ===== HERO ===== */
+.hero{position:relative;text-align:center;padding:64px 16px 70px;background:radial-gradient(ellipse at 50% 0%,rgba(25,227,194,.12),transparent 55%),linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.2)),url('assets/saul/sandstone.jpg') center/cover;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:rgba(20,10,30,.45);mix-blend-mode:multiply}
+.hero>*{position:relative}
+.hero .lady{position:absolute;font-size:64px;opacity:.16;bottom:6px;filter:grayscale(.3)}
+.hero .lady.l{left:4%}.hero .lady.r{right:4%;transform:scaleX(-1)}
+.hero .kicker{color:var(--teal);font-size:clamp(12px,2vw,15px);letter-spacing:.4em;text-shadow:var(--neon-t);animation:flick 4s infinite}
+.hero h1{font-size:clamp(44px,9vw,110px);line-height:.95;margin:14px 0 6px;cursor:pointer;color:#fff;text-shadow:var(--neon-p),var(--neon-t);animation:flick 5s infinite .7s}
+.hero h1 .g{color:var(--teal);text-shadow:var(--neon-t),var(--neon-p)}
+.hero .assoc{color:var(--gold);letter-spacing:.5em;font-size:clamp(12px,2.4vw,18px)}
+.hero .slogan{min-height:52px;margin:22px auto 10px;max-width:760px;color:var(--yp);font-size:clamp(18px,3.4vw,30px)}
+.hero .cta{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+@keyframes flick{0%,19%,21%,62%,64%,100%{opacity:1}20%,63%{opacity:.55}}
+/* ===== 按钮 ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Oswald';font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:14px;padding:12px 22px;border:3px solid var(--ink);cursor:pointer;color:var(--ink);background:var(--yp);box-shadow:5px 5px 0 rgba(0,0,0,.55);transition:transform .12s,box-shadow .12s;text-decoration:none}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 rgba(0,0,0,.55)}
+.btn.red{background:var(--bs-red);color:#fff}
+.btn.blue{background:var(--bs-blue);color:#fff}
+.btn.ghost{background:var(--bs-white)}
+.btn.sm{padding:6px 12px;font-size:12px;box-shadow:3px 3px 0 rgba(0,0,0,.5)}
+/* ===== 区块与卡片 ===== */
+.sec{padding:56px 0}
+.sec-h{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.sec-h .badge{background:var(--bs-red);color:#fff;font-size:12px;letter-spacing:.2em;padding:4px 10px;border:2px solid #000;transform:rotate(-2deg)}
+.sec-h h2{color:var(--bs-white);font-size:clamp(22px,4vw,34px);text-shadow:3px 3px 0 #000}
+.sec-h .line{flex:1;height:4px;background:repeating-linear-gradient(90deg,var(--gold) 0 14px,transparent 14px 22px)}
+.card{position:relative;background:var(--paper);border:4px solid var(--ink);box-shadow:8px 8px 0 rgba(0,0,0,.5);padding:20px;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:url('assets/saul/wood.jpg') center/cover;opacity:.16;pointer-events:none}
+.card.floral::before{background-image:url('assets/saul/floral.png');opacity:.35}
+.card>*{position:relative}
+.card:hover{animation:wob .35s ease}
+@keyframes wob{0%{transform:rotate(0)}25%{transform:rotate(.5deg)}60%{transform:rotate(-.5deg)}100%{transform:rotate(0)}}
+.corner-flag{position:absolute;top:0;right:0;width:56px;height:38px;background:repeating-linear-gradient(0deg,var(--bs-red) 0 4px,var(--bs-white) 4px 8px);border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);opacity:.8;filter:sepia(.35)}
+.corner-flag::before{content:'';position:absolute;top:0;left:0;width:24px;height:16px;background:var(--bs-blue)}
+.cactus-tag{position:absolute;bottom:8px;right:10px;color:var(--cactus);font-size:22px;opacity:.55}
+/* 雪花噪点 */
+#vhs{position:fixed;inset:0;z-index:200;pointer-events:none;display:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.16) 0 1px,transparent 1px 3px)}
+#vhs::after{content:'';position:absolute;inset:-50%;background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1px);background-size:3px 3px;animation:noise .18s steps(4) infinite}
+@keyframes noise{0%{transform:translate(0,0)}25%{transform:translate(-4%,3%)}50%{transform:translate(3%,-5%)}75%{transform:translate(-3%,-2%)}100%{transform:translate(4%,4%)}}
+#vhs.on{display:block;animation:vhsout 1.1s forwards}
+@keyframes vhsout{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
+/* 烟花粒子 */
+.spark{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:300;animation:burst .9s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+/* ===== 案例转化器 ===== */
+.case-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:760px){.case-grid{grid-template-columns:1.6fr 1fr}}
+.case-item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fffdf4;border:3px solid var(--ink);padding:12px 14px;margin-bottom:10px;box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+.case-item .nm{font-weight:700;min-width:90px}
+.case-item .cr{flex:1;font-size:13px;color:#5a4a2f;font-style:italic}
+.st{font-size:11px;letter-spacing:.1em;padding:3px 9px;border:2px solid var(--ink);text-transform:uppercase;font-weight:600}
+.st.pending{background:#f5e6a8}.st.ongoing{background:#bcd7f5}.st.free{background:#7ed08a}.st.tech{background:#c9c9c9}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.inp{flex:1;min-width:130px;font-family:'Oswald';font-size:14px;padding:10px 12px;border:3px solid var(--ink);background:#fffdf4;color:var(--ink)}
+.inp:focus{outline:3px solid var(--gold)}
+.hint{font-size:13px;color:#7a6435;font-style:italic;margin-top:8px;min-height:20px}
+/* ===== 计算器 ===== */
+.calc-box{text-align:center}
+#fee{width:100%;-webkit-appearance:none;height:16px;border:3px solid var(--ink);background:linear-gradient(90deg,#2e7d32,#f2c230,#d32f2f);margin:18px 0 6px;cursor:pointer}
+#fee::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;background:var(--bs-white);border:4px solid var(--ink);border-radius:50%;box-shadow:2px 2px 0 #000}
+.fee-num{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0}
+.fee-num b{font-size:clamp(30px,6vw,46px);color:var(--bs-red);text-shadow:2px 2px 0 rgba(0,0,0,.15)}
+.fee-num .fa-sack-dollar{font-size:26px;color:var(--gold)}
+#fee-bg{position:absolute;inset:0;z-index:0;opacity:.14;transition:background .3s;pointer-events:none}
+.quip{font-size:clamp(15px,2.6vw,19px);color:#4a3423;padding:10px 14px;border:3px dashed var(--bs-red);background:rgba(255,255,255,.6);display:inline-block;transform:rotate(-.6deg)}
+/* ===== 地图 ===== */
+#mapcv{width:100%;height:auto;display:block;background:linear-gradient(180deg,#e8d5a8,#d9b877);border:3px solid var(--ink);cursor:crosshair}
+.maptip{position:fixed;z-index:150;max-width:250px;background:#1c1712;color:var(--yp);border:3px solid var(--gold);padding:10px 12px;font-size:13px;box-shadow:5px 5px 0 rgba(0,0,0,.6);pointer-events:none;display:none;transform:rotate(-.8deg)}
+.maptip b{color:var(--pink);display:block;margin-bottom:3px}
+/* ===== 留言簿 ===== */
+.msg{background:rgba(255,253,244,.92);border:3px solid var(--ink);padding:12px 14px;margin-bottom:12px;box-shadow:4px 4px 0 rgba(0,0,0,.3);position:relative;transform:rotate(.4deg)}
+.msg:nth-child(even){transform:rotate(-.5deg)}
+.msg .tx{font-size:14px;line-height:1.5;color:#3a2c1a}
+.msg .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:#8a6f45;letter-spacing:.06em}
+.msg .del{background:none;border:none;color:var(--bs-red);cursor:pointer;font-size:15px;padding:2px 6px}
+.msg .del:hover{transform:scale(1.25)}
+textarea.inp{min-height:88px;resize:vertical;width:100%;flex:auto}
+/* ===== 页脚 ===== */
+.foot{margin-top:40px;border-top:6px double var(--gold);background:#0d0b08;color:#b3a077;padding:34px 0 46px;text-align:center;position:relative;overflow:hidden}
+.foot .big{font-size:clamp(18px,3.4vw,26px);color:var(--yp);margin-bottom:8px}
+.foot .marhey{color:var(--pink);font-size:clamp(16px,3vw,22px);text-shadow:var(--neon-p)}
+.foot small{display:block;margin-top:12px;font-size:11px;letter-spacing:.14em;color:#7a6435}
+.foot .stripe{height:8px;background:repeating-linear-gradient(45deg,var(--gold) 0 12px,#0d0b08 12px 24px);margin:18px auto;max-width:420px}
+@media(max-width:640px){
+.topnav{display:none}
+.hero .lady{display:none}
+.case-item{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div id="vhs"></div>
+<div class="flag-bar"></div>
+<header class="topbar">
+<div class="wrap">
+<a class="brand" href="#top">
+<i class="fa-solid fa-scale-unbalanced"></i>
+<b>SAUL GOODMAN<small data-l="& ASSOCIATES · EST. 2002">& ASSOCIATES · EST. 2002</small></b>
+</a>
+<nav class="topnav">
+<a href="#cases"><i class="fa-solid fa-gavel"></i> <span data-l="案件">案件</span></a>
+<a href="#fee-sec"><i class="fa-solid fa-sack-dollar"></i> <span data-l="收费">收费</span></a>
+<a href="#map-sec"><i class="fa-solid fa-map-location-dot"></i> <span data-l="地盘">地盘</span></a>
+<a href="#guest"><i class="fa-solid fa-book-open"></i> <span data-l="留言">留言</span></a>
+</nav>
+<div class="jimmy-sw" id="jimmySw" title="身份伪装">
+<span data-l="吉米模式">吉米模式</span><div class="sw"></div>
+</div>
+</div>
+</header>
+<!-- HERO -->
+<section class="hero" id="top">
+<i class="fa-solid fa-monument lady l"></i>
+<i class="fa-solid fa-monument lady r"></i>
+<div class="kicker">ALBUQUERQUE · NEW MEXICO · 24H</div>
+<h1 id="saulTitle">SAUL <span class="g">GOODMAN</span></h1>
+<div class="assoc" data-l="& 联合律所 · 世界需要知道">& 联合律所 · 世界需要知道</div>
+<div class="slogan marhey" id="slogan"></div>
+<div class="cta">
+<a class="btn red" href="tel:5051642255"><i class="fa-solid fa-mobile-screen-button"></i> (505) 164-CALL</a>
+<a class="btn ghost" href="#cases"><i class="fa-solid fa-briefcase"></i> <span data-l="免费评估你的案子">免费评估你的案子</span></a>
+</div>
+</section>
+<!-- 案例转化器 -->
+<section class="sec" id="cases">
+<div class="wrap">
+<div class="sec-h"><span class="badge" data-l="核心业务">核心业务</span><h2 data-l="清白 VS 有罪 · 案例转化器">清白 VS 有罪 · 案例转化器</h2><div class="line"></div><i class="fa-solid fa-gavel" style="color:var(--gold);font-size:24px"></i></div>
+<div class="case-grid">
+<div class="card">
+<div class="corner-flag"></div>
+<h3 style="margin-bottom:14px"><i class="fa-solid fa-folder-open" style="color:var(--bs-red)"></i> <span data-l="客户卷宗">客户卷宗</span></h3>
+<div id="caseList"></div>
+<div class="hint" id="caseHint"></div>
+</div>
+<div class="card">
+<div class="corner-flag"></div>
+<h3 style="margin-bottom:14px"><i class="fa-solid fa-user-plus" style="color:var(--bs-blue)"></i> <span data-l="新客登记">新客登记</span></h3>
+<div class="form-row"><input class="inp" id="cName" placeholder="客户姓名（可用化名）" maxlength="20"></div>
+<div class="form-row"><input class="inp" id="cCrime" placeholder="罪名（例如：公园超速遛狗）" maxlength="40"></div>
+<button class="btn red" id="addCase" style="width:100%;justify-content:center"><i class="fa-solid fa-handshake"></i> <span data-l="签约受理">签约受理</span></button>
+<div class="hint marhey" style="font-size:14px" data-l="“别担心，我打赢过更离谱的。”">“别担心，我打赢过更离谱的。”</div>
+<i class="fa-solid fa-sun cactus-tag"></i>
+</div>
+</div>
+</div>
+</section>
+<!-- 收费计算器 -->
+<section class="sec" id="fee-sec" style="padding-top:0">
+<div class="wrap">
+<div class="sec-h"><span class="badge" data-l="明码标价">明码标价</span><h2 data-l="俗气收费计算器">俗气收费计算器</h2><div class="line"></div><i class="fa-solid fa-money-bill-wave" style="color:var(--gold);font-size:24px"></i></div>
+<div class="card calc-box">
+<div id="fee-bg"></div>
+<div class="corner-flag"></div>
+<h3><i class="fa-solid fa-calculator" style="color:var(--cactus)"></i> <span data-l="拖动选择你的“预算”">拖动选择你的“预算”</span></h3>
+<input type="range" id="fee" min="0" max="5000" step="50" value="500">
+<div class="fee-num"><i class="fa-solid fa-sack-dollar"></i><b>$<span id="feeVal">500</span></b></div>
+<div class="quip marhey" id="feeQuip"></div>
+</div>
+</div>
+</section>
+<!-- 沙漠地图 -->
+<section class="sec" id="map-sec" style="padding-top:0">
+<div class="wrap">
+<div class="sec-h"><span class="badge" data-l="势力范围">势力范围</span><h2 data-l="阿尔伯克基 · 业务据点图">阿尔伯克基 · 业务据点图</h2><div class="line"></div><i class="fa-solid fa-hat-cowboy" style="color:var(--gold);font-size:24px"></i></div>
+<div class="card">
+<div class="corner-flag"></div>
+<canvas id="mapcv" width="900" height="420"></canvas>
+<div class="hint" data-l="把鼠标悬停在图钉上，听索尔讲讲每个据点的“光辉历史”。">把鼠标悬停在图钉上，听索尔讲讲每个据点的“光辉历史”。</div>
+</div>
+</div>
+</section>
+<div class="maptip" id="maptip"></div>
+<!-- 留言簿 -->
+<section class="sec" id="guest" style="padding-top:0">
+<div class="wrap">
+<div class="sec-h"><span class="badge" data-l="保密协议">保密协议</span><h2 data-l="匿名委托留言簿">匿名委托留言簿</h2><div class="line"></div><i class="fa-solid fa-comment-dots" style="color:var(--gold);font-size:24px"></i></div>
+<div class="case-grid">
+<div class="card floral">
+<h3 style="margin-bottom:14px"><i class="fa-solid fa-pen-nib" style="color:var(--pink)"></i> <span data-l="写下你的麻烦（绝对保密*）">写下你的麻烦（绝对保密*）</span></h3>
+<div class="form-row"><textarea class="inp" id="gText" placeholder="例：我表哥在宾果夜输了钱想赖账，能告他吗？" maxlength="200"></textarea></div>
+<button class="btn blue" id="addMsg" style="width:100%;justify-content:center"><i class="fa-solid fa-paper-plane"></i> <span data-l="塞进索尔的信箱">塞进索尔的信箱</span></button>
+<div class="hint" data-l="*保密程度取决于今天的咖啡浓度。">*保密程度取决于今天的咖啡浓度。</div>
+</div>
+<div class="card floral">
+<h3 style="margin-bottom:14px"><i class="fa-solid fa-inbox" style="color:var(--cactus)"></i> <span data-l="待办委托">待办委托</span> <span id="msgCount" style="color:var(--bs-red)"></span></h3>
+<div id="msgList"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 页脚 -->
+<footer class="foot">
+<div class="wrap">
+<div class="big"><i class="fa-solid fa-scale-unbalanced" style="transform:rotate(-14deg)"></i> SAUL GOODMAN & ASSOCIATES</div>
+<div class="marhey">"Better Call Saul!"</div>
+<div class="stripe"></div>
+<small data-l="新墨西哥州阿尔伯克基 · 蒙哥马利街 6330 号 · 电梯旁第三扇门">新墨西哥州阿尔伯克基 · 蒙哥马利街 6330 号 · 电梯旁第三扇门</small>
+<small data-l="本页面纯属剧集致敬 · 不构成任何法律意见 · 出事别真打这个电话">本页面纯属剧集致敬 · 不构成任何法律意见 · 出事别真打这个电话</small>
+</div>
+</footer>
+<script>
+/* ===== 音频引擎 (Web Audio) ===== */
+const AudioFX=(()=>{
+let ctx=null;
+const ac=()=>ctx||(ctx=new (window.AudioContext||window.webkitAudioContext)());
+function click(){
+try{
+const c=ac(),t=c.currentTime;
+const buf=c.createBuffer(1,c.sampleRate*0.03,c.sampleRate);
+const d=buf.getChannelData(0);
+for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+const src=c.createBufferSource();src.buffer=buf;
+const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=2600;f.Q.value=1.2;
+const g=c.createGain();g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);
+src.connect(f).connect(g).connect(c.destination);src.start(t);
+const o=c.createOscillator(),g2=c.createGain();o.type='square';o.frequency.value=220;
+g2.gain.setValueAtTime(.08,t);g2.gain.exponentialRampToValueAtTime(.001,t+.04);
+o.connect(g2).connect(c.destination);o.start(t);o.stop(t+.05);
+}catch(e){}
+}
+function riff(){
+try{
+const c=ac(),t=c.currentTime;
+const master=c.createGain();master.gain.value=.5;
+const dist=c.createWaveShaper();
+const curve=new Float32Array(256);
+for(let i=0;i<256;i++){const x=i/128-1;curve[i]=Math.tanh(3.5*x)}
+dist.curve=curve;
+const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2800;
+dist.connect(lp).connect(master).connect(c.destination);
+const N={E3:164.81,G3:196,A3:220,Bb3:233.08,B3:246.94,E4:329.63,D4:293.66};
+const seq=[[N.E3,0,.18],[N.G3,.2,.14],[N.A3,.36,.14],[N.Bb3,.52,.1],[N.B3,.62,.22],[N.A3,.86,.12],[N.G3,1,.12],[N.E3,1.14,.3],[N.D4,1.5,.14],[N.E4,1.66,.55]];
+seq.forEach(([f0,st,dur])=>{
+const o=c.createOscillator();o.type='sawtooth';o.frequency.value=f0;
+const o2=c.createOscillator();o2.type='square';o2.frequency.value=f0*1.005;
+const g=c.createGain();g.gain.setValueAtTime(0,t+st);
+g.gain.linearRampToValueAtTime(.32,t+st+.02);
+g.gain.setValueAtTime(.32,t+st+dur*.7);
+g.gain.exponentialRampToValueAtTime(.001,t+st+dur);
+o.connect(g);o2.connect(g);g.connect(dist);
+o.start(t+st);o.stop(t+st+dur+.05);o2.start(t+st);o2.stop(t+st+dur+.05);
+});
+for(let i=0;i<8;i++){
+const o=c.createOscillator(),g=c.createGain();o.type='sine';
+o.frequency.setValueAtTime(120,t+i*.28);o.frequency.exponentialRampToValueAtTime(40,t+i*.28+.1);
+g.gain.setValueAtTime(.5,t+i*.28);g.gain.exponentialRampToValueAtTime(.001,t+i*.28+.12);
+o.connect(g).connect(c.destination);o.start(t+i*.28);o.stop(t+i*.28+.15);
+}
+}catch(e){}
+}
+return{click,riff};
+})();
+document.addEventListener('click',e=>{if(e.target.closest('.btn,button,.jimmy-sw,.del'))AudioFX.click()});
+</script>
+<script>
+/* ===== 口号打字机 + 标题彩蛋 ===== */
+(()=>{
+const SLOGANS=[
+"DUI? DWI? You've come to the right place!",
+"Did you know that you have rights? The Constitution says you do!",
+"I'm the guy who knows a guy... who knows another guy.",
+"It's all good, man!",
+"I didn't do it. Okay, maybe I did. But can you prove it?",
+"Justice matters... most of the time."
+];
+const el=document.getElementById('slogan');let i=0;
+function type(str,done){el.textContent='';let p=0;const tm=setInterval(()=>{el.textContent=str.slice(0,++p);if(p>=str.length){clearInterval(tm);setTimeout(done,2400)}},55)}
+function erase(done){const tm=setInterval(()=>{el.textContent=el.textContent.slice(0,-1);if(!el.textContent){clearInterval(tm);done()}},18)}
+(function loop(){type(SLOGANS[i%SLOGANS.length],()=>erase(()=>{i++;loop()}))})();
+document.getElementById('saulTitle').addEventListener('click',()=>{
+AudioFX.riff();
+const v=document.getElementById('vhs');v.classList.remove('on');void v.offsetWidth;v.classList.add('on');
+});
+})();
+/* ===== 吉米模式 ===== */
+const JIMMY_MAP={'案件':'活儿','收费':'刀乐','地盘':'场子','留言':'纸条','免费评估你的案子':'先聊聊不要钱','清白 VS 有罪 · 案例转化器':'进去 VS 出来 · 索尔魔法机','客户卷宗':'熟客名单','新客登记':'新韭菜登记','签约受理':'成交！','俗气收费计算器':'灵魂估价器','阿尔伯克基 · 业务据点图':'ABQ · 索尔的游乐场','匿名委托留言簿':'不可描述留言板','写下你的麻烦（绝对保密*）':'写下你的破事（我尽量不听）','塞进索尔的信箱':'扔进洞里','待办委托':'排队等捞','核心业务':'捞人业务','明码标价':'童叟无欺','势力范围':'我的地盘','保密协议':'天知地知','吉米模式':'索尔模式','“别担心，我打赢过更离谱的。”':'“Nailed it! 更离谱的我都赢过。”','把鼠标悬停在图钉上，听索尔讲讲每个据点的“光辉历史”。':'戳戳图钉，听听我的光辉事迹。','*保密程度取决于今天的咖啡浓度。':'*Let\u2019s cook... oh wait, 串台了。','新墨西哥州阿尔伯克基 · 蒙哥马利街 6330 号 · 电梯旁第三扇门':'ABQ · 随便哪个商场办公室 · 闻到指甲油味就对了','本页面纯属剧集致敬 · 不构成任何法律意见 · 出事别真打这个电话':'S\u2019all good, man! · 出事就打 (505) 164-CALL'};
+let jimmyOn=false;
+document.getElementById('jimmySw').addEventListener('click',function(){
+jimmyOn=!jimmyOn;this.classList.toggle('on',jimmyOn);
+document.body.classList.toggle('jimmy',jimmyOn);
+document.querySelectorAll('[data-l]').forEach(el=>{
+const orig=el.getAttribute('data-l');
+el.textContent=jimmyOn?(JIMMY_MAP[orig]||orig):orig;
+});
+});
+</script>
+<script>
+/* ===== 案例转化器 CRUD ===== */
+(()=>{
+const KEY='saul_cases';
+const DEF=[
+{name:'老白 W.W.',crime:'涉嫌"化学课外社会实践"',status:'ongoing'},
+{name:'小粉 Jesse',crime:'在房车里开派对扰民',status:'pending'},
+{name:'赫克托',crime:'用铃铛发送骚扰信息',status:'pending'}
+];
+let cases;
+try{cases=JSON.parse(localStorage.getItem(KEY))||DEF}catch(e){cases=DEF}
+const save=()=>localStorage.setItem(KEY,JSON.stringify(cases));
+const LBL={pending:'待审',ongoing:'进行中',free:'无罪释放',tech:'技术性脱罪'};
+const list=document.getElementById('caseList'),hint=document.getElementById('caseHint');
+function fireworks(x,y){
+const colors=['#FF2E88','#19E3C2','#F2C230','#D32F2F','#fff'];
+for(let i=0;i<26;i++){
+const s=document.createElement('div');s.className='spark';
+const a=Math.random()*Math.PI*2,d=60+Math.random()*110;
+s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d+'px');
+s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];
+document.body.appendChild(s);setTimeout(()=>s.remove(),950);
+}
+}
+const QUIPS=['证人突然决定回老家养老。','证据袋上的标签…哎呀打错了。','陪审团里有个我宾果夜的老朋友。','关键录像带神秘消磁了。','法官今天心情不错，我也是。'];
+window.__saulize=function(btn,id){
+const c=cases.find(x=>x.id===id);if(!c)return;
+const r=btn.getBoundingClientRect();
+if(Math.random()<.7){
+c.status='free';hint.textContent=c.name+' 无罪释放！今晚仙人掌酒吧见！';
+fireworks(r.left+r.width/2,r.top);
+}else{
+c.status='tech';hint.textContent=c.name+' 技术性脱罪 —— '+QUIPS[Math.floor(Math.random()*QUIPS.length)];
+}
+save();render();
+};
+window.__delCase=function(id){cases=cases.filter(x=>x.id!==id);save();render();hint.textContent='卷宗已碎纸。索尔从没见过这个人。'};
+window.__toggle=function(id){
+const c=cases.find(x=>x.id===id);if(!c)return;
+c.status=c.status==='pending'?'ongoing':'pending';save();render();
+};
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'"',"'":'&#39;'}[m]))}
+function render(){
+list.innerHTML=cases.map(c=>
+'<div class="case-item">'+
+'<span class="nm">'+esc(c.name)+'</span>'+
+'<span class="cr">'+esc(c.crime)+'</span>'+
+'<span class="st '+c.status+'">'+LBL[c.status]+'</span>'+
+((c.status==='pending'||c.status==='ongoing')
+?'<button class="btn sm red" onclick="__saulize(this,'+c.id+')"><i class="fa-solid fa-wand-magic-sparkles"></i> 索尔化</button>'+
+'<button class="btn sm blue" onclick="__toggle('+c.id+')"><i class="fa-solid fa-arrows-rotate"></i></button>':'')+
+'<button class="btn sm ghost" onclick="__delCase('+c.id+')"><i class="fa-solid fa-trash"></i></button>'+
+'</div>'
+).join('')||'<div class="hint">暂无客户 —— 索尔正在美甲店门口发名片。</div>';
+}
+document.getElementById('addCase').addEventListener('click',()=>{
+const n=document.getElementById('cName'),c=document.getElementById('cCrime');
+if(!n.value.trim()||!c.value.trim()){hint.textContent='姓名和罪名都得填 —— 哪怕是编的。';return}
+cases.unshift({id:Date.now(),name:n.value.trim(),crime:c.value.trim(),status:'pending'});
+n.value='';c.value='';save();render();hint.textContent='新客已建档！成功率预估：反正比不请律师高。';
+});
+render();
+})();
+</script>
+<script>
+/* ===== 俗气收费计算器 ===== */
+(()=>{
+const fee=document.getElementById('fee'),val=document.getElementById('feeVal'),quip=document.getElementById('feeQuip'),bg=document.getElementById('fee-bg');
+const T=[
+[0,'免费？行吧，就当交个朋友。但咖啡你请。'],
+[500,'只需 $[v]，我就能让证人"失忆"。'],
+[1500,'$[v] 包你陪审团里至少有一个"熟人"。'],
+[3000,'$[v]？这价钱能让证据自己长腿跑掉。'],
+[4500,'$[v]！先生，您这是要买下半个法院啊。我喜欢。']
+];
+function upd(){
+const v=+fee.value;val.textContent=v.toLocaleString();
+const t=T.filter(x=>v>=x[0]).pop()[1];
+quip.textContent=t.replace('[v]',v.toLocaleString());
+const r=Math.round(46+v/5000*165),g=Math.round(125-v/5000*80);
+bg.style.background='rgb('+r+','+g+',50)';
+}
+fee.addEventListener('input',upd);upd();
+})();
+</script>
+<script>
+/* ===== 阿尔伯克基地图 ===== */
+(()=>{
+const cv=document.getElementById('mapcv'),ctx=cv.getContext('2d'),tip=document.getElementById('maptip');
+const PTS=[
+{x:140,y:110,icon:'⚖️',name:'县法院',txt:'我的第二个家。保安已经认识我了，还给我留车位。'},
+{x:400,y:80,icon:'🚗',name:'A1A 洗车店',txt:'洛萨帕格斯。洗钱...哦不，洗车的好地方。'},
+{x:640,y:150,icon:'💅',name:'美甲店后屋',txt:'我的"行政办公室"。前台小妹总以为我是来做指甲的。'},
+{x:280,y:300,icon:'🍗',name:'Los Pollos Hermanos',txt:'炸鸡不错。老板人很"热心"，别惹他。'},
+{x:700,y:320,icon:'🏜️',name:'沙漠深处',txt:'如果有人说要带你去沙漠"谈谈"，带上我。还有水。'}
+];
+function draw(){
+ctx.clearRect(0,0,900,420);
+ctx.strokeStyle='#a8845a';ctx.lineWidth=2;ctx.setLineDash([8,8]);
+ctx.beginPath();ctx.moveTo(40,200);ctx.bezierCurveTo(260,140,420,300,860,220);ctx.stroke();
+ctx.setLineDash([]);
+ctx.strokeStyle='#b3925f';ctx.lineWidth=1;
+for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(60+i*180,390);ctx.lineTo(120+i*180,340);ctx.lineTo(180+i*180,390);ctx.closePath();ctx.stroke()}
+ctx.font='22px serif';ctx.fillText('🌵',80,260);ctx.fillText('🌵',560,340);ctx.fillText('🌵',820,120);ctx.fillText('🦂',460,180);
+ctx.font='bold 15px Oswald,sans-serif';ctx.fillStyle='#6b4a1e';
+ctx.fillText('ALBUQUERQUE, NM · 35°N 106°W',330,405);
+PTS.forEach((p,i)=>{
+ctx.font='28px serif';ctx.fillText(p.icon,p.x-14,p.y+10);
+ctx.fillStyle='#D32F2F';ctx.beginPath();ctx.arc(p.x,p.y-14,5,0,7);ctx.fill();
+ctx.strokeStyle='#1a1410';ctx.lineWidth=2;ctx.stroke();
+ctx.font='bold 13px Oswald,sans-serif';ctx.fillStyle='#3a2a12';
+ctx.fillText(p.name,p.x+16,p.y-8);
+});
+}
+cv.addEventListener('mousemove',e=>{
+const r=cv.getBoundingClientRect();
+const mx=(e.clientX-r.left)*cv.width/r.width,my=(e.clientY-r.top)*cv.height/r.height;
+const hit=PTS.find(p=>Math.hypot(p.x-mx,p.y-my)<34);
+if(hit){
+tip.style.display='block';
+tip.innerHTML='<b>'+hit.icon+' '+hit.name+'</b>'+hit.txt;
+tip.style.left=Math.min(e.clientX+14,innerWidth-270)+'px';
+tip.style.top=(e.clientY+16)+'px';
+cv.style.cursor='pointer';
+}else{tip.style.display='none';cv.style.cursor='crosshair'}
+});
+cv.addEventListener('mouseleave',()=>tip.style.display='none');
+draw();
+})();
+</script><script>
+/* ===== 留言簿 ===== */
+(()=>{
+const KEY='saul_msgs';
+let msgs;
+try{msgs=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){msgs=[]}
+const save=()=>localStorage.setItem(KEY,JSON.stringify(msgs));
+const list=document.getElementById('msgList'),cnt=document.getElementById('msgCount');
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'"',"'":'&#39;'}[m]))}
+window.__delMsg=function(id){msgs=msgs.filter(m=>m.id!==id);save();render()};
+function render(){
+cnt.textContent=msgs.length?'('+msgs.length+')':'';
+list.innerHTML=msgs.map(m=>
+'<div class="msg"><div class="tx">'+esc(m.text)+'</div>'+
+'<div class="meta"><span><i class="fa-solid fa-clock"></i> '+m.time+'</span>'+
+'<button class="del" onclick="__delMsg('+m.id+')" title="销毁证据"><i class="fa-solid fa-fire"></i></button></div></div>'
+).join('')||'<div class="hint">信箱空空如也。索尔翻了翻，只找到一张过期的塔可优惠券。</div>';
+}
+document.getElementById('addMsg').addEventListener('click',()=>{
+const t=document.getElementById('gText');
+if(!t.value.trim())return;
+const now=new Date();
+const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+msgs.unshift({id:Date.now(),text:t.value.trim(),time:ts});
+t.value='';save();render();
+});
+render();
+})();
+</script>
+</body>
+</html>
