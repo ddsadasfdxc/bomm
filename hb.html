@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HEISENBERG CONSOLE</title>
+<style>
+:root{
+--g:#2EA84F;--gd:#1A3A2A;--y:#E5B53B;--o:#C26A36;--bg:#0A0D0C;--pn:#10160F;--pn2:#151B12;
+--tx:#D8E0D0;--td:#6B7A66;--rd:#C73E3A;
+}
+body.desert{
+--g:#8A6A1F;--gd:#5A4A15;--y:#B8860B;--o:#A0522D;--bg:#D8CFC0;--pn:#C8BFb0;--pn2:#BFB5A5;
+--tx:#2A2520;--td:#5A5548;--rd:#8B2020;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'Courier New',monospace;overflow-x:hidden;transition:background .4s,color .4s}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16l28-16 28 16v34zM28 100l28-16V50M28 34l28 16' fill='none' stroke='%231A3A2A' stroke-opacity='.35'/%3E%3C/svg%3E");
+}
+body.desert::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16l28-16 28 16v34zM28 100l28-16V50M28 34l28 16' fill='none' stroke='%235A4A15' stroke-opacity='.2'/%3E%3C/svg%3E")}
+.hz{height:10px;background:repeating-linear-gradient(45deg,var(--y) 0 16px,#111 16px 32px)}
+.panel{position:relative;z-index:1;background:var(--pn);border:1px solid var(--gd);border-radius:4px;padding:20px;filter:contrast(1.08) grayscale(.06);transition:box-shadow .3s,border-color .3s}
+.panel:hover{border-color:var(--g);box-shadow:0 0 18px rgba(46,168,79,.35)}
+.metal{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+header{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--pn);border-bottom:2px solid var(--gd)}
+.logo{font-size:20px;font-weight:700;letter-spacing:3px;color:var(--y)}
+.logo b{background:var(--g);color:#04120a;padding:2px 8px;border:2px solid var(--y);border-radius:3px;margin:0 4px}
+.hbtns button{background:var(--gd);color:var(--tx);border:1px solid var(--g);padding:6px 12px;font-family:inherit;font-size:12px;cursor:pointer;border-radius:3px;margin-left:8px}
+.hbtns button:hover{background:var(--g);color:#04120a}
+nav.tabs{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:6px;padding:12px 20px;background:var(--pn2);border-bottom:1px solid var(--gd)}
+.tab{padding:8px 16px;background:transparent;border:1px solid var(--gd);color:var(--td);font-family:inherit;font-size:13px;cursor:pointer;border-radius:3px;letter-spacing:1px}
+.tab.on{background:var(--g);color:#04120a;border-color:var(--y);font-weight:700}
+.view{display:none;padding:20px;max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.view.on{display:block}
+.dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.dash h2{font-size:14px;letter-spacing:3px;color:var(--y);margin-bottom:14px;border-bottom:1px solid var(--gd);padding-bottom:8px}
+#gauge{width:100%;max-width:260px;display:block;margin:0 auto}
+#lot{font-size:18px;color:var(--g);letter-spacing:2px;text-align:center;margin-top:10px}
+#rule{font-size:14px;line-height:1.9;color:var(--tx)}
+#rule b{color:var(--y)}
+.big-btn{display:block;width:100%;padding:26px;font-size:22px;font-weight:700;letter-spacing:4px;font-family:inherit;background:var(--gd);color:var(--y);border:2px solid var(--g);border-radius:4px;cursor:pointer;transition:all .2s;text-shadow:0 0 12px rgba(229,181,59,.6)}
+.big-btn:hover{background:var(--g);color:#04120a;box-shadow:0 0 30px rgba(46,168,79,.6)}
+#quote-out{min-height:120px;margin-top:20px;padding:24px;text-align:center;font-size:20px;line-height:1.8;color:var(--y);text-shadow:0 0 14px rgba(229,181,59,.5)}
+#quote-out small{display:block;margin-top:14px;font-size:13px;color:var(--td);letter-spacing:2px}
+.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-8px,4px)}40%{transform:translate(8px,-4px)}60%{transform:translate(-6px,-3px)}80%{transform:translate(6px,3px)}}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:999;transition:opacity .3s}
+.elf{display:flex;gap:14px;flex-wrap:wrap}
+#el-grid{flex:2;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px;align-content:start}
+.el{aspect-ratio:1;background:var(--pn);border:1px solid var(--gd);clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.el:hover{border-color:var(--y);box-shadow:0 0 16px rgba(46,168,79,.5);transform:scale(1.06)}
+.el .sym{font-size:22px;font-weight:700;color:var(--g)}
+.el .num{font-size:10px;color:var(--td)}
+.el.toxic .sym{color:var(--rd)}.el.boom .sym{color:var(--o)}
+#el-info{flex:1;min-width:250px;font-size:13px;line-height:1.8}
+#el-info h3{color:var(--y);font-size:20px;margin-bottom:8px}
+.fbtn{padding:6px 14px;margin-right:8px;margin-bottom:10px;background:transparent;border:1px solid var(--gd);color:var(--td);font-family:inherit;font-size:12px;cursor:pointer;border-radius:3px}
+.fbtn.on{background:var(--y);color:#111;border-color:var(--y);font-weight:700}
+.task{display:flex;align-items:center;gap:12px;padding:12px;background:var(--pn2);border:1px solid var(--gd);border-radius:4px;margin-bottom:10px;position:relative;overflow:hidden}
+.task.done{border-color:var(--rd)}
+.task.done::after{content:'已售罄';position:absolute;right:14px;top:50%;transform:translateY(-50%) rotate(-12deg);color:var(--rd);border:2px solid var(--rd);padding:3px 10px;font-size:13px;font-weight:700;letter-spacing:3px;border-radius:3px;opacity:.85}
+.task .tt{flex:1;font-size:14px}
+.task.done .tt{text-decoration:line-through;color:var(--td)}
+.task input[type=range]{width:110px;accent-color:var(--g)}
+.task .pp{font-size:12px;color:var(--y);width:48px}
+.task .del{background:none;border:1px solid var(--rd);color:var(--rd);padding:4px 10px;cursor:pointer;font-family:inherit;font-size:12px;border-radius:3px}
+#t-add{display:flex;gap:10px;margin-bottom:16px}
+#t-add input{flex:1;background:var(--pn2);border:1px solid var(--gd);color:var(--tx);padding:10px 14px;font-family:inherit;font-size:14px;border-radius:3px}
+#t-add button{background:var(--g);color:#04120a;border:none;padding:10px 20px;font-family:inherit;font-weight:700;cursor:pointer;border-radius:3px;letter-spacing:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--pn2);border:1px solid var(--gd);border-radius:4px;padding:16px;text-align:center}
+.stat .n{font-size:26px;color:var(--y);font-weight:700}
+.stat .l{font-size:11px;color:var(--td);letter-spacing:2px;margin-top:6px}
+#chart{width:100%;height:240px}
+.pad{display:grid;grid-template-columns:repeat(3,80px);gap:10px;justify-content:center;margin:16px 0}
+.key{aspect-ratio:1;font-size:22px;font-family:inherit;background:var(--pn2);color:var(--tx);border:1px solid var(--gd);border-radius:6px;cursor:pointer}
+.key:hover{border-color:var(--g);box-shadow:0 0 10px rgba(46,168,79,.4)}
+#dial-out{text-align:center;font-size:22px;letter-spacing:4px;color:var(--g);min-height:34px;margin:10px 0}
+#saul-pop{display:none;position:fixed;inset:0;z-index:998;background:rgba(4,10,6,.96);align-items:center;justify-content:center;text-align:center;padding:24px}
+#saul-pop.on{display:flex}
+#saul-pop .in{max-width:560px;border:4px solid var(--y);padding:36px;background:var(--pn);box-shadow:0 0 60px rgba(229,181,59,.4)}
+#saul-pop h2{color:var(--y);font-size:28px;letter-spacing:3px;margin-bottom:16px}
+#saul-pop p{font-size:15px;line-height:2}
+#panic{position:fixed;right:18px;bottom:18px;z-index:900;background:var(--rd);color:#fff;border:2px solid var(--y);padding:12px 18px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:4px}
+#fake{display:none;position:fixed;inset:0;z-index:997;background:#f5f0e6;color:#333;padding:40px 20px;font-family:'Comic Sans MS',cursive;text-align:center}
+#fake.on{display:block}
+#fake h1{color:#4a7c4e;margin-bottom:20px}
+#fake .q{font-size:28px;margin:14px 0}
+#fake input{font-size:22px;width:100px;padding:6px;text-align:center;border:2px solid #4a7c4e;border-radius:6px}
+#fake button{margin-top:16px;padding:10px 24px;font-size:16px;background:#4a7c4e;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#modal{display:none;position:fixed;inset:0;z-index:990;background:rgba(0,0,0,.75);align-items:center;justify-content:center}
+#modal.on{display:flex}
+#modal .box{background:var(--pn);border:10px solid transparent;border-image:repeating-linear-gradient(45deg,var(--y) 0 16px,#111 16px 32px) 10;padding:28px;max-width:420px;width:90%;text-align:center}
+#modal .box p{margin-bottom:20px;font-size:15px;line-height:1.8}
+#modal .box button{padding:10px 24px;margin:0 8px;font-family:inherit;font-size:14px;cursor:pointer;border-radius:3px}
+#m-ok{background:var(--rd);color:#fff;border:none}
+#m-no{background:var(--gd);color:var(--tx);border:1px solid var(--g)}
+.pt{position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:996}
+@media(max-width:700px){#el-grid{grid-template-columns:repeat(2,1fr)}.elf{flex-direction:column}.pad{grid-template-columns:repeat(3,70px)}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo"><b>He</b>ISEN<b>Ba</b>RG CONSOLE</div>
+<div class="hbtns"><button id="theme-b">荒漠模式</button></div>
+</header>
+<div class="hz"></div>
+<nav class="tabs">
+<button class="tab on" data-v="dash">控制台</button>
+<button class="tab" data-v="quote">SAY MY NAME</button>
+<button class="tab" data-v="lab">元素实验室</button>
+<button class="tab" data-v="rv">RV 账本</button>
+<button class="tab" data-v="intel">情报局</button>
+<button class="tab" data-v="phone">拨号</button>
+</nav>
+<main class="view on" id="v-dash">
+<div class="dash">
+<div class="panel metal"><h2>◈ 实时制毒纯度</h2><canvas id="gauge" width="260" height="170"></canvas><div id="lot">LOT-</div></div>
+<div class="panel metal"><h2>◈ 今日毒师法则</h2><div id="rule"></div></div>
+<div class="panel metal"><h2>◈ 批次概览</h2><div id="dash-sum" style="font-size:14px;line-height:2"></div></div>
+</div>
+</main>
+<main class="view" id="v-quote">
+<div class="panel metal">
+<button class="big-btn" id="say-btn">SAY MY NAME</button>
+<div id="quote-out">...<small>点击按钮，说出我的名字</small></div>
+</div>
+</main>
+<main class="view" id="v-lab">
+<div class="panel metal">
+<h2 style="font-size:14px;letter-spacing:3px;color:var(--y);margin-bottom:14px">◈ 拆解实验室</h2>
+<div>
+<button class="fbtn on" data-f="all">全部</button>
+<button class="fbtn" data-f="toxic">剧毒</button>
+<button class="fbtn" data-f="boom">易爆</button>
+<button class="fbtn" data-f="raw">原料</button>
+</div>
+<div class="elf">
+<div id="el-grid"></div>
+<div id="el-info" class="panel metal"><h3>选择元素</h3><p style="color:var(--td)">点击左侧六边形晶体查看物化属性与剧中用途。</p></div>
+</div>
+</div>
+</main>
+<main class="view" id="v-rv">
+<div class="panel metal">
+<h2 style="font-size:14px;letter-spacing:3px;color:var(--y);margin-bottom:14px">◈ 沙漠 RV 账本</h2>
+<div id="t-add">
+<input id="t-in" placeholder="输入新批次名称…（投入原料）" maxlength="40">
+<button id="t-btn">投入原料</button>
+</div>
+<div id="t-list"></div>
+</div>
+</main>
+<main class="view" id="v-intel">
+<div class="panel metal">
+<h2 style="font-size:14px;letter-spacing:3px;color:var(--y);margin-bottom:14px">◈ 炸鸡叔商业情报局</h2>
+<div class="stats">
+<div class="stat"><div class="n" id="s-quotes">0</div><div class="l">台词库</div></div>
+<div class="stat"><div class="n" id="s-els">0</div><div class="l">元素数</div></div>
+<div class="stat"><div class="n" id="s-done">0</div><div class="l">已结晶</div></div>
+<div class="stat"><div class="n" id="s-money">$0</div><div class="l">累计收入</div></div>
+</div>
+<canvas id="chart"></canvas>
+</div>
+</main>
+<main class="view" id="v-phone">
+<div class="panel metal" style="max-width:420px;margin:0 auto">
+<h2 style="font-size:14px;letter-spacing:3px;color:var(--y);margin-bottom:14px;text-align:center">◈ 加密线路</h2>
+<div id="dial-out">—</div>
+<div class="pad" id="pad"></div>
+<div style="text-align:center">
+<button class="fbtn" id="dial-call">拨 打</button>
+<button class="fbtn" id="dial-clr">清 除</button>
+</div>
+<p style="text-align:center;margin-top:16px;font-size:11px;color:var(--td)">提示：试试 505-842-5662</p>
+</div>
+</main>
+<div id="saul-pop"><div class="in">
+<h2>BETTER CALL SAUL!</h2>
+<p>遇到法律麻烦了吗？被 DEA 盯上了？<br>别慌！给索尔·古德曼打电话！<br><br><b style="color:var(--y);font-size:22px">(505) 842-5662</b><br><br>"我能让你的罪行像露水一样蒸发！"</p>
+<button class="fbtn" id="saul-close" style="margin-top:20px">挂断</button>
+</div></div>
+<button id="panic">⚠ DEA 突袭</button>
+<div id="fake">
+<h1>阳光小学数学练习</h1>
+<div class="q" id="fake-q"></div>
+<input id="fake-a" type="number" placeholder="答案">
+<br><button id="fake-ok">提交答案</button>
+<div id="fake-r" style="margin-top:14px;font-size:18px"></div>
+</div>
+<div id="flash"></div>
+<div id="modal"><div class="box">
+<p id="m-text"></p>
+<button id="m-ok">确认执行</button>
+<button id="m-no">取消</button>
+</div></div>
+<script>
+const QUOTES=[
+["I am not in danger, Skyler. I am the danger.","Walter White","S4E06"],
+["Say my name.","Heisenberg","S5E07"],
+["I did it for me. I liked it. I was good at it.","Walter White","S5E16"],
+["Yeah, science!","Jesse Pinkman","S1E07"],
+["Better call Saul!","Saul Goodman","S2E08"],
+["No more half measures, Walter.","Mike Ehrmantraut","S3E12"],
+["I am the one who knocks.","Walter White","S4E06"],
+["Stay out of my territory.","Heisenberg","S2E06"],
+["Tread lightly.","Walter White","S5E09"],
+["We're done when I say we're done.","Walter White","S5E08"],
+["I watched Jane die.","Walter White","S5E14"],
+["It's not about the money. It's about the empire.","Walter White","S5E07"],
+["Chemistry is the study of change.","Walter White","S1E01"],
+["I'm in the empire business.","Walter White","S5E07"],
+["Yeah, bitch! Magnets!","Jesse Pinkman","S5E01"],
+["This is not meth.","Walter White","S1E06"],
+["You're an insane, degenerate piece of filth.","Walter White","S5E11"],
+["I deserve this.","Walter White","S3E10"],
+["Run.","Walter White","S5E14"],
+["It's over. We're safe.","Walter White","S4E13"]
+];
+const RULES=[
+"<b>法则 1</b>：永远不要让情绪影响配比。",
+"<b>法则 2</b>：纯度就是尊严，低于 90% 的货不出手。",
+"<b>法则 3</b>：信任是奢侈品，只给家人。",
+"<b>法则 4</b>：半吊子措施比不行动更危险。",
+"<b>法则 5</b>：永远准备好 B 计划——和一瓶蓖麻毒素。",
+"<b>法则 6</b>：化学不会说谎，但人会。",
+"<b>法则 7</b>：沙漠里没有人能听见你说话。"
+];
+const ELS=[
+{n:1,s:"H",name:"氢",cat:"raw",w:"1.008",mp:"-259C",use:"H2气体制备，雷酸汞引爆剂原料"},
+{n:6,s:"C",name:"碳",cat:"raw",w:"12.01",mp:"3550C",use:"一切有机化合物骨架，蓝色晶体之魂"},
+{n:8,s:"O",name:"氧",cat:"raw",w:"16.00",mp:"-218C",use:"氧化反应核心，制毒必备"},
+{n:15,s:"P",name:"磷",cat:"boom",w:"30.97",mp:"44C",use:"白磷自燃——老白的烟雾弹"},
+{n:16,s:"S",name:"硫",cat:"raw",w:"32.06",mp:"115C",use:"硫酸，尸体处理（浴缸警告）"},
+{n:17,s:"Cl",name:"氯",cat:"toxic",w:"35.45",mp:"-101C",use:"盐酸原料，腐蚀性极强"},
+{n:26,s:"Fe",name:"铁",cat:"raw",w:"55.85",mp:"1538C",use:"RV车体，电磁铁 Yeah bitch"},
+{n:29,s:"Cu",name:"铜",cat:"raw",w:"63.55",mp:"1085C",use:"导线，电解实验"},
+{n:35,s:"Br",name:"溴",cat:"toxic",w:"79.90",mp:"-7C",use:"Breaking Bad 标题元素之一"},
+{n:56,s:"Ba",name:"钡",cat:"toxic",w:"137.3",mp:"727C",use:"Breaking Bad 标题元素之二"},
+{n:74,s:"W",name:"钨",cat:"raw",w:"183.8",mp:"3422C",use:"耐高温灯丝"},
+{n:79,s:"Au",name:"金",cat:"raw",w:"197.0",mp:"1064C",use:"炸鸡叔的终极报酬"},
+{n:80,s:"Hg",name:"汞",cat:"toxic",w:"200.6",mp:"-39C",use:"雷酸汞 fulminated mercury"},
+{n:81,s:"Tl",name:"铊",cat:"toxic",w:"204.4",mp:"304C",use:"蓖麻毒素替代品，剧毒"},
+{n:92,s:"U",name:"铀",cat:"boom",w:"238.0",mp:"1132C",use:"放射性衰变——终极威慑"}
+];
+const $=s=>document.querySelector(s);
+const LS='heisenberg_console';
+let S=JSON.parse(localStorage.getItem(LS)||'null')||{tasks:[],money:0,week:{},theme:'dark'};
+function save(){localStorage.setItem(LS,JSON.stringify(S))}
+function burst(x,y){for(let i=0;i<24;i++){const p=document.createElement('div');p.className='pt';const c=['#E5B53B','#2EA84F','#C26A36','#C73E3A'][i%4];p.style.background=c;p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);const a=Math.random()*Math.PI*2,d=40+Math.random()*100;const dx=Math.cos(a)*d,dy=Math.sin(a)*d;p.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px)',opacity:0}],{duration:500+Math.random()*400,easing:'cubic-bezier(.1,.8,.3,1)'}).onfinish=()=>p.remove()}}
+document.addEventListener('click',e=>{burst(e.clientX,e.clientY)});
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+t.classList.add('on');$('#v-'+t.dataset.v).classList.add('on');
+if(t.dataset.v==='intel')renderStats();
+}));
+function purity(){const t=S.tasks.filter(x=>x.done).length;const all=S.tasks.length;return all?Math.min(99.1,Math.round(t/all*991)/10):0}
+function drawGauge(){
+const c=$('#gauge'),ctx=c.getContext('2d'),W=c.width,H=c.height,cx=W/2,cy=H-20,r=100;
+ctx.clearRect(0,0,W,H);
+ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0);ctx.lineWidth=16;ctx.strokeStyle='#1A3A2A';ctx.stroke();
+const p=purity(),ang=Math.PI+(p/100)*Math.PI;
+ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,ang);ctx.lineWidth=16;
+ctx.strokeStyle=p>=99.1?'#E5B53B':'#2EA84F';ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=14;ctx.stroke();ctx.shadowBlur=0;
+const na=Math.PI+(p/100)*Math.PI;
+ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(na)*(r-24),cy+Math.sin(na)*(r-24));ctx.lineWidth=3;ctx.strokeStyle='#E5B53B';ctx.stroke();
+ctx.beginPath();ctx.arc(cx,cy,6,0,7);ctx.fillStyle='#E5B53B';ctx.fill();
+ctx.fillStyle=p>=99.1?'#E5B53B':'#D8E0D0';ctx.font='bold 26px Courier New';ctx.textAlign='center';ctx.fillText(p.toFixed(1)+'%',cx,cy-16);
+if(p>=99.1){ctx.font='12px Courier New';ctx.fillStyle='#E5B53B';ctx.fillText('PERFECT BATCH!',cx,20)}
+}
+setInterval(()=>{const d=new Date();const p=n=>String(n).padStart(2,'0');
+$('#lot').textContent='LOT-'+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+},1000);
+$('#rule').innerHTML=RULES[new Date().getDate()%RULES.length];
+function dashSum(){const t=S.tasks.length,done=S.tasks.filter(x=>x.done).length;
+$('#dash-sum').innerHTML='总批次：<b style="color:var(--y)">'+t+'</b><br>已结晶：<b style="color:var(--g)">'+done+'</b><br>待处理：<b style="color:var(--o)">'+(t-done)+'</b><br>当前纯度：<b style="color:var(--y)">'+purity().toFixed(1)+'%</b>';
+}
+let typing=null;
+$('#say-btn').addEventListener('click',()=>{
+const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+const out=$('#quote-out');out.innerHTML='';
+$('#flash').style.opacity='1';setTimeout(()=>$('#flash').style.opacity='0',300);
+out.classList.remove('shake');void out.offsetWidth;out.classList.add('shake');
+if(typing)clearInterval(typing);
+let i=0;const txt=q[0];
+typing=setInterval(()=>{
+out.innerHTML=txt.slice(0,++i)+'<span style="opacity:.5">▌</span>';
+if(i>=txt.length){clearInterval(typing);
+out.innerHTML=txt+'<small>— '+q[1]+' · '+q[2]+'</small>';}
+},35);
+});
+let elf='all';
+function renderEls(){
+const g=$('#el-grid');g.innerHTML='';
+ELS.filter(e=>elf==='all'||e.cat===elf).forEach(e=>{
+const d=document.createElement('div');d.className='el '+e.cat;
+d.innerHTML='<span class="num">'+e.n+'</span><span class="sym">'+e.s+'</span><span class="num">'+e.name+'</span>';
+d.addEventListener('click',()=>showEl(e));g.appendChild(d);
+});
+}
+function showEl(e){
+const cn={toxic:'剧毒',boom:'易爆',raw:'原料'};
+$('#el-info').innerHTML='<h3>['+e.s+'] '+e.name+'</h3>'+
+'<p>原子序数：<b style="color:var(--y)">'+e.n+'</b><br>'+
+'原子量：<b style="color:var(--y)">'+e.w+'</b><br>'+
+'熔点：<b style="color:var(--y)">'+e.mp+'</b><br>'+
+'危险等级：<b style="color:'+(e.cat==='toxic'?'var(--rd)':e.cat==='boom'?'var(--o)':'var(--g)')+'">'+cn[e.cat]+'</b></p>'+
+'<p style="margin-top:12px;color:var(--td)">剧中用途：</p><p style="color:var(--tx)">'+e.use+'</p>';
+}
+document.querySelectorAll('.fbtn[data-f]').forEach(b=>b.addEventListener('click',()=>{
+document.querySelectorAll('.fbtn[data-f]').forEach(x=>x.classList.remove('on'));
+b.classList.add('on');elf=b.dataset.f;renderEls();
+}));
+renderEls();
+function renderTasks(){
+const l=$('#t-list');l.innerHTML='';
+if(!S.tasks.length){l.innerHTML='<p style="color:var(--td);text-align:center;padding:20px">暂无批次记录。投入原料开始生产。</p>';return}
+S.tasks.forEach((t,i)=>{
+const d=document.createElement('div');d.className='task'+(t.done?' done':'');
+d.innerHTML='<span class="tt">'+t.txt+'</span><input type="range" min="1" max="100" value="'+t.p+'"><span class="pp">'+t.p+'%</span><button class="del">✕</button>';
+const rng=d.querySelector('input');
+rng.addEventListener('input',()=>{t.p=+rng.value;d.querySelector('.pp').textContent=t.p+'%';save()});
+rng.addEventListener('change',()=>{if(t.p>=99&&!t.done){t.done=true;S.money+=1000;save();renderTasks();drawGauge();dashSum()}});
+d.querySelector('.del').addEventListener('click',()=>delTask(i));
+l.appendChild(d);
+});
+}
+$('#t-btn').addEventListener('click',()=>{
+const v=$('#t-in').value.trim();if(!v)return;
+S.tasks.push({txt:v,p:50,done:false,ts:Date.now()});
+const dk=new Date().toISOString().slice(0,10);S.week[dk]=(S.week[dk]||0)+1;
+$('#t-in').value='';save();renderTasks();drawGauge();dashSum();
+});
+$('#t-in').addEventListener('keydown',e=>{if(e.key==='Enter')$('#t-btn').click()});
+let delIdx=-1,mClicks=0;
+function delTask(i){delIdx=i;mClicks=0;$('#m-text').innerHTML='确认销毁该批次？<br><b style="color:var(--rd)">此操作不可逆，DEA 也救不回来。</b>';$('#m-ok').textContent='确认执行（再点一次）';$('#modal').classList.add('on')}
+$('#m-ok').addEventListener('click',()=>{
+mClicks++;
+if(mClicks>=2){S.tasks.splice(delIdx,1);save();renderTasks();drawGauge();dashSum();$('#modal').classList.remove('on');mClicks=0}
+else{$('#m-ok').textContent='再次点击确认销毁'}
+});
+$('#m-no').addEventListener('click',()=>{$('#modal').classList.remove('on');mClicks=0});
+function renderStats(){
+$('#s-quotes').textContent=QUOTES.length;
+$('#s-els').textContent=ELS.length;
+$('#s-done').textContent=S.tasks.filter(x=>x.done).length;
+$('#s-money').textContent='$'+S.money.toLocaleString();
+drawChart();
+}
+function drawChart(){
+const c=$('#chart'),ctx=c.getContext('2d');
+c.width=c.offsetWidth;c.height=240;
+const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10))}
+const vals=days.map(d=>S.week[d]||0);const max=Math.max(...vals,1);
+const W=c.width,H=c.height,pad=40,bw=(W-pad*2)/7;
+ctx.clearRect(0,0,W,H);
+ctx.strokeStyle='#1A3A2A';ctx.lineWidth=1;
+for(let i=0;i<=4;i++){const y=pad+(H-pad*2)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke()}
+days.forEach((d,i)=>{
+const v=vals[i],h=(H-pad*2)*(v/max),x=pad+bw*i+bw*0.15,y=H-pad-h;
+ctx.fillStyle=v>0?'#2EA84F':'#1A3A2A';ctx.fillRect(x,y,bw*0.7,h);
+ctx.fillStyle='#6B7A66';ctx.font='10px Courier New';ctx.textAlign='center';
+ctx.fillText(d.slice(5),x+bw*0.35,H-pad+14);
+if(v>0){ctx.fillStyle='#E5B53B';ctx.fillText(v,x+bw*0.35,y-4)}
+});
+}
+let dial='';
+const padEl=$('#pad');
+['1','2','3','4','5','6','7','8','9','*','0','#'].forEach(k=>{
+const b=document.createElement('button');b.className='key';b.textContent=k;
+b.addEventListener('click',()=>{dial+=k;$('#dial-out').textContent=dial});
+padEl.appendChild(b);
+});
+$('#dial-clr').addEventListener('click',()=>{dial='';$('#dial-out').textContent='—'});
+$('#dial-call').addEventListener('click',()=>{
+if(dial==='5058425662'||dial==='505-842-5662'){
+$('#saul-pop').classList.add('on');ringTone();
+}else{$('#dial-out').textContent='无信号…'}
+});
+$('#saul-close').addEventListener('click',()=>$('#saul-pop').classList.remove('on'));
+function ringTone(){
+try{
+const ac=new(window.AudioContext||window.webkitAudioContext)();
+const o=ac.createOscillator(),g=ac.createGain();
+o.type='square';o.frequency.value=440;g.gain.value=0.08;
+o.connect(g);g.connect(ac.destination);o.start();
+let on=true;const iv=setInterval(()=>{o.frequency.value=on?440:480;on=!on},300);
+setTimeout(()=>{clearInterval(iv);o.stop();ac.close()},2500);
+}catch(e){}
+}
+$('#theme-b').addEventListener('click',()=>{
+S.theme=S.theme==='dark'?'desert':'dark';save();applyTheme();
+});
+function applyTheme(){
+document.body.classList.toggle('desert',S.theme==='desert');
+$('#theme-b').textContent=S.theme==='desert'?'黑夜模式':'荒漠模式';
+}
+let fakeOn=false,faq=[];
+function genFake(){faq=[];for(let i=0;i<3;i++){const a=10+Math.floor(Math.random()*89),b=10+Math.floor(Math.random()*89),op=Math.random()>.5?'+':'-';const r=op==='+'?a+b:a-b;faq.push({q:a+' '+op+' '+b+' = ?',a:r})}showFake()}
+function showFake(){const f=faq[0];if(!f){$('#fake-q').textContent='全部完成！你真棒！';return}$('#fake-q').textContent=f.q;$('#fake-a').value='';$('#fake-r').textContent=''}
+$('#fake-ok').addEventListener('click',()=>{
+const v=parseInt($('#fake-a').value);const f=faq[0];
+if(v===f.a){$('#fake-r').textContent='✓ 回答正确！';faq.shift();setTimeout(showFake,800)}
+else{$('#fake-r').textContent='✗ 再想想…'}
+});
+function toggleFake(){
+fakeOn=!fakeOn;
+$('#fake').classList.toggle('on',fakeOn);
+if(fakeOn)genFake();
+}
+$('#panic').addEventListener('click',toggleFake);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleFake()});
+applyTheme();drawGauge();dashSum();renderTasks();
+</script>
+</body>
+</html>
