@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-jjk-theme="daily">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>咒术高专 · 窗 | Jujutsu High - Window</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Zen+Dots&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --jjc-red: #C62828;
+      --jjc-red-glow: rgba(198, 40, 40, 0.55);
+      --jjc-blue: #1E88E5;
+      --jjc-blue-glow: rgba(30, 136, 229, 0.55);
+      --jjc-black: #1A1A1A;
+      --jjc-gold: #D4AF37;
+      --jjc-paper: #f5f0e6;
+      --jjc-ink: #0c0f0a;
+      --jjc-void: #070706;
+      --jjc-card: rgba(26, 26, 26, 0.78);
+      --jjc-card-border: rgba(212, 175, 55, 0.22);
+      --jjc-muted: #8a8a8a;
+      --font-serif: 'Noto Serif SC', serif;
+      --font-dots: 'Zen Dots', cursive;
+      --ease-shock: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background-color: var(--jjc-void);
+      color: var(--jjc-paper);
+      font-family: var(--font-serif);
+      overflow-x: hidden;
+    }
+
+    body {
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(30, 136, 229, 0.08), transparent 35%),
+        radial-gradient(circle at 80% 90%, rgba(198, 40, 40, 0.10), transparent 40%),
+        linear-gradient(180deg, #0a0a0a 0%, #121212 50%, #0a0a0a 100%);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.28;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    /* 领域展开模式 */
+    html[data-jjk-theme="domain"] body {
+      filter: contrast(1.15) saturate(1.25);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(198, 40, 40, 0.18), transparent 60%),
+        linear-gradient(180deg, #1a0505 0%, #0a0a0a 100%);
+    }
+    html[data-jjk-theme="domain"] .jjk-card {
+      transform: rotate(1.2deg);
+      box-shadow: 0 0 30px rgba(198, 40, 40, 0.25), 4px 4px 0 rgba(198, 40, 40, 0.35);
+    }
+    html[data-jjk-theme="domain"] .jjk-card:nth-child(even) { transform: rotate(-1.2deg); }
+
+    .jjk-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 18px 80px;
+    }
+
+    /* 四角注连绳/符咒装饰 */
+    .jjk-seal {
+      position: fixed;
+      width: 90px;
+      height: 90px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.55;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0 L40 0 L0 40 Z' fill='none' stroke='%23D4AF37' stroke-width='1.5'/%3E%3Ctext x='8' y='22' fill='%23D4AF37' font-size='14' font-family='serif'%3E封%3C/text%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+    .jjk-seal.tl { top: 10px; left: 10px; }
+    .jjk-seal.tr { top: 10px; right: 10px; transform: rotate(90deg); }
+    .jjk-seal.bl { bottom: 10px; left: 10px; transform: rotate(-90deg); }
+    .jjk-seal.br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+    /* Header */
+    .jjk-header {
+      text-align: center;
+      padding: 40px 0 30px;
+      position: relative;
+    }
+    .jjk-header h1 {
+      font-family: var(--font-dots);
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      letter-spacing: 0.15em;
+      margin: 0;
+      cursor: pointer;
+      user-select: none;
+      text-shadow:
+        0 0 20px var(--jjc-red-glow),
+        0 0 40px rgba(198, 40, 40, 0.25);
+      transition: text-shadow 0.3s;
+    }
+    .jjk-header h1:hover {
+      text-shadow:
+        0 0 30px var(--jjc-blue-glow),
+        0 0 60px rgba(30, 136, 229, 0.35);
+    }
+    .jjk-header h1 .jjc-kanji {
+      font-family: var(--font-serif);
+      font-weight: 700;
+    }
+    .jjk-subtitle {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      letter-spacing: 0.4em;
+      color: var(--jjc-muted);
+    }
+
+    /* 领域展开开关 */
+    .domain-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(12, 15, 10, 0.8);
+      border: 1px solid var(--jjc-card-border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      backdrop-filter: blur(8px);
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+    }
+    .domain-switch {
+      position: relative;
+      width: 46px;
+      height: 24px;
+      background: #333;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .domain-switch.active { background: var(--jjc-red); }
+    .domain-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s var(--ease-shock);
+    }
+    .domain-switch.active::after { transform: translateX(22px); }
+
+    /* 通用卡片 */
+    .jjk-section { margin-top: 34px; }
+    .jjk-section-title {
+      font-size: 1.1rem;
+      letter-spacing: 0.25em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--jjc-gold);
+    }
+    .jjk-section-title i { color: var(--jjc-red); }
+
+    .jjk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .jjk-card {
+      background: var(--jjc-card);
+      border: 1px solid var(--jjc-card-border);
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: transform 0.35s var(--ease-shock), box-shadow 0.35s;
+    }
+    .jjk-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255,255,255,0.03) 10px,
+        rgba(255,255,255,0.03) 20px
+      );
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.4s;
+    }
+    .jjk-card.unsealed::before,
+    .jjk-card:hover::before { opacity: 0; }
+    .jjk-card:hover {
+      box-shadow: 0 0 28px var(--jjc-red-glow);
+      border-color: rgba(198, 40, 40, 0.45);
+    }
+    .jjk-card h3 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
+    }
+
+    /* 咒力量表 */
+    .ce-gauge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .infinity-ring {
+      width: 180px;
+      height: 90px;
+      position: relative;
+    }
+    .infinity-ring svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .infinity-ring path.track {
+      fill: none;
+      stroke: rgba(255,255,255,0.1);
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+    .infinity-ring path.fill {
+      fill: none;
+      stroke: url(#ceGradient);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      transition: stroke-dashoffset 0.8s var(--ease-shock);
+      filter: drop-shadow(0 0 8px var(--jjc-red-glow));
+    }
+    .ce-value {
+      font-family: var(--font-dots);
+      font-size: 2.4rem;
+      color: var(--jjc-red);
+      text-shadow: 0 0 12px var(--jjc-red-glow);
+      position: relative;
+    }
+    .ce-value.glitch::after {
+      content: attr(data-value);
+      position: absolute;
+      left: 2px;
+      top: 0;
+      color: var(--jjc-blue);
+      opacity: 0.7;
+      clip-path: inset(20% 0 40% 0);
+      animation: glitch-anim 0.25s infinite;
+    }
+    @keyframes glitch-anim {
+      0% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, 1px); }
+      50% { clip-path: inset(40% 0 20% 0); transform: translate(2px, -1px); }
+      100% { clip-path: inset(25% 0 35% 0); transform: translate(0, 0); }
+    }
+
+    /* 实时战报 */
+    .battle-report {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      font-family: var(--font-dots);
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      color: var(--jjc-paper);
+      background: rgba(0,0,0,0.35);
+      border-left: 3px solid var(--jjc-red);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+    }
+    .battle-report .label {
+      color: var(--jjc-red);
+      margin-right: 12px;
+      font-weight: 700;
+    }
+
+    /* 咒灵图鉴 / 任务看板 */
+    .task-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .task-col {
+      background: rgba(0,0,0,0.35);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 220px;
+    }
+    .task-col h4 {
+      margin: 0 0 10px;
+      font-size: 0.82rem;
+      letter-spacing: 0.15em;
+      color: var(--jjc-muted);
+      text-align: center;
+    }
+    .task-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: grab;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 0.85rem;
+    }
+    .task-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
+    .task-card.dragging { opacity: 0.5; }
+    .task-card .grade {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      margin-right: 6px;
+      font-weight: 700;
+    }
+    .grade-4 { background: #4a6fa5; }
+    .grade-3 { background: #2e7d32; }
+    .grade-2 { background: #f9a825; color: #000; }
+    .grade-1 { background: #e65100; }
+    .grade-sp { background: var(--jjc-red); color: #fff; }
+    .task-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    .task-actions button {
+      flex: 1;
+      background: rgba(198, 40, 40, 0.18);
+      border: 1px solid rgba(198, 40, 40, 0.35);
+      color: var(--jjc-paper);
+      border-radius: 4px;
+      padding: 4px 0;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .task-actions button:hover { background: var(--jjc-red); }
+    .add-task {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .add-task input, .add-task select {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--jjc-paper);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+    }
+    .add-task input { flex: 1; }
+    .add-task button {
+      background: var(--jjc-red);
+      border: none;
+      color: #fff;
+      padding: 0 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-serif);
+    }
+
+    /* 黑闪特效 */
+    .black-flash {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 8px;
+      opacity: 0;
+      z-index: 10;
+    }
+    .black-flash.active {
+      animation: black-flash-burst 0.55s forwards;
+    }
+    @keyframes black-flash-burst {
+      0% { opacity: 0; transform: scale(0.8); box-shadow: inset 0 0 0 rgba(198,40,40,0); }
+      30% { opacity: 1; transform: scale(1); box-shadow: inset 0 0 40px rgba(198,40,40,0.9); }
+      60% { opacity: 1; box-shadow: inset 0 0 80px rgba(0,0,0,0.95); }
+      100% { opacity: 0; transform: scale(1.1); box-shadow: inset 0 0 0 rgba(0,0,0,0); }
+    }
+
+    /* 宿傩手指 */
+    .finger-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .finger-cell {
+      aspect-ratio: 1;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.35s;
+      background: rgba(0,0,0,0.3);
+    }
+    .finger-cell.obtained {
+      background: var(--jjc-red);
+      border-color: var(--jjc-gold);
+      box-shadow: 0 0 12px var(--jjc-red-glow);
+    }
+    .seek-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, rgba(198,40,40,0.2), rgba(30,136,229,0.2));
+      border: 1px solid var(--jjc-card-border);
+      color: var(--jjc-paper);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-serif);
+      letter-spacing: 0.2em;
+      transition: all 0.3s;
+    }
+    .seek-btn:hover { background: rgba(198,40,40,0.35); letter-spacing: 0.25em; }
+    .seek-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    /* 帐帷幕 */
+    .curtain {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .curtain.show { opacity: 1; pointer-events: auto; }
+    .curtain-text {
+      font-family: var(--font-dots);
+      font-size: 2rem;
+      letter-spacing: 0.3em;
+      color: var(--jjc-red);
+      text-shadow: 0 0 20px var(--jjc-red-glow);
+    }
+
+    /* 黑闪训练器 */
+    .bf-target {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 40%),
+        linear-gradient(135deg, var(--jjc-red), #8e0000);
+      border: 3px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 0 30px var(--jjc-red-glow);
+      transition: transform 0.08s;
+    }
+    .bf-target:active { transform: scale(0.94); }
+    .bf-panel { text-align: center; }
+    .bf-timer {
+      font-family: var(--font-dots);
+      font-size: 1.6rem;
+      color: var(--jjc-gold);
+    }
+    .bf-result {
+      margin-top: 12px;
+      min-height: 2em;
+      font-size: 0.95rem;
+    }
+    .bf-success {
+      color: var(--jjc-gold);
+      text-shadow: 0 0 12px rgba(212,175,55,0.5);
+      animation: bf-pulse 0.6s ease-out;
+    }
+    @keyframes bf-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* 角色图鉴 */
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 14px;
+    }
+    .char-cube {
+      aspect-ratio: 1;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      perspective: 600px;
+      transition: transform 0.4s var(--ease-shock), box-shadow 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .char-cube:hover {
+      transform: rotateY(15deg) rotateX(8deg) scale(1.05);
+      box-shadow: 0 0 24px rgba(30, 136, 229, 0.35);
+      border-color: var(--jjc-blue);
+    }
+    .char-cube.unsealed { border-color: var(--jjc-gold); }
+    .char-cube .char-avatar {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+    .char-cube .char-name {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+    }
+    .char-detail {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 15, 10, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      opacity: 0;
+      transform: rotateY(90deg);
+      transition: all 0.4s var(--ease-shock);
+      text-align: center;
+    }
+    .char-cube:hover .char-detail,
+    .char-cube.unsealed .char-detail {
+      opacity: 1;
+      transform: rotateY(0);
+    }
+    .char-detail .spell { color: var(--jjc-gold); font-size: 0.75rem; margin: 6px 0; }
+    .char-detail .quote { font-size: 0.7rem; color: var(--jjc-muted); line-height: 1.5; }
+
+    /* 留言簿 */
+    .guest-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .guest-form textarea {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--jjc-paper);
+      padding: 10px;
+      border-radius: 8px;
+      min-height: 70px;
+      font-family: var(--font-serif);
+      resize: vertical;
+    }
+    .guest-form button {
+      align-self: flex-end;
+      background: var(--jjc-red);
+      border: none;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-serif);
+    }
+    .guest-list {
+      max-height: 260px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .guest-msg {
+      display: flex;
+      gap: 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.85rem;
+      animation: msg-ink-in 0.4s ease-out;
+    }
+    .msg-residue {
+      width: 10px;
+      min-width: 10px;
+      border-radius: 4px;
+      align-self: stretch;
+    }
+    .msg-body { flex: 1; }
+    .msg-time {
+      font-family: var(--font-dots);
+      font-size: 0.65rem;
+      color: var(--jjc-muted);
+      margin-top: 4px;
+    }
+
+    /* 无量空处特效 */
+    .gojo-overlay {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .gojo-overlay.active {
+      animation: gojo-flash 2s forwards;
+      pointer-events: auto;
+    }
+    @keyframes gojo-flash {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .info-stream {
+      color: #000;
+      font-family: var(--font-dots);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      width: 90%;
+      max-width: 800px;
+      text-align: justify;
+      padding-top: 20px;
+      animation: stream-fall 2s linear forwards;
+    }
+    @keyframes stream-fall {
+      from { transform: translateY(-10%); opacity: 0.8; }
+      to { transform: translateY(80vh); opacity: 0; }
+    }
+
+    /* 粒子画布 */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    /* 咒灵剪影 */
+    .wandering-curse {
+      position: fixed;
+      font-size: 1.8rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+      animation: wander 18s linear forwards;
+      filter: drop-shadow(0 0 6px rgba(198,40,40,0.5));
+    }
+    @keyframes wander {
+      0% { transform: translateX(-10vw) translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.18; }
+      90% { opacity: 0.18; }
+      100% { transform: translateX(110vw) translateY(-20px) rotate(10deg); opacity: 0; }
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .jjk-grid { grid-template-columns: 1fr; }
+      .task-board { grid-template-columns: 1fr; }
+      .finger-grid { grid-template-columns: repeat(5, 1fr); }
+      .char-grid { grid-template-columns: repeat(2, 1fr); }
+      .domain-toggle { top: auto; bottom: 14px; right: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="jjk-seal tl"></div>
+  <div class="jjk-seal tr"></div>
+  <div class="jjk-seal bl"></div>
+  <div class="jjk-seal br"></div>
+
+  <div class="domain-toggle" id="domainToggle" role="button" aria-label="切换领域展开模式">
+    <span>日常模式</span>
+    <div class="domain-switch" id="domainSwitch"></div>
+    <span>领域展开</span>
+  </div>
+
+  <canvas id="particleCanvas"></canvas>
+
+  <div class="gojo-overlay" id="gojoOverlay">
+    <div class="info-stream" id="infoStream"></div>
+  </div>
+
+  <div class="curtain" id="curtain">
+    <div class="curtain-text">帐</div>
+  </div>
+
+  <div class="jjk-wrapper">
+    <header class="jjk-header">
+      <h1 id="siteTitle"><span class="jjc-kanji">窗</span> JUJUTSU HIGH</h1>
+      <p class="jjk-subtitle">咒术高专 · 任务终端 · 咒力可视化</p>
+    </header>
+
+    <section class="jjk-grid">
+      <!-- 咒力量表 -->
+      <div class="jjk-card">
+        <h3><i class="fa-solid fa-infinity"></i> 反转术式 · 咒力量表</h3>
+        <div class="ce-gauge">
+          <div class="infinity-ring">
+            <svg viewBox="0 0 200 100">
+              <defs>
+                <linearGradient id="ceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#C62828"/>
+                  <stop offset="50%" style="stop-color:#1E88E5"/>
+                  <stop offset="100%" style="stop-color:#C62828"/>
+                </linearGradient>
+              </defs>
+              <path class="track" d="M50,50 C50,22 22,22 22,50 C22,78 50,78 50,50 C50,22 78,22 78,50 C78,78 50,78 50,50" transform="scale(1.25) translate(8,8)"/>
+              <path class="fill" id="ceFill" d="M50,50 C50,22 22,22 22,50 C22,78 50,78 50,50 C50,22 78,22 78,50 C78,78 50,78 50,50" transform="scale(1.25) translate(8,8)"/>
+            </svg>
+          </div>
+          <div class="ce-value glitch" id="ceValue" data-value="0%">0%</div>
+          <p style="font-size:0.8rem;color:var(--jjc-muted);margin:0;">咒力输出随本机时间浮动</p>
+        </div>
+      </div>
+
+      <!-- 实时战报 -->
+      <div class="jjk-card">
+        <h3><i class="fa-solid fa-tower-broadcast"></i> 实时战报</h3>
+        <div class="battle-report" id="battleReport">
+          <span class="label">[紧急]</span>
+          <span id="reportText">正在连接高专通讯网...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 任务档案 -->
+    <section class="jjk-section">
+      <div class="jjk-section-title"><i class="fa-solid fa-scroll"></i> 任务档案 · 咒灵图鉴</div>
+      <div class="jjk-card">
+        <div class="task-board">
+          <div class="task-col" data-col="pending">
+            <h4>待祓除</h4>
+            <div id="pendingList"></div>
+          </div>
+          <div class="task-col" data-col="cleared">
+            <h4>已祓除</h4>
+            <div id="clearedList"></div>
+          </div>
+        </div>
+        <div class="add-task">
+          <input type="text" id="newTaskName" placeholder="咒灵代号">
+          <select id="newTaskGrade">
+            <option value="4">四级</option>
+            <option value="3">三级</option>
+            <option value="2">二级</option>
+            <option value="1">一级</option>
+            <option value="sp">特级</option>
+          </select>
+          <button id="addTaskBtn">追加委托</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="jjk-grid">
+      <!-- 宿傩手指 -->
+      <div class="jjk-card">
+        <h3><i class="fa-solid fa-hand-fist"></i> 宿傩手指 · 收集进度</h3>
+        <p style="font-size:0.8rem;color:var(--jjc-muted);margin:0 0 10px;">已收集 <span id="fingerCount">0</span> / 20</p>
+        <div class="finger-grid" id="fingerGrid"></div>
+        <button class="seek-btn" id="seekBtn">探 寻 手 指</button>
+        <div id="seekLog" style="margin-top:10px;font-size:0.78rem;color:var(--jjc-muted);"></div>
+      </div>
+
+      <!-- 黑闪训练器 -->
+      <div class="jjk-card">
+        <h3><i class="fa-solid fa-bolt"></i> 术式熔炉 · 黑闪训练</h3>
+        <div class="bf-panel">
+          <div class="bf-target" id="bfTarget"><i class="fa-solid fa-fist-raised"></i></div>
+          <div class="bf-timer" id="bfTimer">5.00</div>
+          <div class="bf-result" id="bfResult">点击靶心开始训练</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 角色图鉴 -->
+    <section class="jjk-section">
+      <div class="jjk-section-title"><i class="fa-solid fa-cubes"></i> 角色图鉴 · 狱门疆</div>
+      <div class="jjk-card">
+        <div class="char-grid" id="charGrid"></div>
+      </div>
+    </section>
+
+    <!-- 内部通联 -->
+    <section class="jjk-section">
+      <div class="jjk-section-title"><i class="fa-solid fa-crow"></i> 高专内部通联</div>
+      <div class="jjk-card">
+        <div class="guest-form">
+          <textarea id="guestInput" placeholder="留下咒术情报或吐槽..."></textarea>
+          <button id="guestSubmit">投送乌鸦</button>
+        </div>
+        <div class="guest-list" id="guestList"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+      // ========== 工具 ==========
+      const rand = (min, max) => Math.random() * (max - min) + min;
+      const randInt = (min, max) => Math.floor(rand(min, max + 1));
+      const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+      // ========== 咒力量表 ==========
+      const ceFill = $('#ceFill');
+      const ceValue = $('#ceValue');
+      function updateCE() {
+        const now = new Date();
+        const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+        const base = Math.sin(sec / 10 * Math.PI) * 0.5 + 0.5;
+        const noise = Math.random() * 0.15;
+        const pct = clamp(Math.round((base + noise) * 120), 0, 120);
+        const offset = 400 - (pct / 120) * 400;
+        ceFill.style.strokeDashoffset = offset;
+        ceValue.dataset.value = pct + '%';
+        ceValue.textContent = pct + '%';
+        ceValue.classList.add('glitch');
+        setTimeout(() => ceValue.classList.remove('glitch'), 250);
+      }
+      setInterval(updateCE, 2000);
+      updateCE();
+
+      // ========== 实时战报 ==========
+      const reports = [
+        '[一级咒灵] 确认于涩谷东急百货出现',
+        '[三级咒灵] 新宿御苑附近咒力残秽反应',
+        '[特级] 代号为「假想」的咒灵领域展开中',
+        '[辅助监督] 请求增派一级术师前往池袋',
+        '[京都校] 交流会的团体战准备完毕',
+        '[窗] 监测到涩谷站周边帐浓度异常升高',
+        '[特级] 诅咒师集团于深夜高速移动',
+        '[后勤] 反转术式治疗资源已调配'
+      ];
+      let reportIdx = 0;
+      function rotateReport() {
+        const el = $('#reportText');
+        el.style.opacity = 0;
+        setTimeout(() => {
+          reportIdx = (reportIdx + 1) % reports.length;
+          el.textContent = reports[reportIdx];
+          el.style.opacity = 1;
+        }, 300);
+      }
+      setInterval(rotateReport, 4500);
+
+      // ========== 无量空处彩蛋 ==========
+      const gojoWords = '無量空處無限情報蒼赫茈領域展開六眼術式順轉反轉術式';
+      $('#siteTitle').addEventListener('click', () => {
+        const stream = $('#infoStream');
+        stream.innerHTML = '';
+        for (let i = 0; i < 30; i++) {
+          const p = document.createElement('div');
+          p.textContent = Array.from({length: 40}, () => gojoWords[randInt(0, gojoWords.length - 1)]).join('');
+          p.style.marginBottom = '8px';
+          p.style.opacity = rand(0.3, 0.9);
+          stream.appendChild(p);
+        }
+        $('#gojoOverlay').classList.add('active');
+        setTimeout(() => $('#gojoOverlay').classList.remove('active'), 2000);
+      });
+
+      // ========== 咒灵图鉴 / 任务看板 ==========
+      const defaultTasks = [
+        { id: 1, name: '蝇头', grade: '4', region: '新宿 alley', status: 'pending' },
+        { id: 2, name: '呪胎九相图', grade: '2', region: '医院旧址', status: 'pending' },
+        { id: 3, name: '陀艮', grade: 'sp', region: '冲绳海域', status: 'pending' },
+        { id: 4, name: '漏瑚', grade: 'sp', region: '涩谷地下', status: 'pending' },
+        { id: 5, name: '花御', grade: 'sp', region: '少年院遗迹', status: 'pending' },
+        { id: 6, name: '真人', grade: 'sp', region: '涩谷站', status: 'pending' },
+        { id: 7, name: '坏相', grade: '1', region: '东京街头', status: 'pending' },
+        { id: 8, name: '血涂', grade: '1', region: '东京街头', status: 'pending' },
+        { id: 9, name: '改造人', grade: '3', region: '巷弄', status: 'pending' },
+        { id: 10, name: '特级假想咒灵', grade: 'sp', region: '不明', status: 'pending' }
+      ];
+
+      let tasks = JSON.parse(localStorage.getItem('jjk_tasks') || JSON.stringify(defaultTasks));
+
+      function gradeLabel(g) {
+        const map = { '4': '四级', '3': '三级', '2': '二级', '1': '一级', 'sp': '特级' };
+        return map[g] || g;
+      }
+
+      function renderTasks() {
+        $('#pendingList').innerHTML = '';
+        $('#clearedList').innerHTML = '';
+        tasks.forEach(t => {
+          const card = document.createElement('div');
+          card.className = 'task-card';
+          card.draggable = true;
+          card.dataset.id = t.id;
+          card.innerHTML = `
+            <div><span class="grade grade-${t.grade}">${gradeLabel(t.grade)}</span>${t.name}</div>
+            <div style="font-size:0.72rem;color:var(--jjc-muted);margin-top:4px;">${t.region}</div>
+            <div class="task-actions">
+              <button data-action="toggle">${t.status === 'pending' ? '祓除' : '复活'}</button>
+              <button data-action="delete">销毁档案</button>
+            </div>
+            <div class="black-flash"></div>
+          `;
+          card.querySelector('[data-action="toggle"]').addEventListener('click', () => toggleTask(t.id));
+          card.querySelector('[data-action="delete"]').addEventListener('click', (e) => deleteTask(t.id, e.currentTarget.closest('.task-card')));
+          enableDrag(card);
+          if (t.status === 'pending') $('#pendingList').appendChild(card);
+          else $('#clearedList').appendChild(card);
+        });
+      }
+
+      function toggleTask(id) {
+        const t = tasks.find(x => x.id === id);
+        if (t) { t.status = t.status === 'pending' ? 'cleared' : 'pending'; saveTasks(); renderTasks(); }
+      }
+
+      function deleteTask(id, card) {
+        const flash = card.querySelector('.black-flash');
+        flash.classList.add('active');
+        setTimeout(() => {
+          tasks = tasks.filter(x => x.id !== id);
+          saveTasks();
+          renderTasks();
+        }, 450);
+      }
+
+      function saveTasks() { localStorage.setItem('jjk_tasks', JSON.stringify(tasks)); }
+
+      $('#addTaskBtn').addEventListener('click', () => {
+        const name = $('#newTaskName').value.trim();
+        const grade = $('#newTaskGrade').value;
+        if (!name) return;
+        tasks.push({ id: Date.now(), name, grade, region: '未确认', status: 'pending' });
+        saveTasks();
+        renderTasks();
+        $('#newTaskName').value = '';
+      });
+
+      function enableDrag(card) {
+        card.addEventListener('dragstart', () => card.classList.add('dragging'));
+        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+      }
+
+      $$('.task-col').forEach(col => {
+        col.addEventListener('dragover', e => e.preventDefault());
+        col.addEventListener('drop', e => {
+          e.preventDefault();
+          const id = Number($('.dragging')?.dataset.id);
+          if (!id) return;
+          const target = col.dataset.col;
+          const t = tasks.find(x => x.id === id);
+          if (t && t.status !== target) {
+            t.status = target;
+            saveTasks();
+            renderTasks();
+          }
+        });
+      });
+
+      renderTasks();
+
+      // ========== 宿傩手指 ==========
+      const fingerState = JSON.parse(localStorage.getItem('jjk_fingers') || '{"count":0,"history":[]}');
+      const fingerGrid = $('#fingerGrid');
+      for (let i = 0; i < 20; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'finger-cell' + (i < fingerState.count ? ' obtained' : '');
+        cell.textContent = i < fingerState.count ? '☞' : '';
+        fingerGrid.appendChild(cell);
+      }
+      $('#fingerCount').textContent = fingerState.count;
+
+      $('#seekBtn').addEventListener('click', async () => {
+        const btn = $('#seekBtn');
+        btn.disabled = true;
+        const curtain = $('#curtain');
+        curtain.classList.add('show');
+        await new Promise(r => setTimeout(r, 600));
+        curtain.classList.remove('show');
+
+        const success = Math.random() < 0.3;
+        const now = new Date();
+        if (success && fingerState.count < 20) {
+          fingerState.count++;
+          fingerState.history.push({ time: now.toISOString(), result: '获得手指' });
+          updateFingerUI();
+          $('#seekLog').innerHTML = `<span style="color:var(--jjc-red)">[成功]</span> 在废墟中发现了第 ${fingerState.count} 根手指。`;
+          burstParticles(window.innerWidth / 2, window.innerHeight / 2, '#C62828', 40);
+        } else {
+          fingerState.history.push({ time: now.toISOString(), result: '一无所获' });
+          $('#seekLog').innerHTML = `<span style="color:var(--jjc-muted)">[失败]</span> 帐内只有普通诅咒，并无手指残秽。`;
+        }
+        localStorage.setItem('jjk_fingers', JSON.stringify(fingerState));
+        updateDomainBorder();
+        btn.disabled = false;
+      });
+
+      function updateFingerUI() {
+        $('#fingerCount').textContent = fingerState.count;
+        $$('.finger-cell').forEach((cell, i) => {
+          cell.classList.toggle('obtained', i < fingerState.count);
+          cell.textContent = i < fingerState.count ? '☞' : '';
+        });
+      }
+
+      function updateDomainBorder() {
+        const tiers = Math.floor(fingerState.count / 5);
+        const width = tiers * 4;
+        document.body.style.boxShadow = `inset 0 0 ${20 + width * 8}px rgba(198, 40, 40, ${0.1 + tiers * 0.08})`;
+      }
+      updateDomainBorder();
+
+      // ========== 黑闪训练器 ==========
+      let bfState = { active: false, clicks: [], startTime: 0, timer: null };
+      const bfTarget = $('#bfTarget');
+      const bfTimer = $('#bfTimer');
+      const bfResult = $('#bfResult');
+
+      bfTarget.addEventListener('click', () => {
+        if (!bfState.active) startBF();
+        const now = performance.now();
+        bfState.clicks.push(now);
+        bfTarget.style.transform = 'scale(0.92)';
+        setTimeout(() => bfTarget.style.transform = '', 80);
+      });
+
+      function startBF() {
+        bfState = { active: true, clicks: [], startTime: performance.now(), timer: null };
+        bfResult.textContent = '黑闪判定中...';
+        bfResult.className = 'bf-result';
+        bfTimer.textContent = '5.00';
+        bfState.timer = setInterval(() => {
+          const left = 5 - (performance.now() - bfState.startTime) / 1000;
+          if (left <= 0) { endBF(); }
+          else bfTimer.textContent = left.toFixed(2);
+        }, 50);
+      }
+
+      function endBF() {
+        clearInterval(bfState.timer);
+        bfState.active = false;
+        bfTimer.textContent = '0.00';
+        const slices = {};
+        bfState.clicks.forEach(t => {
+          const sec = Math.floor((t - bfState.startTime) / 1000);
+          slices[sec] = (slices[sec] || 0) + 1;
+        });
+        const maxCps = Math.max(0, ...Object.values(slices));
+        const record = Number(localStorage.getItem('jjk_bf_record') || 0);
+        if (maxCps >= 8) {
+          bfResult.innerHTML = `<span class="bf-success">黑闪成功！ CPS: ${maxCps}</span>`;
+          burstParticles(window.innerWidth / 2, window.innerHeight / 2, '#D4AF37', 60);
+          if (maxCps > record) {
+            localStorage.setItem('jjk_bf_record', maxCps);
+            bfResult.innerHTML += '<br>新纪录！';
+          }
+        } else {
+          const jokes = ['看来你只适合当辅助监督。', '不存在的记忆增加了。', '你的咒力输出甚至不如蝇头。', '回去再挥一万次拳吧。'];
+          bfResult.innerHTML = `<span style="color:var(--jjc-muted)">黑闪失败。${jokes[randInt(0, jokes.length - 1)]}</span>`;
+        }
+      }
+
+      // ========== 角色图鉴 ==========
+      const chars = [
+        { name: '虎杖悠仁', spell: '径庭拳 / 黑闪', quote: '我要在众人的簇拥下死去。', emoji: '🐯', camp: '我方' },
+        { name: '伏黑惠', spell: '十种影法术', quote: '我无所谓正义，只是看不惯。', emoji: '🐺', camp: '我方' },
+        { name: '钉崎野蔷薇', spell: '刍灵咒法', quote: '我最喜欢漂亮的东西和自己。', emoji: '🔨', camp: '我方' },
+        { name: '五条悟', spell: '无下限术式', quote: '会赢的。', emoji: '👁️', camp: '我方' },
+        { name: '夏油杰', spell: '咒灵操术', quote: '我要杀光所有非术师。', emoji: '🐒', camp: '诅咒师' },
+        { name: '宿傩', spell: '御厨子 / 灶开', quote: '你也要给我跪下吗？', emoji: '☠️', camp: '诅咒' }
+      ];
+
+      const charGrid = $('#charGrid');
+      chars.forEach(c => {
+        const cube = document.createElement('div');
+        cube.className = 'char-cube';
+        cube.innerHTML = `
+          <div class="char-avatar">${c.emoji}</div>
+          <div class="char-name">${c.name}</div>
+          <div class="char-detail">
+            <div style="font-size:0.85rem;color:${c.camp === '我方' ? 'var(--jjc-blue)' : 'var(--jjc-red)'}">${c.camp}</div>
+            <div class="spell">${c.spell}</div>
+            <div class="quote">${c.quote}</div>
+          </div>
+        `;
+        cube.addEventListener('click', () => {
+          cube.classList.add('unsealed');
+          const color = c.name === '五条悟' ? '#1E88E5' : (c.name === '宿傩' ? '#C62828' : '#D4AF37');
+          const rect = cube.getBoundingClientRect();
+          burstParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, color, 35);
+        });
+        charGrid.appendChild(cube);
+      });
+
+      // ========== 内部通联 ==========
+      const guestKey = 'jjk_guestbook';
+      let messages = JSON.parse(localStorage.getItem(guestKey) || '[]');
+
+      function formatShibuyaTime(date) {
+        const base = new Date('2020-10-31T19:00:00+09:00');
+        const diff = Math.floor((new Date(date) - base) / 60000);
+        return `涩谷事变第 ${Math.max(0, diff)} 分钟`;
+      }
+
+      function renderGuests() {
+        const list = $('#guestList');
+        list.innerHTML = '';
+        messages.slice().reverse().forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'guest-msg';
+          item.innerHTML = `
+            <div class="msg-residue" style="background:rgb(${m.residue})"></div>
+            <div class="msg-body">
+              <div>${escapeHtml(m.text)}</div>
+              <div class="msg-time">${formatShibuyaTime(m.time)}</div>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      }
+
+      function escapeHtml(s) {
+        const div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      $('#guestSubmit').addEventListener('click', () => {
+        const input = $('#guestInput');
+        const text = input.value.trim();
+        if (!text) return;
+        messages.push({
+          text,
+          time: new Date().toISOString(),
+          residue: `${randInt(80,220)},${randInt(40,120)},${randInt(40,120)}`
+        });
+        localStorage.setItem(guestKey, JSON.stringify(messages));
+        input.value = '';
+        renderGuests();
+      });
+
+      renderGuests();
+
+      // ========== 领域展开模式 ==========
+      const domainToggle = $('#domainToggle');
+      const domainSwitch = $('#domainSwitch');
+      let domainActive = false;
+      let audioCtx, droneOsc;
+
+      domainToggle.addEventListener('click', () => {
+        domainActive = !domainActive;
+        domainSwitch.classList.toggle('active', domainActive);
+        document.documentElement.dataset.jjkTheme = domainActive ? 'domain' : 'daily';
+        if (domainActive) startDrone();
+        else stopDrone();
+      });
+
+      function startDrone() {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          droneOsc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          droneOsc.type = 'sawtooth';
+          droneOsc.frequency.value = 55;
+          gain.gain.value = 0.03;
+          droneOsc.connect(gain);
+          gain.connect(audioCtx.destination);
+          droneOsc.start();
+        } catch (e) { console.warn('Audio unavailable', e); }
+      }
+
+      function stopDrone() {
+        if (droneOsc) { droneOsc.stop(); droneOsc.disconnect(); droneOsc = null; }
+        if (audioCtx) { audioCtx.close(); audioCtx = null; }
+      }
+
+      // ========== 粒子系统 ==========
+      const canvas = $('#particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      function burstParticles(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+          const angle = rand(0, Math.PI * 2);
+          const speed = rand(2, 8);
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            color,
+            size: rand(2, 5)
+          });
+        }
+      }
+
+      function renderParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.15;
+          p.life -= 0.02;
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(renderParticles);
+      }
+      renderParticles();
+
+      // ========== 咒灵剪影漫游 ==========
+      const curses = ['👁️', '☠️', '👹', '👻', '🦴'];
+      function spawnCurse() {
+        const el = document.createElement('div');
+        el.className = 'wandering-curse';
+        el.textContent = curses[randInt(0, curses.length - 1)];
+        el.style.top = rand(10, 80) + 'vh';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 18000);
+      }
+      setInterval(spawnCurse, 30000);
+      setTimeout(spawnCurse, 5000);
+    })();
+  </script>
+</body>
+</html>
