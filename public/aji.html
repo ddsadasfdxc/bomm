@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-aji-mode="angel">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>濑名紫阳花 | Sena Ajisai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       濑名紫阳花 · 大天使/堕天使主题站
+       ============================================================ */
+    :root {
+      --aji-bg: #FFFBFB;
+      --aji-primary: #A294C6;
+      --aji-secondary: #FFD1DC;
+      --aji-text-main: #5D4037;
+      --aji-text-sub: #8D6E63;
+      --aji-fallen-bg: #2A1B38;
+      --aji-fallen-accent: #E1BEE7;
+      --aji-card-bg: rgba(255, 255, 255, 0.72);
+      --aji-shadow: 0 8px 28px rgba(162, 148, 198, 0.18);
+      --aji-radius: 22px;
+      --font-round: 'M PLUS Rounded 1c', 'Nunito', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: var(--font-round);
+      color: var(--aji-text-main);
+      background: var(--aji-bg);
+      line-height: 1.7;
+      transition: background 0.8s ease, color 0.6s ease;
+      overflow-x: hidden;
+    }
+
+    html[data-aji-mode="fallen"] body {
+      background: var(--aji-fallen-bg);
+      color: var(--aji-fallen-accent);
+    }
+
+    /* 背景花瓣层 */
+    .petals-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      top: -10%;
+      border-radius: 50% 0 50% 50%;
+      opacity: 0.45;
+      animation: petal-fall linear infinite;
+      filter: blur(1px);
+    }
+
+    .petal:nth-child(1) {
+      left: 8%;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, var(--aji-primary), var(--aji-secondary));
+      animation-duration: 12s;
+      animation-delay: 0s;
+    }
+    .petal:nth-child(2) {
+      left: 22%;
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(135deg, var(--aji-secondary), #fff);
+      animation-duration: 15s;
+      animation-delay: 2s;
+    }
+    .petal:nth-child(3) {
+      left: 42%;
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--aji-primary), #E1BEE7);
+      animation-duration: 18s;
+      animation-delay: 1s;
+    }
+    .petal:nth-child(4) {
+      left: 62%;
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, var(--aji-secondary), var(--aji-primary));
+      animation-duration: 14s;
+      animation-delay: 4s;
+    }
+    .petal:nth-child(5) {
+      left: 78%;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #E1BEE7, var(--aji-secondary));
+      animation-duration: 16s;
+      animation-delay: 3s;
+    }
+    .petal:nth-child(6) {
+      left: 92%;
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, var(--aji-primary), #fff);
+      animation-duration: 13s;
+      animation-delay: 5s;
+    }
+
+    @keyframes petal-fall {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0;
+      }
+      10% { opacity: 0.45; }
+      90% { opacity: 0.35; }
+      100% {
+        transform: translateY(110vh) rotate(360deg) translateX(30px);
+        opacity: 0;
+      }
+    }
+
+    /* 堕天使羽毛 */
+    .feathers-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    html[data-aji-mode="fallen"] .feathers-layer {
+      opacity: 0.55;
+    }
+
+    .feather {
+      position: absolute;
+      top: -10%;
+      width: 14px;
+      height: 28px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.85), rgba(30,20,40,0.6));
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: feather-fall linear infinite;
+    }
+
+    .feather:nth-child(1) { left: 12%; animation-duration: 10s; animation-delay: 0s; }
+    .feather:nth-child(2) { left: 35%; animation-duration: 13s; animation-delay: 1.5s; }
+    .feather:nth-child(3) { left: 58%; animation-duration: 11s; animation-delay: 3s; }
+    .feather:nth-child(4) { left: 82%; animation-duration: 14s; animation-delay: 2s; }
+
+    @keyframes feather-fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      15% { opacity: 0.7; }
+      85% { opacity: 0.5; }
+      100% {
+        transform: translateY(110vh) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    /* 容器 */
+    .aji-wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* 顶部切换开关 */
+    .mode-toggle-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      font-size: 0.82rem;
+      color: var(--aji-text-sub);
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .mode-toggle-bar {
+      color: var(--aji-fallen-accent);
+    }
+
+    .mode-toggle {
+      position: relative;
+      width: 54px;
+      height: 28px;
+      background: linear-gradient(90deg, var(--aji-primary), var(--aji-secondary));
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.5s ease;
+      box-shadow: 0 0 12px rgba(162, 148, 198, 0.25);
+    }
+
+    html[data-aji-mode="fallen"] .mode-toggle {
+      background: linear-gradient(90deg, #4A306D, var(--aji-fallen-accent));
+      box-shadow: 0 0 18px rgba(225, 190, 231, 0.35);
+    }
+
+    .mode-toggle::after {
+      content: '👼';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 24px;
+      height: 24px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    html[data-aji-mode="fallen"] .mode-toggle::after {
+      content: '😈';
+      transform: translateX(26px);
+      background: #1a1025;
+    }
+
+    /* Hero 区 */
+    .hero-card {
+      background: var(--aji-card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: var(--aji-radius);
+      padding: 40px 28px;
+      text-align: center;
+      box-shadow: var(--aji-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.7s ease;
+    }
+
+    html[data-aji-mode="fallen"] .hero-card {
+      background: rgba(40, 25, 55, 0.72);
+      border-color: rgba(225, 190, 231, 0.18);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-avatar {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4.5rem;
+      background: linear-gradient(135deg, var(--aji-secondary), var(--aji-primary));
+      box-shadow: 0 8px 30px rgba(162, 148, 198, 0.28);
+      animation: avatar-breathe 4s ease-in-out infinite;
+    }
+
+    html[data-aji-mode="fallen"] .hero-avatar {
+      background: linear-gradient(135deg, #4A306D, var(--aji-fallen-accent));
+      box-shadow: 0 8px 30px rgba(225, 190, 231, 0.22);
+    }
+
+    @keyframes avatar-breathe {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 30px rgba(162, 148, 198, 0.28); }
+      50% { transform: scale(1.03); box-shadow: 0 12px 38px rgba(162, 148, 198, 0.38); }
+    }
+
+    html[data-aji-mode="fallen"] .hero-avatar {
+      animation-name: avatar-breathe-fallen;
+    }
+
+    @keyframes avatar-breathe-fallen {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 30px rgba(225, 190, 231, 0.18); }
+      50% { transform: scale(1.03); box-shadow: 0 12px 38px rgba(225, 190, 231, 0.32); }
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      margin: 0 0 8px;
+      letter-spacing: 0.05em;
+      color: var(--aji-text-main);
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .hero-title {
+      color: var(--aji-fallen-accent);
+      text-shadow: 0 0 20px rgba(225, 190, 231, 0.4);
+    }
+
+    .hero-ruby {
+      font-size: 0.95rem;
+      color: var(--aji-text-sub);
+      margin-bottom: 18px;
+      letter-spacing: 0.2em;
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .hero-ruby {
+      color: rgba(225, 190, 231, 0.75);
+    }
+
+    .typewriter {
+      min-height: 1.8em;
+      font-size: 1.05rem;
+      color: var(--aji-primary);
+      font-weight: 500;
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .typewriter {
+      color: var(--aji-fallen-accent);
+    }
+
+    .typewriter::after {
+      content: '|';
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* 通用区块 */
+    .section-card {
+      margin-top: 28px;
+      background: var(--aji-card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--aji-radius);
+      padding: 26px;
+      box-shadow: var(--aji-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      transition: all 0.7s ease;
+    }
+
+    html[data-aji-mode="fallen"] .section-card {
+      background: rgba(40, 25, 55, 0.68);
+      border-color: rgba(225, 190, 231, 0.14);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--aji-text-main);
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .section-title {
+      color: var(--aji-fallen-accent);
+    }
+
+    /* 档案矩阵 */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+    }
+
+    .profile-item {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      transition: transform 0.25s ease, background 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .profile-item {
+      background: rgba(20, 12, 32, 0.45);
+    }
+
+    .profile-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .profile-icon {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+
+    .profile-label {
+      font-size: 0.72rem;
+      color: var(--aji-text-sub);
+      margin-bottom: 2px;
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .profile-label {
+      color: rgba(225, 190, 231, 0.65);
+    }
+
+    .profile-value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--aji-text-main);
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .profile-value {
+      color: var(--aji-fallen-accent);
+    }
+
+    /* 关系网格 */
+    .relation-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--aji-primary) transparent;
+    }
+
+    .relation-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+    .relation-scroll::-webkit-scrollbar-thumb {
+      background: var(--aji-primary);
+      border-radius: 999px;
+    }
+
+    .relation-card {
+      flex: 0 0 180px;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      transition: transform 0.25s ease, background 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .relation-card {
+      background: rgba(20, 12, 32, 0.5);
+    }
+
+    .relation-card:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .relation-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+      color: var(--aji-text-main);
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .relation-name {
+      color: var(--aji-fallen-accent);
+    }
+
+    .relation-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--aji-secondary);
+      color: var(--aji-text-main);
+    }
+
+    html[data-aji-mode="fallen"] .relation-tag {
+      background: rgba(225, 190, 231, 0.18);
+      color: var(--aji-fallen-accent);
+    }
+
+    /* 隐藏文本 */
+    .fallen-whisper {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.7s ease;
+      font-size: 0.95rem;
+      font-style: italic;
+      text-align: center;
+      color: var(--aji-fallen-accent);
+      margin-top: 0;
+    }
+
+    html[data-aji-mode="fallen"] .fallen-whisper {
+      max-height: 200px;
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 22px;
+    }
+
+    /* 页脚 */
+    .aji-footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 0.74rem;
+      color: var(--aji-text-sub);
+      opacity: 0.8;
+      transition: color 0.5s ease;
+    }
+
+    html[data-aji-mode="fallen"] .aji-footer {
+      color: rgba(225, 190, 231, 0.55);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="petals-layer" aria-hidden="true">
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+  </div>
+
+  <div class="feathers-layer" aria-hidden="true">
+    <div class="feather"></div>
+    <div class="feather"></div>
+    <div class="feather"></div>
+    <div class="feather"></div>
+  </div>
+
+  <main class="aji-wrap">
+    <div class="mode-toggle-bar">
+      <span>大天使</span>
+      <div class="mode-toggle" id="modeToggle" role="button" aria-label="切换天使/堕天使模式"></div>
+      <span>堕天使</span>
+    </div>
+
+    <section class="hero-card">
+      <div class="hero-avatar" id="heroAvatar">👼</div>
+      <h1 class="hero-title">濑名紫阳花</h1>
+      <div class="hero-ruby">Sena Ajisai</div>
+      <div class="typewriter" id="typewriter"></div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="section-title"><span>🌸</span> 基础档案</h2>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="profile-icon">📏</div>
+          <div class="profile-label">身高</div>
+          <div class="profile-value">158cm</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-icon">🎂</div>
+          <div class="profile-label">生日</div>
+          <div class="profile-value">12月12日 ♐</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-icon">🩸</div>
+          <div class="profile-label">血型</div>
+          <div class="profile-value">O型</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-icon">✂️</div>
+          <div class="profile-label">特长</div>
+          <div class="profile-value">做发型</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-icon">🍰</div>
+          <div class="profile-label">擅长</div>
+          <div class="profile-value">制作点心</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-icon">🧸</div>
+          <div class="profile-label">萌点</div>
+          <div class="profile-value">大天使·治愈</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="section-title"><span>💜</span> 羁绊与人际关系</h2>
+      <div class="relation-scroll">
+        <div class="relation-card">
+          <div class="relation-name">甘织玲奈子</div>
+          <span class="relation-tag">💖 朋友 / 特别的存在</span>
+        </div>
+        <div class="relation-card">
+          <div class="relation-name">王冢真唯</div>
+          <span class="relation-tag">👑 小团体中心</span>
+        </div>
+        <div class="relation-card">
+          <div class="relation-name">橘平 & 广树</div>
+          <span class="relation-tag">🏠 想要照顾的弟弟们</span>
+        </div>
+      </div>
+      <div class="fallen-whisper" id="fallenWhisper">
+        “会不会有黑暗的一面呢……想要诱惑玲奈子，独占她的笑容……”
+      </div>
+    </section>
+
+    <footer class="aji-footer">
+      芦谷高中高一A班 · 团体柔和剂 · 大天使降临
+    </footer>
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ---------- 打字机效果 ---------- */
+      const phrases = [
+        '芦谷高中的大天使',
+        '高一A班团体柔和剂',
+        '最喜欢玲奈子了哦',
+        '今天也要温柔地度过呢'
+      ];
+      const el = document.getElementById('typewriter');
+      let phraseIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+
+      function typeLoop() {
+        const current = phrases[phraseIndex];
+        if (isDeleting) {
+          el.textContent = current.substring(0, charIndex - 1);
+          charIndex--;
+        } else {
+          el.textContent = current.substring(0, charIndex + 1);
+          charIndex++;
+        }
+
+        let nextDelay = isDeleting ? 60 : 120;
+        if (!isDeleting && charIndex === current.length) {
+          nextDelay = 2200;
+          isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          nextDelay = 400;
+        }
+        setTimeout(typeLoop, nextDelay);
+      }
+      setTimeout(typeLoop, 500);
+
+      /* ---------- 天使/堕天使切换 ---------- */
+      const toggle = document.getElementById('modeToggle');
+      const avatar = document.getElementById('heroAvatar');
+      toggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        const isFallen = html.dataset.ajiMode === 'fallen';
+        html.dataset.ajiMode = isFallen ? 'angel' : 'fallen';
+        avatar.textContent = isFallen ? '👼' : '😈';
+      });
+    })();
+  </script>
+</body>
+</html>
