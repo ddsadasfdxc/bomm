@@ -33,6 +33,44 @@
       --ease-out: cubic-bezier(0, 0, 0.2, 1);
     }
 
+    .back-to-home {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--aji-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--aji-card-border);
+      color: var(--aji-text-main);
+      font-family: var(--font-round);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--aji-shadow);
+    }
+    html[data-aji-mode="fallen"] .back-to-home {
+      background: rgba(28, 16, 42, 0.72);
+      border-color: rgba(225, 190, 231, 0.14);
+      color: var(--aji-fallen-accent);
+    }
+    .back-to-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(162,148,198,0.25);
+    }
+    .back-to-home svg { width: 14px; height: 14px; }
+    @media (max-width: 640px) {
+      .back-to-home { padding: 8px 12px; }
+      .back-to-home span { display: none; }
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
@@ -540,6 +578,11 @@
   </div>
 
   <div class="cursor-glow" id="cursorGlow"></div>
+
+  <a href="/" class="back-to-home" aria-label="返回主站">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    <span>返回主站</span>
+  </a>
 
   <header class="top-bar">
     <div class="top-bar-brand">
