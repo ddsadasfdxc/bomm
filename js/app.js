@@ -83,6 +83,8 @@ export async function initApp() {
   initMinecraft();
   // runner.js self-initializes
   initCardGlow();
+  initCodeQuotes();
+  initPricingTilt();
   initScrollReveal();
   initTilt();
   initProgressInk();
@@ -182,5 +184,43 @@ function initCardGlow() {
       card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
       card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
     });
+  });
+}
+
+/* 代码名言卡片从左侧跳跃入场 */
+function initCodeQuotes() {
+  const cards = document.querySelectorAll('.code-quote-card');
+  if (!cards.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+
+  cards.forEach(card => observer.observe(card));
+}
+
+/* 0$ 定价卡片 3D 倾斜跟随 */
+function initPricingTilt() {
+  const card = document.querySelector('.pricing-card');
+  const stage = document.querySelector('.pricing-stage');
+  if (!card || !stage) return;
+
+  const isTouch = window.matchMedia('(pointer: coarse)').matches;
+  if (isTouch) return;
+
+  stage.addEventListener('mousemove', (e) => {
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+  });
+
+  stage.addEventListener('mouseleave', () => {
+    card.style.transform = '';
   });
 }
