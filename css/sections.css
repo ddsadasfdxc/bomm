@@ -1,7 +1,7 @@
 .section-intro {
   flex-direction: column;
   text-align: center;
-  padding-top: calc(50vh - 220px);
+  padding-top: calc(50vh - 200px);
 }
 
 .intro-title {

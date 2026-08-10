@@ -4,7 +4,7 @@
 
 .ios-nav {
   position: fixed;
-  bottom: 16px;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
@@ -15,35 +15,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   position: relative;
-  padding: 5px;
-  background: rgba(12, 14, 10, 0.55);
-  backdrop-filter: blur(26px) saturate(1.5);
-  -webkit-backdrop-filter: blur(26px) saturate(1.5);
-  border: 1px solid rgba(245, 240, 230, 0.1);
+  padding: 4px 6px;
+  background: rgba(245, 240, 230, 0.04);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(245, 240, 230, 0.06);
   border-radius: 999px;
   pointer-events: auto;
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.45),
-    0 2px 8px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: all 0.4s var(--ease-silk);
+    0 4px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: background 0.4s var(--ease-silk), box-shadow 0.4s var(--ease-silk);
+}
+
+.ios-nav-pill:hover {
+  background: rgba(245, 240, 230, 0.07);
+  border-color: rgba(245, 240, 230, 0.1);
 }
 
 .ios-nav-track {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  height: calc(100% - 10px);
-  background: linear-gradient(135deg, var(--accent-cinnabar), var(--accent-cinnabar-light));
+  top: 4px;
+  left: 6px;
+  height: calc(100% - 8px);
+  background: rgba(245, 240, 230, 0.1);
+  border: 1px solid rgba(245, 240, 230, 0.08);
   border-radius: 999px;
   box-shadow:
-    0 4px 16px rgba(196, 90, 74, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring), opacity 0.35s ease;
   z-index: 0;
-  opacity: 0.95;
+  opacity: 0.85;
 }
 
 .ios-nav-tab {
@@ -51,10 +55,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   padding: 0;
-  color: rgba(245, 240, 230, 0.55);
+  color: rgba(245, 240, 230, 0.45);
   background: transparent;
   border: none;
   border-radius: 50%;
@@ -64,26 +68,26 @@
 }
 
 .ios-nav-tab svg {
-  width: 19px;
-  height: 19px;
+  width: 16px;
+  height: 16px;
   transition: transform 0.35s var(--ease-spring), filter 0.35s ease;
 }
 
 .ios-nav-tab:hover {
-  color: rgba(245, 240, 230, 0.95);
+  color: rgba(245, 240, 230, 0.85);
 }
 
 .ios-nav-tab:hover svg {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .ios-nav-tab.active {
-  color: #fff;
+  color: var(--accent-cinnabar);
 }
 
 .ios-nav-tab.active svg {
-  transform: scale(1.08);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px rgba(196, 90, 74, 0.45));
 }
 
 /* 页面切换动画 */
@@ -753,26 +757,26 @@
 
 @media (max-width: 640px) {
   .explore-area {
-    padding: 60px 16px 100px;
+    padding: 76px 16px 80px;
   }
 
   .ios-nav {
-    bottom: 10px;
+    top: 8px;
   }
 
   .ios-nav-pill {
-    gap: 2px;
-    padding: 4px;
+    gap: 1px;
+    padding: 3px 5px;
   }
 
   .ios-nav-tab {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
   }
 
   .ios-nav-tab svg {
-    width: 17px;
-    height: 17px;
+    width: 15px;
+    height: 15px;
   }
 
   .note-modal {
