@@ -133,21 +133,35 @@ function initNav() {
     const pill = activeTab.parentElement;
     const pillRect = pill.getBoundingClientRect();
     const tabRect = activeTab.getBoundingClientRect();
+    const x = tabRect.left - pillRect.left - 4;
     track.style.width = tabRect.width + 'px';
-    track.style.transform = `translateX(${tabRect.left - pillRect.left}px)`;
-    track.style.opacity = '0.95';
+    track.style.transform = `translateX(${x}px)`;
+    track.style.opacity = '0.9';
   }
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const pageName = tab.dataset.page;
+      const target = document.getElementById(`page-${pageName}`);
+      const current = document.querySelector('.page.active');
+      if (!target || target === current) return;
+
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      pages.forEach(p => {
-        p.classList.toggle('active', p.id === `page-${pageName}`);
-      });
       moveTrackTo(tab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (current) {
+        current.classList.add('leaving');
+        current.addEventListener('animationend', function handler() {
+          current.removeEventListener('animationend', handler);
+          current.classList.remove('active', 'leaving');
+          target.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, { once: true });
+      } else {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   });
 

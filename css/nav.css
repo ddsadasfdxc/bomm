@@ -38,16 +38,18 @@
 .ios-nav-track {
   position: absolute;
   top: 4px;
-  left: 6px;
+  left: 4px;
   height: calc(100% - 8px);
-  background: rgba(245, 240, 230, 0.1);
+  background: rgba(245, 240, 230, 0.08);
   border: 1px solid rgba(245, 240, 230, 0.08);
   border-radius: 999px;
   box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring), opacity 0.35s ease;
+  transition: transform 0.5s var(--ease-spring), width 0.5s var(--ease-spring), opacity 0.35s ease;
   z-index: 0;
-  opacity: 0.85;
+  opacity: 0.9;
+  will-change: transform, width;
 }
 
 .ios-nav-tab {
@@ -58,7 +60,7 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  color: rgba(245, 240, 230, 0.45);
+  color: rgba(245, 240, 230, 0.42);
   background: transparent;
   border: none;
   border-radius: 50%;
@@ -87,19 +89,33 @@
 
 .ios-nav-tab.active svg {
   transform: scale(1.05);
-  filter: drop-shadow(0 0 8px rgba(196, 90, 74, 0.45));
+  filter: drop-shadow(0 0 6px rgba(196, 90, 74, 0.55));
+}
+
+.ios-nav-tab .nav-dot {
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-cinnabar);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.35s ease, transform 0.35s var(--ease-spring);
+  box-shadow: 0 0 6px rgba(196, 90, 74, 0.6);
+}
+
+.ios-nav-tab.active .nav-dot {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* 页面切换动画 */
 .page {
   display: none;
   opacity: 0;
-  transform: translateY(18px) scale(0.995);
-  filter: blur(6px);
-  transition:
-    opacity 0.5s var(--ease-silk),
-    transform 0.5s var(--ease-silk),
-    filter 0.4s var(--ease-silk);
+  transform: translateY(24px) scale(0.98);
+  filter: blur(8px);
 }
 
 .page.active {
@@ -107,6 +123,21 @@
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0);
+  animation: pageEnter 0.55s var(--ease-silk);
+}
+
+.page.leaving {
+  animation: pageLeave 0.35s var(--ease-silk) forwards;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@keyframes pageLeave {
+  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translateY(-12px) scale(0.99); filter: blur(4px); }
 }
 
 /* ── 探索区域 ── */
