@@ -1,97 +1,153 @@
-/* 剑谱时间轴 */
+/* 剑谱页面：终端打字机统计 */
 
-.path-timeline {
-  position: relative;
-  max-width: 720px;
+.path-terminal {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 100px 18px 60px;
+  max-width: 840px;
   margin: 0 auto;
-  padding-left: 46px;
+  width: 100%;
 }
 
-.path-timeline::before {
-  content: '';
-  position: absolute;
-  left: 13px;
-  top: 8px;
-  bottom: 8px;
-  width: 1px;
-  background: linear-gradient(180deg, transparent, var(--accent-indigo-light), transparent);
-  opacity: 0.6;
+.path-terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(20, 23, 18, 0.85);
+  border: 1px solid rgba(245, 240, 230, 0.1);
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  backdrop-filter: blur(14px);
 }
 
-.path-item {
-  position: relative;
-  margin-bottom: 48px;
-  padding: 24px 26px;
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s var(--ease-silk), border-color 0.3s;
-}
-
-.path-item:hover {
-  transform: translateX(6px);
-  border-color: var(--glass-border-hover);
-}
-
-.path-item::before {
-  content: '';
-  position: absolute;
-  left: -38px;
-  top: 30px;
-  width: 9px;
-  height: 9px;
+.path-terminal-dot {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--accent-indigo-light);
-  box-shadow: 0 0 8px var(--accent-indigo-light);
-  animation: pulse-dot 2.2s infinite ease-in-out;
+  box-shadow: 0 0 6px currentColor;
+}
+.path-terminal-dot.red { background: #ff5f57; color: #ff5f57; }
+.path-terminal-dot.yellow { background: #febc2e; color: #febc2e; }
+.path-terminal-dot.green { background: #28c840; color: #28c840; }
+
+.path-terminal-title {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  color: rgba(245, 240, 230, 0.5);
+  letter-spacing: 0.08em;
+  font-family: 'SF Mono', 'Fira Code', monospace;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.25); opacity: 0.7; }
+.path-terminal-body {
+  flex: 1;
+  min-height: 60vh;
+  padding: 24px 22px;
+  background: rgba(10, 12, 9, 0.82);
+  border: 1px solid rgba(245, 240, 230, 0.1);
+  border-top: none;
+  border-bottom: none;
+  backdrop-filter: blur(10px);
+  font-family: 'SF Mono', 'Fira Code', 'Noto Serif SC', monospace;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: rgba(245, 240, 230, 0.88);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 240, 230, 0.1) transparent;
 }
 
-.path-year {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  color: var(--accent-cinnabar-light);
-  margin-bottom: 8px;
+.path-terminal-body::-webkit-scrollbar {
+  width: 5px;
+}
+.path-terminal-body::-webkit-scrollbar-thumb {
+  background: rgba(245, 240, 230, 0.12);
+  border-radius: 3px;
 }
 
-.path-title {
-  font-size: 1.25rem;
+.path-terminal-line {
+  position: relative;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 2px;
+}
+
+.path-prompt {
+  color: var(--accent-indigo-light);
+  margin-right: 0.4em;
   font-weight: 600;
-  color: var(--text-paper);
-  margin-bottom: 10px;
-  letter-spacing: 0.05em;
 }
 
-.path-desc {
-  font-size: 0.94rem;
-  line-height: 1.8;
-  color: var(--text-muted);
+.path-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  background: var(--accent-cinnabar);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: cursorBlink 0.9s step-end infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.path-line-command {
+  color: rgba(245, 240, 230, 0.95);
+  font-weight: 600;
+}
+
+.path-line-info {
+  color: rgba(245, 240, 230, 0.72);
+}
+
+.path-line-highlight {
+  color: var(--accent-cinnabar-light);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.path-line-divider {
+  color: rgba(245, 240, 230, 0.25);
+  letter-spacing: 0;
+}
+
+.path-line-stat {
+  color: rgba(220, 215, 205, 0.85);
+  padding-left: 0.2em;
+}
+
+.path-terminal-progress {
+  height: 3px;
+  width: 100%;
+  background: rgba(245, 240, 230, 0.06);
+  border: 1px solid rgba(245, 240, 230, 0.1);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+}
+
+.path-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-cinnabar), var(--accent-gold));
+  box-shadow: 0 0 10px rgba(196, 90, 74, 0.35);
+  transition: width 0.2s linear;
 }
 
 @media (max-width: 640px) {
-  .path-timeline {
-    padding-left: 36px;
+  .path-terminal {
+    padding: 84px 12px 40px;
   }
-  .path-item::before {
-    left: -29px;
+  .path-terminal-body {
+    padding: 18px 14px;
+    font-size: 0.78rem;
+    line-height: 1.65;
   }
-}
-
-/* 悬浮卷轴进度条 */
-.scroll-ink {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  width: 0%;
-  background: linear-gradient(90deg, var(--accent-cinnabar), var(--accent-gold));
-  z-index: 101;
-  box-shadow: 0 0 8px var(--accent-cinnabar);
-  transition: width 0.1s linear;
+  .path-terminal-header {
+    padding: 10px 12px;
+  }
 }
