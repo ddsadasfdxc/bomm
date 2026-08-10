@@ -24,13 +24,9 @@ export async function initApp() {
 
   const content = await loadContent();
 
-  const quoteEl = document.querySelector('.intro-quote');
-  if (quoteEl && content.quotes && content.quotes.length) {
-    quoteEl.textContent = content.quotes[0].text;
-    startQuoteRotator(quoteEl, content.quotes);
-  } else if (quoteEl) {
-    quoteEl.textContent = content.intro.quote;
-    loadHitokoto(quoteEl, content.intro.quote);
+  const quoteEl = document.getElementById('hitokotoQuote');
+  if (quoteEl) {
+    loadHitokoto(quoteEl, content.intro.quote || '清风不识字，何故乱翻书。');
   }
 
   document.querySelector('.intro-subtitle').textContent = content.intro.subtitle;
@@ -97,18 +93,6 @@ export async function initApp() {
     if (inkParticles) inkParticles.destroy();
     if (cursorAura) cursorAura.destroy();
   };
-}
-
-function startQuoteRotator(el, quotes) {
-  let idx = 0;
-  setInterval(() => {
-    idx = (idx + 1) % quotes.length;
-    el.style.opacity = '0';
-    setTimeout(() => {
-      el.textContent = quotes[idx].text || quotes[idx];
-      el.style.opacity = '1';
-    }, 500);
-  }, 6000);
 }
 
 async function loadHitokoto(el, fallback) {
