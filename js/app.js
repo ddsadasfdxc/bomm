@@ -126,7 +126,17 @@ async function loadHitokoto(el, fallback) {
 function initNav() {
   const tabs = document.querySelectorAll('.ios-nav-tab');
   const pages = document.querySelectorAll('.page');
-  const navInner = document.querySelector('.ios-nav-inner');
+  const track = document.getElementById('iosNavTrack');
+
+  function moveTrackTo(activeTab) {
+    if (!track || !activeTab) return;
+    const pill = activeTab.parentElement;
+    const pillRect = pill.getBoundingClientRect();
+    const tabRect = activeTab.getBoundingClientRect();
+    track.style.width = tabRect.width + 'px';
+    track.style.transform = `translateX(${tabRect.left - pillRect.left}px)`;
+    track.style.opacity = '0.95';
+  }
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -136,17 +146,17 @@ function initNav() {
       pages.forEach(p => {
         p.classList.toggle('active', p.id === `page-${pageName}`);
       });
+      moveTrackTo(tab);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 
-  if (navInner) {
-    const onScroll = () => {
-      navInner.classList.toggle('scrolled', window.scrollY > 10);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
+  const activeTab = document.querySelector('.ios-nav-tab.active');
+  requestAnimationFrame(() => moveTrackTo(activeTab));
+
+  window.addEventListener('resize', () => {
+    moveTrackTo(document.querySelector('.ios-nav-tab.active'));
+  }, { passive: true });
 }
 
 

@@ -9,6 +9,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Zen+Dots&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
+    .back-to-home {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(26, 26, 26, 0.78);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--jjc-paper);
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    }
+    .back-to-home:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--jjc-gold);
+      transform: translateY(-2px);
+    }
+    .back-to-home i { font-size: 0.85rem; }
+    @media (max-width: 640px) {
+      .back-to-home { padding: 8px 12px; font-size: 0.75rem; }
+      .back-to-home span { display: none; }
+    }
     :root {
       --jjc-red: #C62828;
       --jjc-red-glow: rgba(198, 40, 40, 0.55);
@@ -703,6 +735,8 @@
   </style>
 </head>
 <body>
+  <a href="/" class="back-to-home" aria-label="返回主站"><i class="fa-solid fa-arrow-left"></i><span>返回主站</span></a>
+
   <div class="jjk-seal tl"></div>
   <div class="jjk-seal tr"></div>
   <div class="jjk-seal bl"></div>

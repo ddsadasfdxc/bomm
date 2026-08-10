@@ -1,102 +1,101 @@
 /* ================================
-   iOS 风格导航栏 + 页面
+   iOS 灵动岛风格导航栏 + 页面
    ================================ */
 
 .ios-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: env(safe-area-inset-top, 12px) 16px 0;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   pointer-events: none;
 }
 
-.ios-nav-inner {
+.ios-nav-pill {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin: 0 auto;
-  max-width: fit-content;
-  background: rgba(21, 25, 19, 0.45);
-  backdrop-filter: blur(24px) saturate(1.3);
-  -webkit-backdrop-filter: blur(24px) saturate(1.3);
-  border: 1px solid rgba(245, 240, 230, 0.08);
+  gap: 4px;
+  position: relative;
+  padding: 5px;
+  background: rgba(12, 14, 10, 0.55);
+  backdrop-filter: blur(26px) saturate(1.5);
+  -webkit-backdrop-filter: blur(26px) saturate(1.5);
+  border: 1px solid rgba(245, 240, 230, 0.1);
   border-radius: 999px;
-  padding: 6px 8px;
   pointer-events: auto;
   box-shadow:
-    0 6px 24px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(245, 240, 230, 0.04);
-  transition: all 0.35s var(--ease-silk);
+    0 10px 40px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.4s var(--ease-silk);
 }
 
-.ios-nav-inner.scrolled {
-  background: rgba(21, 25, 19, 0.78);
-  border-color: rgba(245, 240, 230, 0.12);
+.ios-nav-track {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  height: calc(100% - 10px);
+  background: linear-gradient(135deg, var(--accent-cinnabar), var(--accent-cinnabar-light));
+  border-radius: 999px;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(245, 240, 230, 0.06);
+    0 4px 16px rgba(196, 90, 74, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.45s var(--ease-spring), width 0.45s var(--ease-spring), opacity 0.35s ease;
+  z-index: 0;
+  opacity: 0.95;
 }
 
 .ios-nav-tab {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  color: rgba(245, 240, 230, 0.5);
+  color: rgba(245, 240, 230, 0.55);
   background: transparent;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.4s var(--ease-silk);
-  position: relative;
+  transition: color 0.35s ease, transform 0.3s var(--ease-spring);
   z-index: 1;
 }
 
 .ios-nav-tab svg {
-  transition: transform 0.4s var(--ease-silk);
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
+  transition: transform 0.35s var(--ease-spring), filter 0.35s ease;
 }
 
 .ios-nav-tab:hover {
   color: rgba(245, 240, 230, 0.95);
-  background: rgba(245, 240, 230, 0.07);
 }
 
 .ios-nav-tab:hover svg {
-  transform: scale(1.12) rotate(-2deg);
+  transform: scale(1.1);
 }
 
 .ios-nav-tab.active {
-  background: linear-gradient(135deg, var(--accent-cinnabar), var(--accent-cinnabar-light));
   color: #fff;
-  box-shadow:
-    0 4px 16px rgba(196, 90, 74, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.ios-nav-tab.active:hover {
-  background: linear-gradient(135deg, var(--accent-cinnabar-light), #e07768);
+.ios-nav-tab.active svg {
+  transform: scale(1.08);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
-.ios-nav-sep {
-  display: none;
-}
-
+/* 页面切换动画 */
 .page {
   display: none;
   opacity: 0;
-  transform: translateY(20px) scale(0.995);
-  filter: blur(8px);
+  transform: translateY(18px) scale(0.995);
+  filter: blur(6px);
   transition:
-    opacity 0.55s var(--ease-silk),
-    transform 0.55s var(--ease-silk),
-    filter 0.45s var(--ease-silk);
+    opacity 0.5s var(--ease-silk),
+    transform 0.5s var(--ease-silk),
+    filter 0.4s var(--ease-silk);
 }
 
 .page.active {
@@ -104,33 +103,19 @@
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0);
-  animation: pageReveal 0.6s var(--ease-silk);
-}
-
-@keyframes pageReveal {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.995);
-    filter: blur(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
 }
 
 /* ── 探索区域 ── */
 
 .explore-area {
-  padding: 90px 24px 110px;
+  padding: 80px 24px 120px;
   max-width: 840px;
   margin: 0 auto;
 }
 
 .explore-header {
   text-align: center;
-  margin-bottom: 52px;
+  margin-bottom: 44px;
   position: relative;
 }
 
@@ -146,16 +131,16 @@
 
 .explore-title {
   font-family: var(--font-display);
-  font-size: clamp(34px, 5.5vw, 52px);
+  font-size: clamp(32px, 5vw, 48px);
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   color: var(--text-paper);
-  margin-bottom: 14px;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  margin-bottom: 12px;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.3);
 }
 
 .explore-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   letter-spacing: 0.25em;
   text-transform: uppercase;
@@ -164,7 +149,7 @@
 .explore-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 16px;
   max-width: 520px;
   margin: 0 auto;
 }
@@ -176,7 +161,7 @@
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 22px;
-  padding: 30px 26px;
+  padding: 26px 24px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -184,7 +169,7 @@
   touch-action: manipulation;
   transition: all 0.45s var(--ease-silk);
   overflow: hidden;
-  min-height: 110px;
+  min-height: 96px;
 }
 
 .note-card::before {
@@ -200,7 +185,7 @@
 }
 
 .note-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: var(--glass-border-hover);
   box-shadow: var(--shadow-medium);
 }
@@ -216,8 +201,8 @@
 
 .note-card-icon {
   position: relative;
-  font-size: 30px;
-  margin-bottom: 14px;
+  font-size: 28px;
+  margin-bottom: 12px;
   display: inline-block;
   transition: transform 0.45s var(--ease-silk);
   pointer-events: none;
@@ -231,16 +216,16 @@
 .note-card h3 {
   position: relative;
   font-family: var(--font-serif);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-paper);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   letter-spacing: 0.08em;
 }
 
 .note-card p {
   position: relative;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   line-height: 1.7;
 }
@@ -291,7 +276,7 @@
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--glass-border);
   border-radius: 26px;
-  padding: 38px 34px;
+  padding: 36px 32px;
   width: 100%;
   max-width: 500px;
   max-height: 85vh;
@@ -323,7 +308,7 @@
   position: sticky;
   float: right;
   top: 0;
-  margin: -20px -16px -20px 0;
+  margin: -18px -14px -18px 0;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -768,7 +753,26 @@
 
 @media (max-width: 640px) {
   .explore-area {
-    padding: 60px 16px 80px;
+    padding: 60px 16px 100px;
+  }
+
+  .ios-nav {
+    bottom: 10px;
+  }
+
+  .ios-nav-pill {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .ios-nav-tab {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ios-nav-tab svg {
+    width: 17px;
+    height: 17px;
   }
 
   .note-modal {
@@ -798,5 +802,12 @@
 
   .stat-num {
     font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
