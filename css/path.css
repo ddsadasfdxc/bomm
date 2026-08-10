@@ -151,3 +151,16 @@
     padding: 10px 12px;
   }
 }
+
+/* 全局滚动进度条 */
+.scroll-ink {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-cinnabar), var(--accent-gold));
+  z-index: 101;
+  box-shadow: 0 0 8px var(--accent-cinnabar);
+  transition: width 0.1s linear;
+}
