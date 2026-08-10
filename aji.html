@@ -6,7 +6,7 @@
   <title>濑名紫阳花 | Sena Ajisai</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --aji-bg: #FFFBFB;
@@ -16,668 +16,508 @@
       --aji-secondary-soft: #FFE8ED;
       --aji-text-main: #5D4037;
       --aji-text-sub: #8D6E63;
-      --aji-fallen-bg: #2A1B38;
-      --aji-fallen-deep: #1A1022;
+      --aji-text-light: #B8A0A0;
+      --aji-fallen-bg: #1E102E;
+      --aji-fallen-deep: #12081D;
       --aji-fallen-accent: #E1BEE7;
-      --aji-fallen-glow: rgba(225, 190, 231, 0.55);
-      --aji-card: rgba(255, 255, 255, 0.78);
-      --aji-card-border: rgba(255, 255, 255, 0.72);
-      --aji-shadow: 0 10px 34px rgba(162, 148, 198, 0.18), 0 4px 12px rgba(255, 209, 220, 0.12);
-      --aji-radius: 26px;
+      --aji-fallen-glow: rgba(225, 190, 231, 0.45);
+      --aji-card: rgba(255, 255, 255, 0.72);
+      --aji-card-border: rgba(255, 255, 255, 0.6);
+      --aji-shadow: 0 12px 40px rgba(162, 148, 198, 0.15), 0 4px 16px rgba(255, 209, 220, 0.1);
+      --aji-radius: 28px;
       --aji-radius-sm: 18px;
-      --font-round: 'M PLUS Rounded 1c', 'Nunito', sans-serif;
+      --font-round: 'M PLUS Rounded 1c', sans-serif;
+      --font-display: 'Playfair Display', serif;
       --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
       --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
     }
 
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
       font-family: var(--font-round);
       color: var(--aji-text-main);
       background: var(--aji-bg);
-      line-height: 1.75;
+      line-height: 1.8;
       transition: background 1s var(--ease-silk), color 0.7s ease;
       overflow-x: hidden;
+      min-height: 100vh;
     }
 
     html[data-aji-mode="fallen"] body {
-      background:
-        radial-gradient(ellipse at 20% 0%, rgba(90, 50, 120, 0.35), transparent 50%),
-        radial-gradient(ellipse at 80% 100%, rgba(198, 40, 40, 0.15), transparent 45%),
-        var(--aji-fallen-bg);
+      background: radial-gradient(ellipse at 30% 0%, rgba(90, 50, 120, 0.3), transparent 50%),
+                  radial-gradient(ellipse at 70% 100%, rgba(198, 40, 40, 0.1), transparent 40%),
+                  var(--aji-fallen-bg);
       color: var(--aji-fallen-accent);
     }
 
-    /* 底层渐变光晕 */
-    .bg-glow {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+    /* 背景光晕层 */
+    .bg-ambient {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
-        radial-gradient(circle at 15% 20%, rgba(255, 209, 220, 0.55), transparent 28%),
-        radial-gradient(circle at 85% 80%, rgba(162, 148, 198, 0.35), transparent 32%),
-        radial-gradient(circle at 50% 50%, rgba(255, 251, 251, 0.8), transparent 60%);
+        radial-gradient(circle at 20% 10%, rgba(255, 209, 220, 0.5), transparent 30%),
+        radial-gradient(circle at 80% 90%, rgba(162, 148, 198, 0.3), transparent 35%),
+        radial-gradient(circle at 50% 50%, rgba(255, 251, 251, 0.9), transparent 50%);
       transition: opacity 1s ease;
     }
-
-    html[data-aji-mode="fallen"] .bg-glow {
-      opacity: 0.15;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(225, 190, 231, 0.18), transparent 30%),
-        radial-gradient(circle at 80% 80%, rgba(198, 40, 40, 0.12), transparent 35%);
-    }
-
-    /* 紫阳花 SVG 背景 */
-    .hydrangea-bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+    html[data-aji-mode="fallen"] .bg-ambient {
       opacity: 0.12;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='50' cy='50' r='18' fill='%23A294C6'/%3E%3Ccircle cx='75' cy='42' r='16' fill='%23B8A9D4'/%3E%3Ccircle cx='42' cy='78' r='15' fill='%23C9BCE0'/%3E%3Ccircle cx='72' cy='72' r='17' fill='%23A294C6'/%3E%3Ccircle cx='95' cy='58' r='14' fill='%23D1C6E8'/%3E%3Ccircle cx='58' cy='105' r='15' fill='%23B8A9D4'/%3E%3Ccircle cx='90' cy='95' r='16' fill='%23A294C6'/%3E%3Ccircle cx='120' cy='75' r='14' fill='%23C9BCE0'/%3E%3C/svg%3E");
-      background-size: 220px 220px;
-      transition: opacity 1s ease;
+      background: radial-gradient(circle at 20% 20%, rgba(225, 190, 231, 0.15), transparent 30%),
+                  radial-gradient(circle at 80% 80%, rgba(198, 40, 40, 0.1), transparent 35%);
     }
 
-    html[data-aji-mode="fallen"] .hydrangea-bg {
-      opacity: 0.05;
-      filter: hue-rotate(60deg) saturate(0.6);
+    /* 紫阳花纹理 */
+    .hydrangea-pattern {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.08;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Ccircle cx='40' cy='40' r='18' fill='%23A294C6'/%3E%3Ccircle cx='68' cy='30' r='15' fill='%23B8A9D4'/%3E%3Ccircle cx='30' cy='70' r='14' fill='%23C9BCE0'/%3E%3Ccircle cx='62' cy='62' r='17' fill='%23A294C6'/%3E%3Ccircle cx='88' cy='46' r='13' fill='%23D1C6E8'/%3E%3Ccircle cx='46' cy='96' r='14' fill='%23B8A9D4'/%3E%3Ccircle cx='80' cy='85' r='16' fill='%23A294C6'/%3E%3Ccircle cx='112' cy='64' r='13' fill='%23C9BCE0'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      transition: opacity 1s ease, filter 1s ease;
+    }
+    html[data-aji-mode="fallen"] .hydrangea-pattern {
+      opacity: 0.04;
+      filter: hue-rotate(60deg) saturate(0.5);
     }
 
-    /* 飘落花瓣 */
+    /* 花瓣飘落 */
     .petals-layer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
+      position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
     }
-
     .petal {
-      position: absolute;
-      top: -12%;
+      position: absolute; top: -12%;
       border-radius: 60% 0 60% 60%;
       opacity: 0;
       animation: petal-fall linear infinite;
     }
-
-    .petal:nth-child(1) { left: 5%; width: 16px; height: 16px; background: linear-gradient(135deg, var(--aji-primary), var(--aji-secondary)); animation-duration: 11s; animation-delay: 0s; }
-    .petal:nth-child(2) { left: 18%; width: 12px; height: 12px; background: linear-gradient(135deg, var(--aji-secondary), #fff); animation-duration: 14s; animation-delay: 1.5s; }
-    .petal:nth-child(3) { left: 32%; width: 20px; height: 20px; background: linear-gradient(135deg, var(--aji-primary), #E1BEE7); animation-duration: 16s; animation-delay: 0.8s; }
-    .petal:nth-child(4) { left: 48%; width: 14px; height: 14px; background: linear-gradient(135deg, var(--aji-secondary), var(--aji-primary)); animation-duration: 13s; animation-delay: 3s; }
-    .petal:nth-child(5) { left: 62%; width: 18px; height: 18px; background: linear-gradient(135deg, #E1BEE7, var(--aji-secondary)); animation-duration: 15s; animation-delay: 2.2s; }
-    .petal:nth-child(6) { left: 76%; width: 11px; height: 11px; background: linear-gradient(135deg, var(--aji-primary), #fff); animation-duration: 12s; animation-delay: 4s; }
-    .petal:nth-child(7) { left: 88%; width: 15px; height: 15px; background: linear-gradient(135deg, var(--aji-secondary), var(--aji-primary)); animation-duration: 17s; animation-delay: 1s; }
-    .petal:nth-child(8) { left: 95%; width: 13px; height: 13px; background: linear-gradient(135deg, #C9BCE0, var(--aji-secondary)); animation-duration: 14s; animation-delay: 2.8s; }
+    .petal:nth-child(1) { left: 4%; width: 12px; height: 12px; background: linear-gradient(135deg, var(--aji-primary), var(--aji-secondary)); animation-duration: 10s; animation-delay: 0s; }
+    .petal:nth-child(2) { left: 15%; width: 10px; height: 10px; background: linear-gradient(135deg, var(--aji-secondary), #fff); animation-duration: 13s; animation-delay: 1.2s; }
+    .petal:nth-child(3) { left: 28%; width: 16px; height: 16px; background: linear-gradient(135deg, #C9BCE0, var(--aji-secondary)); animation-duration: 15s; animation-delay: 0.6s; }
+    .petal:nth-child(4) { left: 42%; width: 11px; height: 11px; background: linear-gradient(135deg, var(--aji-secondary), var(--aji-primary)); animation-duration: 12s; animation-delay: 2.5s; }
+    .petal:nth-child(5) { left: 55%; width: 14px; height: 14px; background: linear-gradient(135deg, #E1BEE7, var(--aji-secondary)); animation-duration: 14s; animation-delay: 1.8s; }
+    .petal:nth-child(6) { left: 68%; width: 9px; height: 9px; background: linear-gradient(135deg, var(--aji-primary), #fff); animation-duration: 11s; animation-delay: 3.5s; }
+    .petal:nth-child(7) { left: 80%; width: 13px; height: 13px; background: linear-gradient(135deg, var(--aji-secondary), #C9BCE0); animation-duration: 16s; animation-delay: 0.9s; }
+    .petal:nth-child(8) { left: 92%; width: 10px; height: 10px; background: linear-gradient(135deg, #B8A9D4, var(--aji-secondary)); animation-duration: 13s; animation-delay: 2.2s; }
 
     @keyframes petal-fall {
       0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
-      8% { opacity: 0.5; }
-      92% { opacity: 0.35; }
-      100% { transform: translateY(115vh) rotate(420deg) translateX(40px); opacity: 0; }
+      8% { opacity: 0.4; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(115vh) rotate(480deg) translateX(50px); opacity: 0; }
     }
 
     /* 堕天使羽毛 */
     .feathers-layer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      overflow: hidden;
-      opacity: 0;
-      transition: opacity 0.9s ease;
+      position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden;
+      opacity: 0; transition: opacity 0.9s ease;
     }
-
-    html[data-aji-mode="fallen"] .feathers-layer { opacity: 0.6; }
-
+    html[data-aji-mode="fallen"] .feathers-layer { opacity: 0.5; }
     .feather {
-      position: absolute;
-      top: -10%;
-      width: 12px;
-      height: 26px;
-      background: linear-gradient(180deg, rgba(20,10,30,0.95), rgba(60,40,80,0.5));
+      position: absolute; top: -10%;
+      width: 10px; height: 22px;
+      background: linear-gradient(180deg, rgba(18,8,28,0.95), rgba(60,35,80,0.4));
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       animation: feather-fall linear infinite;
     }
-
-    .feather:nth-child(1) { left: 10%; animation-duration: 9s; animation-delay: 0s; }
-    .feather:nth-child(2) { left: 28%; animation-duration: 12s; animation-delay: 1.2s; }
-    .feather:nth-child(3) { left: 50%; animation-duration: 10s; animation-delay: 2.5s; }
-    .feather:nth-child(4) { left: 72%; animation-duration: 13s; animation-delay: 1.8s; }
-    .feather:nth-child(5) { left: 90%; animation-duration: 11s; animation-delay: 3.2s; }
+    .feather:nth-child(1) { left: 8%; animation-duration: 8s; animation-delay: 0s; }
+    .feather:nth-child(2) { left: 25%; animation-duration: 11s; animation-delay: 1s; }
+    .feather:nth-child(3) { left: 45%; animation-duration: 9s; animation-delay: 2s; }
+    .feather:nth-child(4) { left: 65%; animation-duration: 12s; animation-delay: 1.5s; }
+    .feather:nth-child(5) { left: 85%; animation-duration: 10s; animation-delay: 2.8s; }
 
     @keyframes feather-fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-      12% { opacity: 0.75; }
-      88% { opacity: 0.45; }
-      100% { transform: translateY(115vh) rotate(200deg); opacity: 0; }
+      12% { opacity: 0.6; }
+      85% { opacity: 0.35; }
+      100% { transform: translateY(115vh) rotate(220deg); opacity: 0; }
     }
 
     /* 鼠标光点 */
-    .cursor-orb {
-      position: fixed;
-      width: 18px;
-      height: 18px;
+    .cursor-glow {
+      position: fixed; width: 120px; height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(162,148,198,0.45), transparent 70%);
-      pointer-events: none;
-      z-index: 3;
+      background: radial-gradient(circle, rgba(162,148,198,0.15), transparent 70%);
+      pointer-events: none; z-index: 3;
       transform: translate(-50%, -50%);
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, background 0.5s ease;
       opacity: 0;
     }
-
-    html[data-aji-mode="fallen"] .cursor-orb {
-      background: radial-gradient(circle, rgba(225,190,231,0.35), transparent 70%);
+    html[data-aji-mode="fallen"] .cursor-glow {
+      background: radial-gradient(circle, rgba(225,190,231,0.12), transparent 70%);
     }
 
-    /* 主容器 */
-    .aji-wrap {
-      position: relative;
-      z-index: 4;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 28px 18px 90px;
+    /* ========== 顶部导航条 ========== */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(255, 251, 251, 0.6);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(162, 148, 198, 0.08);
+      transition: all 0.6s ease;
+    }
+    html[data-aji-mode="fallen"] .top-bar {
+      background: rgba(20, 10, 32, 0.6);
+      border-bottom-color: rgba(225, 190, 231, 0.06);
     }
 
-    /* 模式切换 */
-    .mode-toggle-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--aji-text-sub);
-      transition: color 0.5s ease;
-      letter-spacing: 0.05em;
+    .top-bar-brand {
+      font-size: 0.82rem; font-weight: 700; letter-spacing: 0.15em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .top-bar-brand .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--aji-primary);
+      animation: dot-pulse 2s ease-in-out infinite;
+    }
+    html[data-aji-mode="fallen"] .top-bar-brand .dot {
+      background: var(--aji-fallen-accent);
+    }
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.4); }
     }
 
-    html[data-aji-mode="fallen"] .mode-toggle-bar { color: var(--aji-fallen-accent); }
+    .top-bar-mode {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em;
+      color: var(--aji-text-sub); transition: color 0.5s ease;
+    }
+    html[data-aji-mode="fallen"] .top-bar-mode { color: var(--aji-fallen-accent); }
 
     .mode-switch {
-      position: relative;
-      width: 56px;
-      height: 30px;
+      position: relative; width: 48px; height: 26px;
       background: linear-gradient(90deg, var(--aji-primary), var(--aji-secondary));
-      border-radius: 999px;
-      cursor: pointer;
+      border-radius: 999px; cursor: pointer;
       transition: background 0.5s ease, box-shadow 0.5s ease;
-      box-shadow: 0 0 16px rgba(162, 148, 198, 0.3);
+      box-shadow: 0 0 12px rgba(162, 148, 198, 0.25);
     }
-
     html[data-aji-mode="fallen"] .mode-switch {
       background: linear-gradient(90deg, #4A306D, var(--aji-fallen-accent));
-      box-shadow: 0 0 22px rgba(225, 190, 231, 0.35);
+      box-shadow: 0 0 18px rgba(225, 190, 231, 0.3);
     }
-
     .mode-switch::after {
       content: '👼';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 24px;
-      height: 24px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.82rem;
-      transition: transform 0.45s var(--ease-spring), background 0.4s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      position: absolute; top: 2px; left: 2px;
+      width: 22px; height: 22px;
+      background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      transition: transform 0.4s var(--ease-spring), background 0.3s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
-
     html[data-aji-mode="fallen"] .mode-switch::after {
-      content: '😈';
-      transform: translateX(26px);
+      content: '😈'; transform: translateX(22px);
       background: #150C1D;
     }
 
-    /* Hero 区 */
-    .hero-card {
-      background: var(--aji-card);
-      backdrop-filter: blur(14px);
-      border-radius: var(--aji-radius);
-      padding: 34px 28px;
-      box-shadow: var(--aji-shadow);
-      border: 1px solid var(--aji-card-border);
-      transition: all 0.8s var(--ease-silk);
+    /* ========== 主容器 ========== */
+    .aji-wrap {
+      position: relative; z-index: 4;
+      max-width: 960px; margin: 0 auto;
+      padding: 80px 18px 60px;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
       display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 28px;
+      grid-template-columns: 200px 1fr;
+      gap: 32px;
       align-items: center;
-      animation: hero-in 1s var(--ease-silk) both;
+      margin-bottom: 32px;
+      padding: 0;
     }
 
-    @keyframes hero-in {
-      from { opacity: 0; transform: translateY(30px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    html[data-aji-mode="fallen"] .hero-card {
-      background: rgba(35, 22, 48, 0.72);
-      border-color: rgba(225, 190, 231, 0.12);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(225, 190, 231, 0.04);
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-visual { margin: 0 auto; }
     }
 
     .hero-visual {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      height: 280px;
+      width: 200px; height: 280px;
+      display: flex; justify-content: center; align-items: flex-end;
     }
 
     .hero-aura {
       position: absolute;
-      width: 170px;
-      height: 170px;
+      width: 180px; height: 180px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,209,220,0.55) 0%, rgba(162,148,198,0.25) 45%, transparent 70%);
+      bottom: 20px;
+      background: radial-gradient(circle, rgba(255,209,220,0.5) 0%, rgba(162,148,198,0.2) 40%, transparent 65%);
       animation: aura-breathe 4s ease-in-out infinite;
-      bottom: 30px;
     }
-
     html[data-aji-mode="fallen"] .hero-aura {
-      background: radial-gradient(circle, rgba(225,190,231,0.22) 0%, rgba(90,50,120,0.25) 45%, transparent 70%);
+      background: radial-gradient(circle, rgba(225,190,231,0.18) 0%, rgba(90,50,120,0.2) 40%, transparent 65%);
+    }
+    @keyframes aura-breathe {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; }
     }
 
-    @keyframes aura-breathe {
-      0%, 100% { transform: scale(1); opacity: 0.85; }
-      50% { transform: scale(1.12); opacity: 1; }
+    .hero-frame {
+      position: relative; z-index: 2;
+      width: 160px; height: 260px;
+      border-radius: 80px 80px 20px 20px;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--aji-secondary-soft), var(--aji-primary));
+      box-shadow: 0 8px 32px rgba(162, 148, 198, 0.25);
+      transition: all 0.6s ease;
+    }
+    html[data-aji-mode="fallen"] .hero-frame {
+      background: linear-gradient(180deg, #2A1B38, #4A306D);
+      box-shadow: 0 8px 32px rgba(225, 190, 231, 0.15);
     }
 
     .hero-illust {
-      position: relative;
-      z-index: 2;
-      width: 160px;
-      height: 260px;
-      object-fit: contain;
-      object-position: bottom;
-      filter: drop-shadow(0 8px 18px rgba(93, 64, 55, 0.18));
-      transition: transform 0.6s var(--ease-spring), filter 0.6s ease;
+      width: 100%; height: 100%;
+      object-fit: contain; object-position: bottom;
+      transition: transform 0.5s var(--ease-spring);
     }
-
-    .hero-illust:hover {
-      transform: scale(1.03) translateY(-4px);
-    }
+    .hero-frame:hover .hero-illust { transform: scale(1.04); }
 
     .hero-illust-placeholder {
-      position: relative;
-      z-index: 2;
-      width: 150px;
-      height: 240px;
-      border-radius: 80px 80px 24px 24px;
-      background: linear-gradient(180deg, rgba(255,209,220,0.6), rgba(162,148,198,0.35));
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
       font-size: 3.5rem;
-      box-shadow: 0 8px 24px rgba(162,148,198,0.22);
-      animation: placeholder-float 4s ease-in-out infinite;
-    }
-
-    @keyframes placeholder-float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .hero-content {
-      text-align: left;
     }
 
     .hero-title {
-      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 800;
-      margin: 0 0 4px;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
       color: var(--aji-text-main);
-      transition: color 0.5s ease;
-      line-height: 1.2;
+      transition: color 0.5s ease, text-shadow 0.5s ease;
+      line-height: 1.15;
+      margin-bottom: 2px;
     }
-
     html[data-aji-mode="fallen"] .hero-title {
       color: var(--aji-fallen-accent);
-      text-shadow: 0 0 24px var(--aji-fallen-glow);
+      text-shadow: 0 0 30px var(--aji-fallen-glow);
     }
 
     .hero-ruby {
-      font-size: 0.95rem;
-      color: var(--aji-text-sub);
-      margin-bottom: 16px;
-      letter-spacing: 0.22em;
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--aji-text-light);
+      margin-bottom: 14px;
+      letter-spacing: 0.15em;
       transition: color 0.5s ease;
     }
+    html[data-aji-mode="fallen"] .hero-ruby { color: rgba(225, 190, 231, 0.6); }
 
-    html[data-aji-mode="fallen"] .hero-ruby { color: rgba(225, 190, 231, 0.7); }
-
-    .typewriter-box {
+    .typewriter {
       display: inline-block;
-      background: rgba(255, 209, 220, 0.35);
+      padding: 8px 20px;
       border-radius: 999px;
-      padding: 8px 18px;
-      font-size: 0.95rem;
+      font-size: 0.9rem; font-weight: 600;
+      background: linear-gradient(135deg, rgba(255,209,220,0.4), rgba(162,148,198,0.15));
       color: var(--aji-primary-dark);
-      font-weight: 600;
       min-height: 2.2em;
-      transition: background 0.5s ease, color 0.5s ease;
+      transition: all 0.5s ease;
     }
-
-    html[data-aji-mode="fallen"] .typewriter-box {
-      background: rgba(225, 190, 231, 0.1);
+    html[data-aji-mode="fallen"] .typewriter {
+      background: linear-gradient(135deg, rgba(225,190,231,0.08), rgba(90,50,120,0.2));
       color: var(--aji-fallen-accent);
     }
-
     .typewriter::after {
       content: '|';
       animation: blink 1s step-end infinite;
       margin-left: 2px;
     }
-
     @keyframes blink { 50% { opacity: 0; } }
 
     .hero-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: flex; flex-wrap: wrap; gap: 8px;
       margin-top: 18px;
     }
-
     .hero-tag {
-      font-size: 0.72rem;
-      padding: 5px 12px;
+      padding: 4px 14px;
       border-radius: 999px;
-      background: rgba(162, 148, 198, 0.12);
+      font-size: 0.72rem; font-weight: 600;
+      background: rgba(162, 148, 198, 0.08);
+      border: 1px solid rgba(162, 148, 198, 0.15);
       color: var(--aji-text-main);
-      font-weight: 600;
-      transition: all 0.4s ease;
+      transition: all 0.3s ease;
     }
-
     html[data-aji-mode="fallen"] .hero-tag {
-      background: rgba(225, 190, 231, 0.1);
+      background: rgba(225, 190, 231, 0.06);
+      border-color: rgba(225, 190, 231, 0.1);
       color: var(--aji-fallen-accent);
     }
-
-    /* 通用区块 */
-    .section-card {
-      margin-top: 26px;
-      background: var(--aji-card);
-      backdrop-filter: blur(12px);
-      border-radius: var(--aji-radius);
-      padding: 28px;
-      box-shadow: var(--aji-shadow);
-      border: 1px solid var(--aji-card-border);
-      transition: all 0.8s var(--ease-silk);
-      animation: section-rise 0.8s var(--ease-silk) both;
+    .hero-tag:hover {
+      background: rgba(162, 148, 198, 0.18);
+      transform: translateY(-2px);
     }
 
-    @keyframes section-rise {
-      from { opacity: 0; transform: translateY(24px); }
+    /* ========== 卡片通用 ========== */
+    .card {
+      margin-top: 22px;
+      border-radius: var(--aji-radius);
+      padding: 30px 28px;
+      background: var(--aji-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--aji-card-border);
+      box-shadow: var(--aji-shadow);
+      transition: all 0.8s var(--ease-silk);
+      animation: card-rise 0.8s var(--ease-silk) both;
+    }
+    @keyframes card-rise {
+      from { opacity: 0; transform: translateY(28px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    html[data-aji-mode="fallen"] .section-card {
-      background: rgba(35, 22, 48, 0.68);
-      border-color: rgba(225, 190, 231, 0.1);
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+    html[data-aji-mode="fallen"] .card {
+      background: rgba(28, 16, 42, 0.68);
+      border-color: rgba(225, 190, 231, 0.08);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
     }
 
-    .section-title {
-      font-size: 1.12rem;
-      font-weight: 800;
-      margin: 0 0 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .card-title {
+      font-size: 1.05rem; font-weight: 700;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
       color: var(--aji-text-main);
       transition: color 0.5s ease;
     }
+    html[data-aji-mode="fallen"] .card-title { color: var(--aji-fallen-accent); }
+    .card-title .icon { font-size: 1.2rem; }
 
-    html[data-aji-mode="fallen"] .section-title {
-      color: var(--aji-fallen-accent);
-    }
-
-    .section-title span {
-      font-size: 1.3rem;
-    }
-
-    /* 档案矩阵 */
+    /* ========== 档案网格 ========== */
     .profile-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
     }
-
     .profile-item {
-      background: rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.5);
       border-radius: var(--aji-radius-sm);
       padding: 16px 10px;
       text-align: center;
-      transition: transform 0.3s var(--ease-spring), background 0.5s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s var(--ease-spring), background 0.5s ease, box-shadow 0.3s;
       cursor: default;
     }
-
-    html[data-aji-mode="fallen"] .profile-item {
-      background: rgba(15, 8, 24, 0.42);
-    }
-
+    html[data-aji-mode="fallen"] .profile-item { background: rgba(12, 6, 22, 0.35); }
     .profile-item:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 8px 20px rgba(162, 148, 198, 0.18);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(162, 148, 198, 0.15);
     }
-
-    .profile-icon {
-      font-size: 1.7rem;
-      margin-bottom: 6px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
-    }
-
-    .profile-label {
-      font-size: 0.7rem;
-      color: var(--aji-text-sub);
-      margin-bottom: 3px;
-      font-weight: 600;
-      transition: color 0.5s ease;
-    }
-
-    html[data-aji-mode="fallen"] .profile-label { color: rgba(225, 190, 231, 0.6); }
-
-    .profile-value {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--aji-text-main);
-      transition: color 0.5s ease;
-    }
-
+    .profile-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .profile-label { font-size: 0.68rem; color: var(--aji-text-sub); font-weight: 600; margin-bottom: 2px; transition: color 0.5s ease; }
+    html[data-aji-mode="fallen"] .profile-label { color: rgba(225, 190, 231, 0.55); }
+    .profile-value { font-size: 0.92rem; font-weight: 700; color: var(--aji-text-main); transition: color 0.5s ease; }
     html[data-aji-mode="fallen"] .profile-value { color: var(--aji-fallen-accent); }
 
-    /* 关系卡片 */
+    /* ========== 关系卡片 ========== */
     .relation-scroll {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
+      display: flex; gap: 14px; overflow-x: auto;
       padding: 6px 4px 12px;
       scrollbar-width: thin;
       scrollbar-color: var(--aji-primary) transparent;
     }
-
-    .relation-scroll::-webkit-scrollbar { height: 6px; }
-    .relation-scroll::-webkit-scrollbar-thumb {
-      background: var(--aji-primary);
-      border-radius: 999px;
-    }
+    .relation-scroll::-webkit-scrollbar { height: 5px; }
+    .relation-scroll::-webkit-scrollbar-thumb { background: var(--aji-primary); border-radius: 999px; }
 
     .relation-card {
-      flex: 0 0 190px;
-      background: rgba(255, 255, 255, 0.6);
+      flex: 0 0 180px;
+      background: rgba(255, 255, 255, 0.55);
       border-radius: var(--aji-radius-sm);
-      padding: 20px;
+      padding: 22px 16px;
       text-align: center;
       transition: transform 0.35s var(--ease-spring), background 0.5s ease;
-      border: 1px solid rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.4);
     }
-
-    html[data-aji-mode="fallen"] .relation-card {
-      background: rgba(15, 8, 24, 0.45);
-      border-color: rgba(225, 190, 231, 0.08);
-    }
-
-    .relation-card:hover {
-      transform: translateY(-6px) scale(1.03);
-    }
-
-    .relation-emoji {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .relation-name {
-      font-weight: 800;
-      font-size: 1rem;
-      margin-bottom: 8px;
-      color: var(--aji-text-main);
-      transition: color 0.5s ease;
-    }
-
+    html[data-aji-mode="fallen"] .relation-card { background: rgba(12, 6, 22, 0.4); border-color: rgba(225, 190, 231, 0.06); }
+    .relation-card:hover { transform: translateY(-6px) scale(1.03); }
+    .relation-emoji { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+    .relation-name { font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; color: var(--aji-text-main); transition: color 0.5s ease; }
     html[data-aji-mode="fallen"] .relation-name { color: var(--aji-fallen-accent); }
-
     .relation-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.72rem;
-      padding: 5px 11px;
-      border-radius: 999px;
-      background: var(--aji-secondary-soft);
-      color: var(--aji-text-main);
-      font-weight: 600;
+      display: inline-block; font-size: 0.7rem; padding: 4px 10px; border-radius: 999px;
+      background: var(--aji-secondary-soft); color: var(--aji-text-main); font-weight: 600;
       transition: all 0.4s ease;
     }
+    html[data-aji-mode="fallen"] .relation-tag { background: rgba(225, 190, 231, 0.1); color: var(--aji-fallen-accent); }
 
-    html[data-aji-mode="fallen"] .relation-tag {
-      background: rgba(225, 190, 231, 0.12);
-      color: var(--aji-fallen-accent);
+    /* ========== 喜欢的东西 ========== */
+    .fav-grid {
+      display: flex; flex-wrap: wrap; gap: 10px;
     }
-
-    /* 喜欢的东西 */
-    .favorites-cloud {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .fav-tag {
-      font-size: 0.82rem;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255,209,220,0.5), rgba(162,148,198,0.2));
+    .fav-item {
+      padding: 7px 16px; border-radius: 999px;
+      font-size: 0.82rem; font-weight: 600;
+      background: linear-gradient(135deg, rgba(255,209,220,0.45), rgba(162,148,198,0.15));
       color: var(--aji-text-main);
-      font-weight: 600;
-      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
       cursor: default;
     }
-
-    html[data-aji-mode="fallen"] .fav-tag {
-      background: linear-gradient(135deg, rgba(90,50,120,0.45), rgba(225,190,231,0.1));
+    html[data-aji-mode="fallen"] .fav-item {
+      background: linear-gradient(135deg, rgba(90,50,120,0.35), rgba(225,190,231,0.08));
       color: var(--aji-fallen-accent);
     }
-
-    .fav-tag:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 16px rgba(162,148,198,0.2);
+    .fav-item:hover {
+      transform: translateY(-4px) scale(1.06);
+      box-shadow: 0 6px 20px rgba(162,148,198,0.2);
     }
 
-    /* 紫阳花语 */
-    .flower-quote-card {
+    /* ========== 花语 ========== */
+    .flower-card {
       text-align: center;
-      padding: 32px 24px;
+      padding: 36px 28px;
       background:
-        radial-gradient(ellipse at 50% 0%, rgba(255,209,220,0.35), transparent 60%),
+        radial-gradient(ellipse at 50% 0%, rgba(255,209,220,0.3), transparent 60%),
         var(--aji-card);
     }
-
-    html[data-aji-mode="fallen"] .flower-quote-card {
+    html[data-aji-mode="fallen"] .flower-card {
       background:
-        radial-gradient(ellipse at 50% 0%, rgba(225,190,231,0.08), transparent 60%),
-        rgba(35, 22, 48, 0.68);
+        radial-gradient(ellipse at 50% 0%, rgba(225,190,231,0.06), transparent 60%),
+        rgba(28, 16, 42, 0.68);
     }
-
     .flower-quote {
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 700; font-style: italic;
       color: var(--aji-primary-dark);
-      margin: 0 0 10px;
-      transition: color 0.5s ease;
+      margin-bottom: 8px; transition: color 0.5s ease;
     }
+    html[data-aji-mode="fallen"] .flower-quote { color: var(--aji-fallen-accent); text-shadow: 0 0 16px rgba(225,190,231,0.2); }
+    .flower-meaning { font-size: 0.85rem; color: var(--aji-text-sub); transition: color 0.5s ease; }
+    html[data-aji-mode="fallen"] .flower-meaning { color: rgba(225, 190, 231, 0.6); }
 
-    html[data-aji-mode="fallen"] .flower-quote { color: var(--aji-fallen-accent); }
-
-    .flower-meaning {
-      font-size: 0.88rem;
-      color: var(--aji-text-sub);
-      transition: color 0.5s ease;
-    }
-
-    html[data-aji-mode="fallen"] .flower-meaning { color: rgba(225, 190, 231, 0.65); }
-
-    /* 隐藏文本 */
+    /* ========== 堕天使低语 ========== */
     .fallen-whisper {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(12px);
+      max-height: 0; overflow: hidden;
+      opacity: 0; transform: translateY(12px);
       transition: all 0.8s var(--ease-silk);
-      font-size: 0.95rem;
-      font-style: italic;
+      font-size: 0.95rem; font-style: italic;
       text-align: center;
       color: var(--aji-fallen-accent);
-      margin-top: 0;
-      padding: 0 10px;
-      text-shadow: 0 0 12px rgba(225, 190, 231, 0.25);
+      margin-top: 0; padding: 0 10px;
+      text-shadow: 0 0 16px rgba(225, 190, 231, 0.2);
     }
-
     html[data-aji-mode="fallen"] .fallen-whisper {
-      max-height: 200px;
-      opacity: 1;
-      transform: translateY(0);
+      max-height: 200px; opacity: 1; transform: translateY(0);
       margin-top: 24px;
     }
 
-    /* 页脚 */
-    .aji-footer {
-      text-align: center;
-      margin-top: 52px;
-      font-size: 0.74rem;
-      color: var(--aji-text-sub);
-      opacity: 0.8;
+    /* ========== 页脚 ========== */
+    .footer {
+      text-align: center; margin-top: 50px;
+      font-size: 0.72rem; letter-spacing: 0.12em;
+      color: var(--aji-text-light);
       transition: color 0.5s ease;
-      letter-spacing: 0.1em;
     }
+    html[data-aji-mode="fallen"] .footer { color: rgba(225, 190, 231, 0.4); }
+    .footer .heart { color: var(--aji-secondary); transition: color 0.5s ease; }
+    html[data-aji-mode="fallen"] .footer .heart { color: var(--aji-fallen-accent); }
 
-    html[data-aji-mode="fallen"] .aji-footer { color: rgba(225, 190, 231, 0.5); }
-
-    /* 响应式 */
+    /* ========== 响应式 ========== */
     @media (max-width: 640px) {
-      .hero-card {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: 28px 22px;
-      }
-      .hero-content { text-align: center; }
-      .hero-visual { height: 240px; }
       .hero-tags { justify-content: center; }
-      .mode-toggle-bar { justify-content: center; margin-top: 6px; }
+      .top-bar { padding: 10px 16px; }
+      .aji-wrap { padding-top: 72px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -686,95 +526,74 @@
   </style>
 </head>
 <body>
-  <div class="bg-glow" aria-hidden="true"></div>
-  <div class="hydrangea-bg" aria-hidden="true"></div>
+  <div class="bg-ambient" aria-hidden="true"></div>
+  <div class="hydrangea-pattern" aria-hidden="true"></div>
 
   <div class="petals-layer" aria-hidden="true">
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
-    <div class="petal"></div>
+    <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+    <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
   </div>
 
   <div class="feathers-layer" aria-hidden="true">
-    <div class="feather"></div>
-    <div class="feather"></div>
-    <div class="feather"></div>
-    <div class="feather"></div>
-    <div class="feather"></div>
+    <div class="feather"></div><div class="feather"></div><div class="feather"></div>
+    <div class="feather"></div><div class="feather"></div>
   </div>
 
-  <div class="cursor-orb" id="cursorOrb"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
 
-  <main class="aji-wrap">
-    <div class="mode-toggle-bar">
+  <header class="top-bar">
+    <div class="top-bar-brand">
+      <span class="dot"></span>
+      Ajisai
+    </div>
+    <div class="top-bar-mode">
       <span>大天使</span>
       <div class="mode-switch" id="modeSwitch" role="button" aria-label="切换天使/堕天使模式"></div>
       <span>堕天使</span>
     </div>
+  </header>
 
-    <section class="hero-card">
+  <main class="aji-wrap">
+
+    <!-- HERO -->
+    <section class="hero">
       <div class="hero-visual">
         <div class="hero-aura"></div>
-        <img class="hero-illust" id="heroIllust" src="/assets/aji/ajisai.png" alt="濑名紫阳花" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="hero-illust-placeholder" id="heroPlaceholder" style="display:none">👼</div>
-      </div>
-      <div class="hero-content">
-        <h1 class="hero-title">濑名紫阳花</h1>
-        <div class="hero-ruby">Sena Ajisai</div>
-        <div class="typewriter-box">
-          <span class="typewriter" id="typewriter"></span>
+        <div class="hero-frame">
+          <img class="hero-illust" id="heroIllust" src="/assets/aji/ajisai.png" alt="濑名紫阳花"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="hero-illust-placeholder" id="heroPlaceholder" style="display:none">👼</div>
         </div>
+      </div>
+      <div>
+        <h1 class="hero-title">濑名紫阳花</h1>
+        <p class="hero-ruby">Sena Ajisai</p>
+        <div class="typewriter" id="typewriter"></div>
         <div class="hero-tags">
           <span class="hero-tag">🌸 大天使</span>
           <span class="hero-tag">💜 芦谷高中</span>
           <span class="hero-tag">🍰 点心能手</span>
+          <span class="hero-tag">🎀 团体柔和剂</span>
         </div>
       </div>
     </section>
 
-    <section class="section-card" style="animation-delay:0.1s">
-      <h2 class="section-title"><span>🌸</span> 基础档案</h2>
+    <!-- 档案 -->
+    <section class="card" style="animation-delay:0.08s">
+      <h2 class="card-title"><span class="icon">🌸</span> 基础档案</h2>
       <div class="profile-grid">
-        <div class="profile-item">
-          <div class="profile-icon">📏</div>
-          <div class="profile-label">身高</div>
-          <div class="profile-value">158cm</div>
-        </div>
-        <div class="profile-item">
-          <div class="profile-icon">🎂</div>
-          <div class="profile-label">生日</div>
-          <div class="profile-value">12月12日 ♐</div>
-        </div>
-        <div class="profile-item">
-          <div class="profile-icon">🩸</div>
-          <div class="profile-label">血型</div>
-          <div class="profile-value">O型</div>
-        </div>
-        <div class="profile-item">
-          <div class="profile-icon">✂️</div>
-          <div class="profile-label">特长</div>
-          <div class="profile-value">做发型</div>
-        </div>
-        <div class="profile-item">
-          <div class="profile-icon">🍰</div>
-          <div class="profile-label">擅长</div>
-          <div class="profile-value">制作点心</div>
-        </div>
-        <div class="profile-item">
-          <div class="profile-icon">🧸</div>
-          <div class="profile-label">萌点</div>
-          <div class="profile-value">治愈·姐系</div>
-        </div>
+        <div class="profile-item"><div class="profile-icon">📏</div><div class="profile-label">身高</div><div class="profile-value">158cm</div></div>
+        <div class="profile-item"><div class="profile-icon">🎂</div><div class="profile-label">生日</div><div class="profile-value">12月12日 ♐</div></div>
+        <div class="profile-item"><div class="profile-icon">🩸</div><div class="profile-label">血型</div><div class="profile-value">O型</div></div>
+        <div class="profile-item"><div class="profile-icon">✂️</div><div class="profile-label">特长</div><div class="profile-value">做发型</div></div>
+        <div class="profile-item"><div class="profile-icon">🍰</div><div class="profile-label">擅长</div><div class="profile-value">制作点心</div></div>
+        <div class="profile-item"><div class="profile-icon">🧸</div><div class="profile-label">萌点</div><div class="profile-value">治愈·姐系</div></div>
       </div>
     </section>
 
-    <section class="section-card" style="animation-delay:0.15s">
-      <h2 class="section-title"><span>💜</span> 羁绊与人际关系</h2>
+    <!-- 羁绊 -->
+    <section class="card" style="animation-delay:0.12s">
+      <h2 class="card-title"><span class="icon">💜</span> 羁绊与人际关系</h2>
       <div class="relation-scroll">
         <div class="relation-card">
           <span class="relation-emoji">💖</span>
@@ -788,7 +607,7 @@
         </div>
         <div class="relation-card">
           <span class="relation-emoji">🏠</span>
-          <div class="relation-name">橘平 & 广树</div>
+          <div class="relation-name">橘平 &amp; 广树</div>
           <span class="relation-tag">想照顾的弟弟们</span>
         </div>
       </div>
@@ -797,27 +616,29 @@
       </div>
     </section>
 
-    <section class="section-card" style="animation-delay:0.2s">
-      <h2 class="section-title"><span>🍰</span> 喜欢的东西</h2>
-      <div class="favorites-cloud">
-        <span class="fav-tag">🧁 纸杯蛋糕</span>
-        <span class="fav-tag">🫖 红茶</span>
-        <span class="fav-tag">🎀 缎带发饰</span>
-        <span class="fav-tag">🧩 搭积木</span>
-        <span class="fav-tag">🌧️ 雨后的紫阳花</span>
-        <span class="fav-tag">💅 帮朋友做头发</span>
-        <span class="fav-tag">📖 少女漫画</span>
-        <span class="fav-tag">🐰 毛绒玩偶</span>
+    <!-- 喜欢 -->
+    <section class="card" style="animation-delay:0.16s">
+      <h2 class="card-title"><span class="icon">🍰</span> 喜欢的东西</h2>
+      <div class="fav-grid">
+        <span class="fav-item">🧁 纸杯蛋糕</span>
+        <span class="fav-item">🫖 红茶</span>
+        <span class="fav-item">🎀 缎带发饰</span>
+        <span class="fav-item">🧩 搭积木</span>
+        <span class="fav-item">🌧️ 雨后的紫阳花</span>
+        <span class="fav-item">💅 帮朋友做头发</span>
+        <span class="fav-item">📖 少女漫画</span>
+        <span class="fav-item">🐰 毛绒玩偶</span>
       </div>
     </section>
 
-    <section class="section-card flower-quote-card" style="animation-delay:0.25s">
-      <div class="flower-quote">“紫阳花的花语是： families gathered in hope ”</div>
+    <!-- 花语 -->
+    <section class="card flower-card" style="animation-delay:0.2s">
+      <div class="flower-quote">“紫阳花的花语是：families gathered in hope”</div>
       <div class="flower-meaning">亦如她想把身边的每个人都温柔地牵在一起。</div>
     </section>
 
-    <footer class="aji-footer">
-      芦谷高中高一A班 · 团体柔和剂 · 大天使降临
+    <footer class="footer">
+      芦谷高中高一A班 · 团体柔和剂 · 大天使降临 · <span class="heart">❤</span> 濑名紫阳花
     </footer>
   </main>
 
@@ -825,7 +646,7 @@
     (function() {
       'use strict';
 
-      /* ---------- 打字机效果 ---------- */
+      /* 打字机 */
       const phrases = [
         '芦谷高中的大天使',
         '高一A班团体柔和剂',
@@ -834,67 +655,34 @@
         '要不要一起吃蛋糕？'
       ];
       const el = document.getElementById('typewriter');
-      let phraseIndex = 0;
-      let charIndex = 0;
-      let isDeleting = false;
+      let pi = 0, ci = 0, del = false;
 
-      function typeLoop() {
-        const current = phrases[phraseIndex];
-        if (isDeleting) {
-          el.textContent = current.substring(0, charIndex - 1);
-          charIndex--;
-        } else {
-          el.textContent = current.substring(0, charIndex + 1);
-          charIndex++;
-        }
-
-        let nextDelay = isDeleting ? 55 : 115;
-        if (!isDeleting && charIndex === current.length) {
-          nextDelay = 2400;
-          isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-          isDeleting = false;
-          phraseIndex = (phraseIndex + 1) % phrases.length;
-          nextDelay = 350;
-        }
-        setTimeout(typeLoop, nextDelay);
+      function type() {
+        const cur = phrases[pi];
+        el.textContent = del ? cur.substring(0, ci - 1) : cur.substring(0, ci + 1);
+        del ? ci-- : ci++;
+        let d = del ? 50 : 110;
+        if (!del && ci === cur.length) { d = 2200; del = true; }
+        else if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; d = 350; }
+        setTimeout(type, d);
       }
-      setTimeout(typeLoop, 600);
+      setTimeout(type, 600);
 
-      /* ---------- 大天使 / 堕天使切换 ---------- */
-      const modeSwitch = document.getElementById('modeSwitch');
-      modeSwitch.addEventListener('click', () => {
-        const html = document.documentElement;
-        const isFallen = html.dataset.ajiMode === 'fallen';
-        html.dataset.ajiMode = isFallen ? 'angel' : 'fallen';
+      /* 模式切换 */
+      document.getElementById('modeSwitch').addEventListener('click', () => {
+        const h = document.documentElement;
+        h.dataset.ajiMode = h.dataset.ajiMode === 'fallen' ? 'angel' : 'fallen';
       });
 
-      /* ---------- 鼠标光点跟随 ---------- */
-      const orb = document.getElementById('cursorOrb');
-      let mouseX = 0, mouseY = 0, orbX = 0, orbY = 0;
-      let mouseActive = false;
-
-      document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        mouseActive = true;
-        orb.style.opacity = '1';
-      });
-
-      document.addEventListener('mouseleave', () => {
-        orb.style.opacity = '0';
-      });
-
-      function animateOrb() {
-        if (mouseActive) {
-          orbX += (mouseX - orbX) * 0.12;
-          orbY += (mouseY - orbY) * 0.12;
-          orb.style.left = orbX + 'px';
-          orb.style.top = orbY + 'px';
-        }
-        requestAnimationFrame(animateOrb);
-      }
-      animateOrb();
+      /* 鼠标光点 */
+      const glow = document.getElementById('cursorGlow');
+      let mx = 0, my = 0, gx = 0, gy = 0, active = false;
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; active = true; glow.style.opacity = '1'; });
+      document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+      (function anim() {
+        if (active) { gx += (mx - gx) * 0.1; gy += (my - gy) * 0.1; glow.style.left = gx + 'px'; glow.style.top = gy + 'px'; }
+        requestAnimationFrame(anim);
+      })();
     })();
   </script>
 </body>
