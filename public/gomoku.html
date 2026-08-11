@@ -3,449 +3,536 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0b0c15" />
   <title>星河五子棋 · Gomoku</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Nunito:wght@400;700;800&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --g-bg: #0b0c15;
-      --g-panel: rgba(255, 255, 255, 0.06);
-      --g-border: rgba(255, 255, 255, 0.12);
+      --g-panel: rgba(255,255,255,0.06);
+      --g-border: rgba(255,255,255,0.12);
       --g-text: #f3f0ff;
       --g-sub: #b8b3d1;
       --g-p1: #7ee7ff;
       --g-p2: #ff7eb3;
       --g-gold: #ffd36e;
       --g-win: #00f5a0;
-      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.25);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --shadow-sm: 0 4px 14px rgba(0,0,0,0.25);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.45);
+      --wood-light: #d4a76a;
+      --wood-mid: #b8863e;
+      --wood-dark: #8b5e3c;
+      --wood-deep: #5c3820;
+      --ease-out: cubic-bezier(0.22,1,0.36,1);
+      --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body {
-      height: 100%;
-      overflow: hidden;
+      height: 100%; overflow: hidden;
       background: var(--g-bg);
       color: var(--g-text);
-      font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+      font-family: 'Nunito', 'M PLUS Rounded 1c', 'Noto Serif SC', sans-serif;
       user-select: none;
     }
 
-    /* 主题场景层 */
+    /* ── 场景层 ── */
     #sceneLayer {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-      background-size: cover;
-      background-position: center;
+      position: fixed; inset: 0; z-index: 0;
+      transition: opacity 0.8s ease, transform 1s var(--ease-out);
+      background-size: cover; background-position: center;
     }
     #sceneLayer::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(11, 12, 21, 0.55) 70%, rgba(11, 12, 21, 0.92) 100%);
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(11,12,21,0.4) 60%, rgba(11,12,21,0.88) 100%);
       pointer-events: none;
     }
-    .scene-enter { opacity: 0; transform: scale(1.08); }
+    .scene-fade-out { opacity: 0; transform: scale(1.06); }
     .scene-active { opacity: 1; transform: scale(1); }
 
-    /* 粒子层 */
-    #particleLayer {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0;
-      animation: floatUp linear forwards;
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(0.6); opacity: 0; }
-      10% { opacity: 0.8; }
-      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+    /* ── 星空画布 ── */
+    #starCanvas {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
     }
 
-    /* 封面 */
+    /* ── 粒子层 ── */
+    #particleCanvas {
+      position: fixed; inset: 0; z-index: 3; pointer-events: none;
+    }
+
+    /* ══════════════ 封面 ══════════════ */
     #cover {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: radial-gradient(circle at 50% 0%, rgba(126, 231, 255, 0.08), transparent 55%),
-                  radial-gradient(circle at 80% 80%, rgba(255, 126, 179, 0.06), transparent 45%),
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(126,231,255,0.1), transparent 55%),
+                  radial-gradient(ellipse at 80% 80%, rgba(255,126,179,0.08), transparent 45%),
                   var(--g-bg);
-      transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity 0.6s ease, transform 0.7s var(--ease-out);
     }
     #cover.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
 
-    .cover-title {
-      font-size: clamp(2.4rem, 8vw, 4.2rem);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-align: center;
-      background: linear-gradient(135deg, #fff 0%, var(--g-p1) 45%, var(--g-p2) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 40px rgba(126, 231, 255, 0.18);
-      margin-bottom: 0.3em;
+    .cover-constellation {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 25% 60%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 40% 15%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 55% 75%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 70% 30%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 35% 40%, rgba(255,255,255,0.4), transparent);
+      background-size: 200px 200px;
+      animation: twinkleStars 3s ease-in-out infinite alternate;
     }
+    @keyframes twinkleStars {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .cover-logo {
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 0.15em;
+      position: relative;
+      z-index: 1;
+    }
+    .cover-logo .t1 {
+      background: linear-gradient(135deg, #fff 0%, var(--g-p1) 40%, var(--g-p2) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 30px rgba(126,231,255,0.3));
+    }
+    .cover-logo .t2 {
+      display: block;
+      font-size: 0.55em;
+      background: linear-gradient(90deg, var(--g-gold), #fff, var(--g-gold));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.5); }
+    }
+
     .cover-sub {
       color: var(--g-sub);
       font-size: 1.05rem;
-      margin-bottom: 2.8em;
+      margin-bottom: 3em;
       text-align: center;
+      position: relative;
+      z-index: 1;
     }
     .cover-options {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: min(320px, 92vw);
+      display: flex; flex-direction: column; gap: 14px;
+      width: min(340px, 92vw);
+      position: relative; z-index: 1;
     }
     .cover-btn {
-      padding: 15px 22px;
-      border-radius: 18px;
-      border: 1px solid var(--g-border);
-      background: var(--g-panel);
-      color: var(--g-text);
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-    .cover-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: rgba(126, 231, 255, 0.35); }
-    .cover-btn.primary { background: linear-gradient(135deg, rgba(126, 231, 255, 0.18), rgba(255, 126, 179, 0.12)); border-color: rgba(126, 231, 255, 0.25); }
-
-    /* 难度浮层 */
-    #difficultyModal {
-      position: fixed;
-      inset: 0;
-      z-index: 11;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(6px);
-    }
-    #difficultyModal.open { display: flex; }
-    .difficulty-card {
-      width: min(360px, 90vw);
-      padding: 26px;
-      border-radius: 24px;
-      background: rgba(20, 21, 34, 0.92);
-      border: 1px solid var(--g-border);
-      box-shadow: var(--shadow-lg);
-    }
-    .difficulty-card h3 { margin-bottom: 18px; text-align: center; font-size: 1.2rem; }
-    .difficulty-row { display: flex; gap: 10px; margin-bottom: 18px; }
-    .difficulty-row label { font-size: 0.85rem; color: var(--g-sub); width: 70px; display: flex; align-items: center; }
-    .difficulty-btns { display: flex; gap: 8px; flex: 1; }
-    .difficulty-btns button {
-      flex: 1;
-      padding: 9px 0;
-      border-radius: 12px;
-      border: 1px solid var(--g-border);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--g-sub);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .difficulty-btns button.active { background: rgba(126, 231, 255, 0.18); color: var(--g-text); border-color: rgba(126, 231, 255, 0.35); }
-    .difficulty-start {
-      width: 100%;
-      padding: 13px;
-      border-radius: 14px;
-      border: none;
-      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
-      color: #0b0c15;
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    /* 游戏主界面 */
-    #game {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.6s ease;
-    }
-    #game.visible { opacity: 1; pointer-events: auto; }
-
-    .game-header {
-      width: 100%;
-      max-width: 640px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .game-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      background: linear-gradient(90deg, var(--g-p1), var(--g-p2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .game-controls { display: flex; gap: 10px; }
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+      padding: 16px 24px;
+      border-radius: 20px;
       border: 1px solid var(--g-border);
       background: var(--g-panel);
       color: var(--g-text);
       font-size: 1.1rem;
+      font-weight: 700;
       cursor: pointer;
-      display: grid;
-      place-items: center;
-      backdrop-filter: blur(10px);
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .icon-btn:hover { transform: scale(1.08); box-shadow: 0 0 16px rgba(126, 231, 255, 0.2); }
+    .cover-btn::after {
+      content: ''; position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .cover-btn:hover::after { opacity: 1; }
+    .cover-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(126,231,255,0.35); }
+    .cover-btn.primary {
+      background: linear-gradient(135deg, rgba(126,231,255,0.15), rgba(255,126,179,0.1));
+      border-color: rgba(126,231,255,0.25);
+    }
+    .cover-btn .btn-icon { margin-right: 8px; }
 
-    .status-bar {
-      max-width: 640px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      padding: 10px 16px;
-      border-radius: 16px;
-      background: var(--g-panel);
+    /* ── 难度弹窗 ── */
+    #difficultyModal {
+      position: fixed; inset: 0; z-index: 11;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s;
+      opacity: 0;
+    }
+    #difficultyModal.open { display: flex; opacity: 1; }
+    .difficulty-card {
+      width: min(380px, 90vw);
+      padding: 28px;
+      border-radius: 26px;
+      background: rgba(18,20,30,0.94);
       border: 1px solid var(--g-border);
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(126,231,255,0.08);
+      animation: modalIn 0.4s var(--ease-spring);
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .difficulty-card h3 { margin-bottom: 20px; text-align: center; font-size: 1.25rem; font-weight: 800; }
+    .difficulty-row { display: flex; gap: 12px; margin-bottom: 18px; align-items: center; }
+    .difficulty-row label { font-size: 0.85rem; color: var(--g-sub); width: 60px; flex-shrink: 0; }
+    .difficulty-btns { display: flex; gap: 8px; flex: 1; }
+    .difficulty-btns button {
+      flex: 1; padding: 10px 0; border-radius: 12px;
+      border: 1px solid var(--g-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--g-sub); cursor: pointer;
+      font-size: 0.9rem; font-weight: 700;
+      transition: all 0.25s ease;
+    }
+    .difficulty-btns button.active {
+      background: rgba(126,231,255,0.18);
+      color: var(--g-text);
+      border-color: rgba(126,231,255,0.4);
+      box-shadow: 0 0 16px rgba(126,231,255,0.15);
+    }
+    .difficulty-start {
+      width: 100%; padding: 14px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
+      color: #0b0c15; font-weight: 800; font-size: 1.05rem;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .difficulty-start:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(126,231,255,0.3); }
+
+    /* ══════════════ 游戏界面 ══════════════ */
+    #game {
+      position: fixed; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 12px 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    #game.visible { opacity: 1; pointer-events: auto; }
+
+    .game-header {
+      width: 100%; max-width: 640px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 8px 14px;
+      border-radius: 16px;
+      background: rgba(20,22,38,0.65);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+    }
+    .game-title {
+      font-size: 1.1rem; font-weight: 800; letter-spacing: 0.05em;
+      background: linear-gradient(90deg, var(--g-p1), var(--g-p2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .game-controls { display: flex; gap: 6px; }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--g-text);
+      font-size: 1.05rem; cursor: pointer;
+      display: grid; place-items: center;
+      backdrop-filter: blur(8px);
+      transition: transform 0.15s ease, box-shadow 0.2s, background 0.2s;
+    }
+    .icon-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); box-shadow: 0 0 14px rgba(126,231,255,0.2); }
+    .icon-btn:active { transform: scale(0.93); }
+
+    /* ── 状态栏 ── */
+    .status-bar {
+      max-width: 640px; width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: rgba(20,22,38,0.55);
+      border: 1px solid rgba(255,255,255,0.08);
       backdrop-filter: blur(10px);
-      font-size: 0.92rem;
+      font-size: 0.88rem;
     }
     .status-player { display: flex; align-items: center; gap: 8px; }
-    .status-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
-    .status-dot.p1 { background: var(--g-p1); color: var(--g-p1); }
-    .status-dot.p2 { background: var(--g-p2); color: var(--g-p2); }
+    .status-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .status-dot.p1 { background: var(--g-p1); box-shadow: 0 0 12px var(--g-p1); }
+    .status-dot.p2 { background: var(--g-p2); box-shadow: 0 0 12px var(--g-p2); }
+    #sceneName { color: var(--g-sub); font-size: 0.82rem; }
 
-    .board-wrap {
+    /* ── 棋盘外框 ── */
+    .board-frame {
       position: relative;
-      padding: 14px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--g-border);
-      box-shadow: var(--shadow-lg), inset 0 0 40px rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(8px);
+      padding: 16px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #3d2b1a 0%, #2a1a0e 30%, #1f1208 60%, #2a1a0e 100%);
+      border: 2px solid rgba(180,130,80,0.25);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.5),
+        0 8px 32px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        inset 0 -2px 6px rgba(0,0,0,0.4);
+      /* 木纹纹理 */
+      background-image:
+        repeating-linear-gradient(
+          2deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,0,0.08) 3px,
+          transparent 3px,
+          transparent 6px
+        ),
+        repeating-linear-gradient(
+          88deg,
+          transparent,
+          transparent 1px,
+          rgba(255,255,255,0.02) 2px,
+          transparent 2px,
+          transparent 5px
+        );
     }
+    .board-frame::before {
+      content: ''; position: absolute; inset: 6px; border-radius: 18px;
+      border: 1px solid rgba(200,160,100,0.12);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── 棋盘 ── */
     #board {
       display: grid;
       grid-template-columns: repeat(15, 1fr);
       grid-template-rows: repeat(15, 1fr);
-      width: min(78vw, 78vh - 190px, 520px);
-      height: min(78vw, 78vh - 190px, 520px);
+      width: min(76vw, 76vh - 170px, 500px);
+      height: min(76vw, 76vh - 170px, 500px);
       position: relative;
+      background:
+        /* 木纹 */
+        linear-gradient(90deg, rgba(212,167,106,0.5) 0%, rgba(184,134,62,0.4) 3%, rgba(200,150,80,0.4) 6%, rgba(184,134,62,0.4) 9%, rgba(176,120,50,0.4) 12%, rgba(184,134,62,0.4) 15%, rgba(190,142,70,0.4) 18%, rgba(184,134,62,0.4) 21%, rgba(200,155,85,0.4) 24%, rgba(184,134,62,0.4) 27%, rgba(172,118,48,0.4) 30%, rgba(184,134,62,0.4) 33%, rgba(184,134,62,0.4) 36%, rgba(200,155,85,0.4) 39%, rgba(184,134,62,0.4) 42%, rgba(184,134,62,0.4) 45%, rgba(172,118,48,0.4) 48%, rgba(184,134,62,0.4) 51%, rgba(200,155,85,0.4) 54%, rgba(190,142,70,0.4) 56%, rgba(184,134,62,0.4) 59%, rgba(190,142,70,0.4) 62%, rgba(200,155,85,0.4) 65%, rgba(184,134,62,0.4) 67%, rgba(190,142,70,0.4) 69%, rgba(184,134,62,0.4) 72%, rgba(196,148,75,0.4) 75%, rgba(184,134,62,0.4) 78%, rgba(184,134,62,0.4) 81%, rgba(200,155,85,0.4) 84%, rgba(184,134,62,0.4) 87%, rgba(200,155,85,0.4) 90%, rgba(184,134,62,0.4) 93%, rgba(196,148,75,0.4) 96%, rgba(184,134,62,0.4) 100%),
+        linear-gradient(180deg, rgba(212,167,106,0.2) 0%, rgba(184,134,62,0.15) 3%, rgba(200,150,80,0.15) 6%, rgba(184,134,62,0.15) 9%, rgba(176,120,50,0.15) 12%, rgba(184,134,62,0.15) 15%, rgba(190,142,70,0.15) 18%, rgba(184,134,62,0.15) 21%, rgba(200,155,85,0.15) 24%, rgba(184,134,62,0.15) 27%, rgba(172,118,48,0.15) 30%, rgba(184,134,62,0.15) 33%, rgba(184,134,62,0.15) 36%, rgba(200,155,85,0.15) 39%, rgba(184,134,62,0.15) 42%, rgba(184,134,62,0.15) 45%, rgba(172,118,48,0.15) 48%, rgba(184,134,62,0.15) 51%, rgba(200,155,85,0.15) 54%, rgba(190,142,70,0.15) 56%, rgba(184,134,62,0.15) 59%, rgba(190,142,70,0.15) 62%, rgba(200,155,85,0.15) 65%, rgba(184,134,62,0.15) 67%, rgba(190,142,70,0.15) 69%, rgba(184,134,62,0.15) 72%, rgba(196,148,75,0.15) 75%, rgba(184,134,62,0.15) 78%, rgba(184,134,62,0.15) 81%, rgba(200,155,85,0.15) 84%, rgba(184,134,62,0.15) 87%, rgba(200,155,85,0.15) 90%, rgba(184,134,62,0.15) 93%, rgba(196,148,75,0.15) 96%, rgba(184,134,62,0.15) 100%),
+        #5c3820;
+      background-color: #4a2c14;
+      background-blend-mode: overlay, overlay, normal;
+      border-radius: 4px;
+      box-shadow: inset 0 2px 12px rgba(0,0,0,0.3);
     }
+
     .cell {
-      position: relative;
-      cursor: pointer;
+      position: relative; cursor: pointer;
     }
     .cell::before, .cell::after {
-      content: '';
-      position: absolute;
-      background: rgba(255, 255, 255, 0.22);
-      pointer-events: none;
+      content: ''; position: absolute; background: rgba(0,0,0,0.28); pointer-events: none;
     }
     .cell::before { width: 1px; height: 100%; left: 50%; top: 0; }
     .cell::after { width: 100%; height: 1px; top: 50%; left: 0; }
     .cell:nth-child(15n+1)::before { left: 50%; }
     .cell:nth-child(-n+15)::after { top: 50%; }
 
+    .cell:hover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
     .star-point {
       position: absolute;
-      width: 7px;
-      height: 7px;
-      background: rgba(255, 255, 255, 0.45);
+      width: 8px; height: 8px;
+      background: rgba(0,0,0,0.5);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
     }
 
+    /* ── 棋子 ── */
     .piece {
       position: absolute;
-      width: 84%;
-      height: 84%;
-      left: 8%;
-      top: 8%;
+      width: 82%; height: 82%;
+      left: 9%; top: 9%;
       border-radius: 50%;
       transform: scale(0);
-      animation: placePiece 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      animation: placePiece 0.4s var(--ease-spring) forwards;
       z-index: 3;
+      pointer-events: none;
     }
     @keyframes placePiece {
       to { transform: scale(1); }
     }
     .piece.p1 {
-      background: radial-gradient(circle at 30% 30%, #e0fbff, var(--g-p1) 55%, #3aa8c7 100%);
-      box-shadow: 0 0 14px rgba(126, 231, 255, 0.45), 0 3px 10px rgba(0, 0, 0, 0.35);
+      background: radial-gradient(circle at 35% 35%, #f0fdff 0%, var(--g-p1) 40%, #2a8fbf 85%, #1a5f80 100%);
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.4),
+        0 0 18px rgba(126,231,255,0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        inset 0 1px 2px rgba(255,255,255,0.4);
     }
     .piece.p2 {
-      background: radial-gradient(circle at 30% 30%, #ffd9ea, var(--g-p2) 55%, #c73d7a 100%);
-      box-shadow: 0 0 14px rgba(255, 126, 179, 0.45), 0 3px 10px rgba(0, 0, 0, 0.35);
+      background: radial-gradient(circle at 35% 35%, #fff0f5 0%, var(--g-p2) 40%, #c73d7a 85%, #8a1a4a 100%);
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.4),
+        0 0 18px rgba(255,126,179,0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        inset 0 1px 2px rgba(255,255,255,0.4);
     }
     .piece.latest::after {
       content: '';
       position: absolute;
-      inset: 28%;
-      border: 2px solid rgba(255, 255, 255, 0.85);
+      inset: 26%;
+      border: 2.5px solid rgba(255,255,255,0.9);
       border-radius: 50%;
-      animation: latestPulse 1.6s ease-in-out infinite;
+      animation: latestPulse 1.8s ease-in-out infinite;
     }
     @keyframes latestPulse {
-      0%, 100% { transform: scale(1); opacity: 0.85; }
-      50% { transform: scale(1.35); opacity: 0; }
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.4); opacity: 0; }
     }
 
-    /* 棋盘网格霓虹 */
-    .board-glow {
-      position: absolute;
-      inset: 14px;
-      border-radius: 18px;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-      background: linear-gradient(135deg, rgba(126, 231, 255, 0.08), rgba(255, 126, 179, 0.08));
-    }
-
-    /* 连珠高亮线 */
+    /* ── 胜利线 ── */
     #winLine {
-      position: absolute;
-      z-index: 4;
+      position: absolute; z-index: 4;
       height: 4px;
       background: linear-gradient(90deg, var(--g-win), #fff, var(--g-win));
       border-radius: 2px;
-      box-shadow: 0 0 18px var(--g-win), 0 0 40px var(--g-win);
+      box-shadow: 0 0 20px var(--g-win), 0 0 50px var(--g-win), 0 0 80px rgba(0,245,160,0.3);
       transform-origin: 0 50%;
       opacity: 0;
       pointer-events: none;
     }
-    .winLine-anim { animation: winLineDraw 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .winLine-anim { animation: winLineDraw 0.7s var(--ease-out) forwards; }
     @keyframes winLineDraw {
       to { opacity: 1; }
     }
 
-    /* 特效文字 */
+    /* ── 特效文字 ── */
     .fx-text {
       position: fixed;
-      left: 50%;
-      top: 50%;
+      left: 50%; top: 50%;
       transform: translate(-50%, -50%) scale(0.5);
-      font-size: clamp(1.6rem, 5vw, 2.6rem);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      pointer-events: none;
-      z-index: 20;
-      opacity: 0;
-      text-shadow: 0 0 30px currentColor;
+      font-size: clamp(1.5rem, 5vw, 2.8rem);
+      font-weight: 800; letter-spacing: 0.06em;
+      pointer-events: none; z-index: 20; opacity: 0;
+      text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
       white-space: nowrap;
     }
-    .fx-text.show { animation: fxPop 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .fx-text.show {
+      animation: fxPop 1s var(--ease-out) forwards;
+    }
     @keyframes fxPop {
-      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-      20% { transform: translate(-50%, -65%) scale(1.15); opacity: 1; }
-      80% { transform: translate(-50%, -75%) scale(1); opacity: 1; }
-      100% { transform: translate(-50%, -90%) scale(0.9); opacity: 0; }
+      0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+      15% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; }
+      70% { transform: translate(-50%, -70%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -85%) scale(0.85); opacity: 0; }
     }
 
-    /* 结果浮层 */
+    /* ── 结果弹窗 ── */
     #resultModal {
-      position: fixed;
-      inset: 0;
-      z-index: 15;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(8px);
+      position: fixed; inset: 0; z-index: 15;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
     }
     #resultModal.open { display: flex; }
     .result-card {
       text-align: center;
-      padding: 34px 28px;
-      border-radius: 26px;
-      background: rgba(20, 21, 34, 0.94);
-      border: 1px solid var(--g-border);
-      box-shadow: var(--shadow-lg);
-      width: min(340px, 88vw);
-      animation: resultIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 36px 30px;
+      border-radius: 28px;
+      background: rgba(16,18,28,0.95);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow-lg), 0 0 80px rgba(126,231,255,0.06);
+      width: min(360px, 88vw);
+      animation: resultIn 0.5s var(--ease-spring);
     }
     @keyframes resultIn {
       from { transform: scale(0.85); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    .result-title { font-size: 1.7rem; margin-bottom: 8px; }
-    .result-sub { color: var(--g-sub); margin-bottom: 22px; }
+    .result-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
+    .result-icon { font-size: 3rem; margin-bottom: 8px; }
+    .result-sub { color: var(--g-sub); margin-bottom: 22px; font-size: 0.95rem; }
     .result-btns { display: flex; gap: 12px; justify-content: center; }
     .result-btns button {
-      padding: 12px 22px;
-      border-radius: 14px;
+      padding: 12px 24px; border-radius: 14px;
       border: 1px solid var(--g-border);
       background: var(--g-panel);
-      color: var(--g-text);
-      font-weight: 700;
-      cursor: pointer;
+      color: var(--g-text); font-weight: 700; cursor: pointer;
+      font-size: 0.95rem;
       transition: all 0.2s ease;
     }
     .result-btns button:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .result-btns .primary { background: linear-gradient(135deg, var(--g-p1), var(--g-p2)); color: #0b0c15; border: none; }
+    .result-btns .primary {
+      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
+      color: #0b0c15; border: none;
+    }
 
-    /* 底部提示 */
+    /* ── 底部提示 ── */
     .hint {
-      position: fixed;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.78rem;
-      color: var(--g-sub);
-      opacity: 0.7;
-      z-index: 5;
-      text-align: center;
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      font-size: 0.75rem; color: var(--g-sub); opacity: 0.6;
+      z-index: 5; text-align: center;
+      pointer-events: none;
+    }
+
+    /* ── 音效开关 ── */
+    #soundToggle {
+      position: fixed; bottom: 14px; right: 14px;
+      z-index: 6;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--g-text); font-size: 1rem;
+      cursor: pointer;
+      display: grid; place-items: center;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    #soundToggle:hover { transform: scale(1.1); }
+    #soundToggle.muted { opacity: 0.4; }
+
+    @media (max-width: 640px) {
+      .game-header { padding: 6px 10px; }
+      .icon-btn { width: 30px; height: 30px; font-size: 0.9rem; }
+      .board-frame { padding: 10px; border-radius: 18px; }
+      #board { width: min(84vw, 84vh - 150px, 400px); height: min(84vw, 84vh - 150px, 400px); }
+      .status-bar { padding: 8px 12px; font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
   <div id="sceneLayer" class="scene-active"></div>
-  <canvas id="particleLayer"></canvas>
+  <canvas id="starCanvas"></canvas>
+  <canvas id="particleCanvas"></canvas>
 
-  <!-- 封面 -->
+  <!-- ══════════════ 封面 ══════════════ -->
   <div id="cover">
-    <h1 class="cover-title">星河五子棋</h1>
-    <p class="cover-sub">在宇宙深处，下一颗会发光的棋子</p>
+    <div class="cover-constellation"></div>
+    <h1 class="cover-logo">
+      <span class="t1">星河五子棋</span>
+      <span class="t2">STELLAR GOMOKU</span>
+    </h1>
+    <p class="cover-sub">在宇宙深处，落下一颗会发光的棋子</p>
     <div class="cover-options">
-      <button class="cover-btn primary" data-mode="pvp">✨ 双人对战</button>
-      <button class="cover-btn" data-mode="pve">🤖 人机对战</button>
+      <button class="cover-btn primary" data-mode="pvp"><span class="btn-icon">✨</span> 双人对战</button>
+      <button class="cover-btn" data-mode="pve"><span class="btn-icon">🤖</span> 人机对战</button>
     </div>
   </div>
 
-  <!-- 难度设置 -->
+  <!-- ══════════════ 难度弹窗 ══════════════ -->
   <div id="difficultyModal">
     <div class="difficulty-card">
-      <h3>人机对战设置</h3>
+      <h3>🤖 人机对战设置</h3>
       <div class="difficulty-row">
         <label>难度</label>
         <div class="difficulty-btns" id="diffBtns">
@@ -457,15 +544,15 @@
       <div class="difficulty-row">
         <label>先手</label>
         <div class="difficulty-btns" id="firstBtns">
-          <button data-first="player" class="active">玩家</button>
-          <button data-first="ai">电脑</button>
+          <button data-first="player" class="active">玩家先</button>
+          <button data-first="ai">电脑先</button>
         </div>
       </div>
       <button class="difficulty-start" id="startAIBtn">开始对决</button>
     </div>
   </div>
 
-  <!-- 游戏界面 -->
+  <!-- ══════════════ 游戏界面 ══════════════ -->
   <div id="game">
     <div class="game-header">
       <div class="game-title">星河五子棋</div>
@@ -483,8 +570,7 @@
       </div>
       <div id="sceneName">星云海</div>
     </div>
-    <div class="board-wrap">
-      <div class="board-glow"></div>
+    <div class="board-frame">
       <div id="board"></div>
       <div id="winLine"></div>
     </div>
@@ -492,8 +578,10 @@
 
   <div class="fx-text" id="fxText"></div>
 
+  <!-- ══════════════ 结果弹窗 ══════════════ -->
   <div id="resultModal">
     <div class="result-card">
+      <div class="result-icon" id="resultIcon">🏆</div>
       <h2 class="result-title" id="resultTitle">蓝方胜</h2>
       <p class="result-sub" id="resultSub">五子连珠，星河同辉</p>
       <div class="result-btns">
@@ -504,54 +592,54 @@
   </div>
 
   <div class="hint">空格切换场景 · 点击棋盘落子</div>
+  <button id="soundToggle" title="音效">🔊</button>
 
   <script>
-    (function(){
+    (function() {
       const SIZE = 15;
       const EMPTY = 0, P1 = 1, P2 = 2;
 
+      /* ══════════════ 场景系统 ══════════════ */
       const scenes = [
         {
           name: '星云海',
-          bg: 'radial-gradient(circle at 20% 30%, #1a1f3c 0%, #0b0c15 60%), linear-gradient(135deg, #0f1120, #1c1e38)',
+          bg: 'radial-gradient(ellipse at 20% 30%, #1a2a5c 0%, #0b0c15 55%), linear-gradient(135deg, #0f1328, #161a38)',
           accent: '#7ee7ff',
-          particles: ['#7ee7ff', '#b8b3d1', '#ffffff']
+          pColors: ['#7ee7ff', '#b8b3d1', '#ffffff', '#a0d8ff'],
+          glow: 'rgba(126,231,255,0.06)'
         },
         {
           name: '极光雪原',
-          bg: 'linear-gradient(180deg, #0d1f1c 0%, #0b0c15 60%), radial-gradient(circle at 50% 100%, rgba(0, 245, 160, 0.18), transparent 55%)',
+          bg: 'linear-gradient(180deg, #0d1f1c 0%, #0b0c15 55%), radial-gradient(ellipse at 50% 100%, rgba(0,245,160,0.15), transparent 60%)',
           accent: '#00f5a0',
-          particles: ['#00f5a0', '#a6ffcb', '#ffffff']
+          pColors: ['#00f5a0', '#a6ffcb', '#ffffff', '#80ffc0'],
+          glow: 'rgba(0,245,160,0.06)'
         },
         {
           name: '绯红深渊',
-          bg: 'radial-gradient(circle at 80% 20%, #2a0f1a 0%, #0b0c15 65%), linear-gradient(135deg, #1a0b12, #0b0c15)',
+          bg: 'radial-gradient(ellipse at 80% 20%, #2a0f1a 0%, #0b0c15 60%), linear-gradient(135deg, #1a0b12, #0b0c15)',
           accent: '#ff7eb3',
-          particles: ['#ff7eb3', '#ffb3d1', '#ffd36e']
+          pColors: ['#ff7eb3', '#ffb3d1', '#ffd36e', '#ff9ec4'],
+          glow: 'rgba(255,126,179,0.06)'
         },
         {
           name: '熔金古城',
-          bg: 'radial-gradient(circle at 50% 80%, rgba(255, 211, 110, 0.12), transparent 50%), linear-gradient(135deg, #1f180b, #0b0c15)',
+          bg: 'radial-gradient(ellipse at 50% 80%, rgba(255,211,110,0.12), transparent 50%), linear-gradient(135deg, #1f180b, #0b0c15)',
           accent: '#ffd36e',
-          particles: ['#ffd36e', '#ff9e64', '#ffffff']
+          pColors: ['#ffd36e', '#ff9e64', '#ffffff', '#ffe0a0'],
+          glow: 'rgba(255,211,110,0.06)'
         },
         {
           name: '量子迷雾',
-          bg: 'repeating-linear-gradient(45deg, #0f1120 0, #0f1120 10px, #12142a 10px, #12142a 20px), radial-gradient(circle at 50% 50%, rgba(126, 231, 255, 0.06), transparent 60%)',
+          bg: 'radial-gradient(ellipse at 50% 50%, rgba(192,132,252,0.08), transparent 60%), linear-gradient(135deg, #1a1030, #0b0c15)',
           accent: '#c084fc',
-          particles: ['#c084fc', '#7ee7ff', '#ffffff']
+          pColors: ['#c084fc', '#e0c0ff', '#7ee7ff', '#ffffff'],
+          glow: 'rgba(192,132,252,0.06)'
         }
       ];
 
-      let board = [];
-      let current = P1;
-      let mode = 'pvp';
-      let diff = 'medium';
-      let first = 'player';
-      let gameOver = false;
-      let history = [];
-      let sceneIndex = 0;
-      let aiThinking = false;
+      let board = [], current = P1, mode = 'pvp', diff = 'medium', first = 'player';
+      let gameOver = false, history = [], sceneIndex = 0, aiThinking = false, soundOn = true;
 
       const cover = document.getElementById('cover');
       const difficultyModal = document.getElementById('difficultyModal');
@@ -563,7 +651,234 @@
       const fxText = document.getElementById('fxText');
       const resultModal = document.getElementById('resultModal');
       const winLine = document.getElementById('winLine');
+      const soundToggle = document.getElementById('soundToggle');
 
+      /* ══════════════ Web Audio 音效引擎 ══════════════ */
+      let audioCtx = null;
+      function initAudio() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+      }
+      document.addEventListener('click', () => initAudio(), { once: true });
+      document.addEventListener('keydown', () => initAudio(), { once: true });
+
+      function playSound(type) {
+        if (!soundOn) return;
+        try {
+          const ctx = initAudio();
+          if (!ctx || ctx.state === 'suspended') return;
+          const t = ctx.currentTime;
+
+          if (type === 'place') {
+            // 木质落子声
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, t);
+            osc.frequency.exponentialRampToValueAtTime(200, t + 0.08);
+            g.gain.setValueAtTime(0.11, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+            osc.connect(g); g.connect(ctx.destination);
+            osc.start(t); osc.stop(t + 0.12);
+            // 共鸣
+            const osc2 = ctx.createOscillator();
+            const g2 = ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(1200, t);
+            osc2.frequency.exponentialRampToValueAtTime(400, t + 0.06);
+            g2.gain.setValueAtTime(0.04, t);
+            g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+            osc2.connect(g2); g2.connect(ctx.destination);
+            osc2.start(t); osc2.stop(t + 0.1);
+          } else if (type === 'special') {
+            // 组合特效音：上升琶音
+            [523, 659, 784, 1047].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.value = freq;
+              const start = t + i * 0.06;
+              g.gain.setValueAtTime(0.08, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.2);
+              osc.connect(g); g.connect(ctx.destination);
+              osc.start(start); osc.stop(start + 0.22);
+            });
+          } else if (type === 'victory') {
+            // 胜利旋律
+            [523, 659, 784, 1047, 784, 1047].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.value = freq;
+              const start = t + i * 0.1;
+              g.gain.setValueAtTime(0.1, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+              osc.connect(g); g.connect(ctx.destination);
+              osc.start(start); osc.stop(start + 0.4);
+            });
+          } else if (type === 'click') {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1800, t);
+            g.gain.setValueAtTime(0.06, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+            osc.connect(g); g.connect(ctx.destination);
+            osc.start(t); osc.stop(t + 0.05);
+          } else if (type === 'scene') {
+            // 场景切换：风铃音
+            [880, 1100, 1320].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.value = freq;
+              const start = t + i * 0.05;
+              g.gain.setValueAtTime(0.06, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+              osc.connect(g); g.connect(ctx.destination);
+              osc.start(start); osc.stop(start + 0.35);
+            });
+          }
+        } catch (e) {}
+      }
+
+      soundToggle.addEventListener('click', () => {
+        soundOn = !soundOn;
+        soundToggle.textContent = soundOn ? '🔊' : '🔇';
+        soundToggle.classList.toggle('muted', !soundOn);
+        playSound('click');
+      });
+
+      /* ══════════════ 星空背景 ══════════════ */
+      const starCanvas = document.getElementById('starCanvas');
+      const starCtx = starCanvas.getContext('2d');
+      let stars = [];
+      function initStars() {
+        starCanvas.width = window.innerWidth;
+        starCanvas.height = window.innerHeight;
+        stars = [];
+        for (let i = 0; i < 120; i++) {
+          stars.push({
+            x: Math.random() * starCanvas.width,
+            y: Math.random() * starCanvas.height,
+            r: Math.random() * 1.5 + 0.3,
+            twinkle: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.02 + 0.005,
+            opacity: Math.random() * 0.6 + 0.2
+          });
+        }
+      }
+      function drawStars() {
+        starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        for (const s of stars) {
+          s.twinkle += s.speed;
+          const alpha = s.opacity * (0.5 + 0.5 * Math.sin(s.twinkle));
+          starCtx.beginPath();
+          starCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          starCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+          starCtx.fill();
+          if (s.r > 1.1) {
+            starCtx.beginPath();
+            starCtx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
+            starCtx.fillStyle = `rgba(200,220,255,${alpha * 0.15})`;
+            starCtx.fill();
+          }
+        }
+        requestAnimationFrame(drawStars);
+      }
+      initStars();
+      drawStars();
+      window.addEventListener('resize', initStars);
+
+      /* ══════════════ 粒子系统 ══════════════ */
+      const pCanvas = document.getElementById('particleCanvas');
+      const pCtx = pCanvas.getContext('2d');
+      let pW, pH, particles = [];
+      function resizeParticles() {
+        pW = pCanvas.width = window.innerWidth;
+        pH = pCanvas.height = window.innerHeight;
+      }
+      resizeParticles();
+      window.addEventListener('resize', resizeParticles);
+
+      function spawnParticle(x, y, color, speed = 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 3 * speed + 1;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * spd,
+          vy: Math.sin(angle) * spd - 1.5,
+          life: 1,
+          decay: Math.random() * 0.012 + 0.006,
+          color,
+          size: Math.random() * 3.5 + 1
+        });
+      }
+      function burstParticles(color, count = 50) {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        for (let i = 0; i < count; i++) spawnParticle(cx, cy, color, 1.5);
+      }
+      function ringParticles(color, count = 30) {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count;
+          const r = 80 + Math.random() * 40;
+          particles.push({
+            x: cx + Math.cos(angle) * 10,
+            y: cy + Math.sin(angle) * 10,
+            vx: Math.cos(angle) * 4,
+            vy: Math.sin(angle) * 4,
+            life: 1, decay: 0.015, color, size: 2
+          });
+        }
+      }
+      function drawParticles() {
+        pCtx.clearRect(0, 0, pW, pH);
+        const s = scenes[sceneIndex];
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy;
+          p.vy += 0.06;
+          p.life -= p.decay;
+          if (p.life <= 0) { particles.splice(i, 1); continue; }
+          pCtx.globalAlpha = p.life * 0.8;
+          pCtx.fillStyle = p.color;
+          pCtx.shadowColor = p.color;
+          pCtx.shadowBlur = 6 * p.life;
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          pCtx.fill();
+        }
+        pCtx.shadowBlur = 0;
+        pCtx.globalAlpha = 1;
+        requestAnimationFrame(drawParticles);
+      }
+      drawParticles();
+
+      /* ══════════════ 场景切换 ══════════════ */
+      function applyScene(i, transition = true) {
+        sceneIndex = ((i % scenes.length) + scenes.length) % scenes.length;
+        const s = scenes[sceneIndex];
+        sceneName.textContent = s.name;
+        if (transition) {
+          sceneLayer.classList.remove('scene-active');
+          sceneLayer.classList.add('scene-fade-out');
+          playSound('scene');
+          setTimeout(() => {
+            sceneLayer.style.background = s.bg;
+            sceneLayer.classList.remove('scene-fade-out');
+            sceneLayer.classList.add('scene-active');
+          }, 450);
+        } else {
+          sceneLayer.style.background = s.bg;
+        }
+      }
+      function nextScene() { applyScene(sceneIndex + 1); }
+
+      /* ══════════════ 棋盘初始化 ══════════════ */
       function initBoard() {
         boardEl.innerHTML = '';
         board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(EMPTY));
@@ -582,13 +897,13 @@
             boardEl.appendChild(cell);
           }
         }
+        // 星位
         [3, 7, 11].forEach(r => {
           [3, 7, 11].forEach(c => {
             const star = document.createElement('div');
             star.className = 'star-point';
-            const cell = boardEl.children[r * SIZE + c];
-            star.style.left = cell.offsetLeft + cell.offsetWidth / 2 + 'px';
-            star.style.top = cell.offsetTop + cell.offsetHeight / 2 + 'px';
+            star.style.left = (c + 0.5) / SIZE * 100 + '%';
+            star.style.top = (r + 0.5) / SIZE * 100 + '%';
             boardEl.appendChild(star);
           });
         });
@@ -597,13 +912,13 @@
 
       function updateStatus() {
         const isP1 = current === P1;
-        statusText.innerHTML = `<span class="status-dot ${isP1 ? 'p1' : 'p2'}"></span><span>${isP1 ? '蓝方' : '粉方'}${mode === 'pve' && current === P2 ? '(电脑)' : ''}回合</span>`;
+        statusText.innerHTML = `<span class="status-dot ${isP1 ? 'p1' : 'p2'}"></span><span>${isP1 ? '蓝方' : '粉方'}${mode === 'pve' && current === P2 ? ' (电脑)' : ''}回合</span>`;
       }
 
       function placePiece(r, c, player) {
         if (board[r][c] !== EMPTY || gameOver || aiThinking) return false;
         board[r][c] = player;
-        history.push({r, c, player});
+        history.push({ r, c, player });
         const cell = boardEl.children[r * SIZE + c];
         const piece = document.createElement('div');
         piece.className = `piece ${player === P1 ? 'p1' : 'p2'}`;
@@ -611,6 +926,13 @@
         document.querySelectorAll('.piece.latest').forEach(p => p.classList.remove('latest'));
         piece.classList.add('latest');
         playSound('place');
+        // 落子粒子
+        const rect = cell.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        for (let i = 0; i < 8; i++) {
+          spawnParticle(cx, cy, player === P1 ? '#7ee7ff' : '#ff7eb3', 0.5);
+        }
         checkSpecialFX(r, c, player);
         return true;
       }
@@ -624,25 +946,21 @@
 
       function afterMove(r, c) {
         const win = checkWin(r, c);
-        if (win) {
-          endGame(win);
-          return;
-        }
-        if (history.length === SIZE * SIZE) {
-          endGame(null);
-          return;
-        }
+        if (win) { endGame(win); return; }
+        if (history.length === SIZE * SIZE) { endGame(null); return; }
         current = current === P1 ? P2 : P1;
         updateStatus();
-        if (mode === 'pve' && current === P2) {
+        if (mode === 'pve' && current === P2 && !gameOver) {
           aiThinking = true;
-          setTimeout(() => aiMove(), 420);
+          setTimeout(() => { aiMove(); }, 380);
         }
       }
 
+      /* ══════════════ AI ══════════════ */
       function aiMove() {
+        if (gameOver) { aiThinking = false; return; }
         const move = findBestMove(diff);
-        if (move) {
+        if (move && !gameOver) {
           placePiece(move.r, move.c, P2);
           afterMove(move.r, move.c);
         }
@@ -651,7 +969,8 @@
 
       function checkWin(r, c) {
         const p = board[r][c];
-        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        if (!p) return null;
+        const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
         for (const [dr, dc] of dirs) {
           let line = [[r, c]];
           for (let d = 1; d < 5; d++) {
@@ -668,17 +987,25 @@
         }
         return null;
       }
-
       function inBoard(r, c) { return r >= 0 && r < SIZE && c >= 0 && c < SIZE; }
 
       function endGame(line) {
         gameOver = true;
         if (line) {
           drawWinLine(line);
-          showFX(current === P1 ? '五子连珠 · 蓝方胜' : '五子连珠 · 粉方胜');
-          burstParticles(current === P1 ? '#7ee7ff' : '#ff7eb3');
-          setTimeout(() => openResult(current === P1 ? '蓝方胜' : (mode === 'pve' ? '电脑胜' : '粉方胜'), '星河为之黯淡'), 1200);
+          const winner = board[line[0][0]][line[0][1]];
+          const color = winner === P1 ? '#7ee7ff' : '#ff7eb3';
+          showFX(winner === P1 ? '五子连珠 · 蓝方胜！' : '五子连珠 · 粉方胜！');
+          burstParticles(color, 80);
+          ringParticles(color, 40);
+          playSound('victory');
+          setTimeout(() => {
+            const title = winner === P1 ? '✨ 蓝方胜' : (mode === 'pve' ? '🤖 电脑胜' : '💖 粉方胜');
+            document.getElementById('resultIcon').textContent = winner === P1 ? '🏆' : (mode === 'pve' ? '🤖' : '🏆');
+            openResult(title, '五子连珠，星河为之黯淡');
+          }, 1400);
         } else {
+          document.getElementById('resultIcon').textContent = '🤝';
           openResult('平局', '棋盘满载，胜负未分');
         }
       }
@@ -708,7 +1035,6 @@
         document.getElementById('resultSub').textContent = sub;
         resultModal.classList.add('open');
       }
-
       function closeResult() { resultModal.classList.remove('open'); }
 
       function showFX(text) {
@@ -716,20 +1042,21 @@
         fxText.classList.remove('show');
         void fxText.offsetWidth;
         fxText.classList.add('show');
+        playSound('special');
       }
 
-      // 特效触发
+      /* ══════════════ 特效判定 ══════════════ */
       function checkSpecialFX(r, c, player) {
         const patterns = [
-          { name: '双三', check: (r, c, p) => countOpenThrees(r, c, p) >= 2, text: '双三成型！' },
-          { name: '冲四', check: (r, c, p) => countFours(r, c, p) >= 1, text: '冲四！' },
-          { name: '活三', check: (r, c, p) => countOpenThrees(r, c, p) >= 1, text: '活三！' },
-          { name: '连二', check: (r, c, p) => countTwos(r, c, p) >= 2, text: '连二攻势' }
+          { name: '双三', check: (r, c, p) => countOpenThrees(r, c, p) >= 2, text: '✦ 双三成型 ✦' },
+          { name: '冲四', check: (r, c, p) => countFours(r, c, p) >= 1, text: '⚡ 冲四！' },
+          { name: '活三', check: (r, c, p) => countOpenThrees(r, c, p) >= 1, text: '✦ 活三！' },
+          { name: '连二', check: (r, c, p) => countTwos(r, c, p) >= 2, text: '· 连二攻势 ·' }
         ];
         for (const pat of patterns) {
           if (pat.check(r, c, player)) {
             showFX(pat.text);
-            burstParticles(player === P1 ? '#7ee7ff' : '#ff7eb3');
+            burstParticles(player === P1 ? '#7ee7ff' : '#ff7eb3', 30);
             break;
           }
         }
@@ -741,42 +1068,39 @@
 
       function countPattern(r, c, p, length, open) {
         let total = 0;
-        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
         for (const [dr, dc] of dirs) {
-          let count = 1;
-          let emptyEnds = 0;
+          let count = 1, emptyEnds = 0;
           for (let side = -1; side <= 1; side += 2) {
             let len = 0;
             for (let d = 1; d <= length; d++) {
               const nr = r + dr * d * side, nc = c + dc * d * side;
               if (!inBoard(nr, nc)) break;
-              if (board[nr][nc] === p) { len++; }
-              else if (board[nr][nc] === EMPTY) {
-                len++;
-                emptyEnds++;
-                break;
-              } else break;
+              if (board[nr][nc] === p) len++;
+              else if (board[nr][nc] === EMPTY) { len++; emptyEnds++; break; }
+              else break;
             }
-            if (len > 0 && (side === -1 || len >= length)) count += len - 1;
+            count += len - 1;
           }
           if (count === length && (!open || emptyEnds >= 2)) total++;
         }
         return total;
       }
 
-      // AI 简化评估
+      /* ══════════════ AI 评估 ══════════════ */
       function findBestMove(level) {
         const candidates = getCandidateMoves();
         if (!candidates.length) return { r: 7, c: 7 };
         if (level === 'easy') {
-          return candidates[Math.floor(Math.random() * Math.min(6, candidates.length))];
+          return candidates[Math.floor(Math.random() * Math.min(8, candidates.length))];
         }
         let best = null, bestScore = -Infinity;
-        for (const m of candidates.slice(0, level === 'hard' ? 30 : 16)) {
-          const score = evaluatePoint(m.r, m.c, P2) * 1.1 + evaluatePoint(m.r, m.c, P1) * 0.9;
+        const limit = level === 'hard' ? 35 : 20;
+        for (const m of candidates.slice(0, limit)) {
+          const score = evaluatePoint(m.r, m.c, P2) * 1.15 + evaluatePoint(m.r, m.c, P1) * 0.85;
           if (score > bestScore) { bestScore = score; best = m; }
         }
-        return best;
+        return best || candidates[0];
       }
 
       function getCandidateMoves() {
@@ -790,20 +1114,20 @@
                   const nr = r + dr, nc = c + dc;
                   if (inBoard(nr, nc) && board[nr][nc] === EMPTY && !set.has(`${nr},${nc}`)) {
                     set.add(`${nr},${nc}`);
-                    moves.push({r: nr, c: nc});
+                    moves.push({ r: nr, c: nc });
                   }
                 }
               }
             }
           }
         }
-        return moves;
+        return moves.length ? moves : [{ r: 7, c: 7 }];
       }
 
       function evaluatePoint(r, c, p) {
         board[r][c] = p;
         let score = 0;
-        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        const dirs = [[1, 0], [0, 1], [1, 1], [1, -1]];
         for (const [dr, dc] of dirs) {
           let count = 1, blocked = 0;
           for (let side = -1; side <= 1; side += 2) {
@@ -829,75 +1153,10 @@
         return score;
       }
 
-      // 场景切换
-      function applyScene(i, transition = true) {
-        const prev = sceneIndex;
-        sceneIndex = ((i % scenes.length) + scenes.length) % scenes.length;
-        const s = scenes[sceneIndex];
-        sceneName.textContent = s.name;
-        if (transition) {
-          sceneLayer.classList.remove('scene-active');
-          sceneLayer.classList.add('scene-enter');
-          setTimeout(() => {
-            sceneLayer.style.background = s.bg;
-            sceneLayer.classList.remove('scene-enter');
-            sceneLayer.classList.add('scene-active');
-          }, 500);
-        } else {
-          sceneLayer.style.background = s.bg;
-        }
-      }
-      function nextScene() { applyScene(sceneIndex + 1); }
-
-      // 粒子系统
-      const pCanvas = document.getElementById('particleLayer');
-      const pCtx = pCanvas.getContext('2d');
-      let pW, pH, particles = [];
-      function resizeParticles() {
-        pW = pCanvas.width = window.innerWidth;
-        pH = pCanvas.height = window.innerHeight;
-      }
-      function createParticle(x, y, color) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 3 + 1;
-        particles.push({
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1.5,
-          life: 1,
-          decay: Math.random() * 0.015 + 0.008,
-          color,
-          size: Math.random() * 3 + 1
-        });
-      }
-      function burstParticles(color) {
-        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
-        for (let i = 0; i < 40; i++) createParticle(cx, cy, color);
-      }
-      function drawParticles() {
-        pCtx.clearRect(0, 0, pW, pH);
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
-          p.x += p.vx; p.y += p.vy;
-          p.vy += 0.08;
-          p.life -= p.decay;
-          if (p.life <= 0) { particles.splice(i, 1); continue; }
-          pCtx.globalAlpha = p.life;
-          pCtx.fillStyle = p.color;
-          pCtx.beginPath();
-          pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          pCtx.fill();
-        }
-        pCtx.globalAlpha = 1;
-        requestAnimationFrame(drawParticles);
-      }
-
-      // 音效占位（静音实现，避免突兀）
-      function playSound(type) {}
-
-      // 事件绑定
+      /* ══════════════ 事件绑定 ══════════════ */
       document.querySelectorAll('[data-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
+          playSound('click');
           mode = btn.dataset.mode;
           if (mode === 'pve') {
             difficultyModal.classList.add('open');
@@ -909,6 +1168,7 @@
 
       document.querySelectorAll('#diffBtns button').forEach(btn => {
         btn.addEventListener('click', () => {
+          playSound('click');
           document.querySelectorAll('#diffBtns button').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           diff = btn.dataset.diff;
@@ -916,6 +1176,7 @@
       });
       document.querySelectorAll('#firstBtns button').forEach(btn => {
         btn.addEventListener('click', () => {
+          playSound('click');
           document.querySelectorAll('#firstBtns button').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           first = btn.dataset.first;
@@ -923,6 +1184,7 @@
       });
 
       document.getElementById('startAIBtn').addEventListener('click', () => {
+        playSound('click');
         difficultyModal.classList.remove('open');
         startGame();
       });
@@ -940,11 +1202,39 @@
       }
 
       document.getElementById('sceneBtn').addEventListener('click', nextScene);
-      document.getElementById('restartBtn').addEventListener('click', () => { closeResult(); initBoard(); if (mode === 'pve' && first === 'ai') { current = P2; aiThinking = true; setTimeout(aiMove, 400); }});
-      document.getElementById('homeBtn').addEventListener('click', () => { cover.classList.remove('hidden'); game.classList.remove('visible'); closeResult(); });
+      document.getElementById('restartBtn').addEventListener('click', () => {
+        playSound('click');
+        closeResult();
+        initBoard();
+        if (mode === 'pve' && first === 'ai') {
+          current = P2;
+          aiThinking = true;
+          setTimeout(() => { aiMove(); }, 400);
+        }
+      });
+      document.getElementById('homeBtn').addEventListener('click', () => {
+        playSound('click');
+        cover.classList.remove('hidden');
+        game.classList.remove('visible');
+        closeResult();
+      });
       document.getElementById('undoBtn').addEventListener('click', undo);
-      document.getElementById('resultRestart').addEventListener('click', () => { closeResult(); initBoard(); if (mode === 'pve' && first === 'ai') { current = P2; aiThinking = true; setTimeout(aiMove, 400); }});
-      document.getElementById('resultHome').addEventListener('click', () => { closeResult(); cover.classList.remove('hidden'); game.classList.remove('visible'); });
+      document.getElementById('resultRestart').addEventListener('click', () => {
+        playSound('click');
+        closeResult();
+        initBoard();
+        if (mode === 'pve' && first === 'ai') {
+          current = P2;
+          aiThinking = true;
+          setTimeout(() => { aiMove(); }, 400);
+        }
+      });
+      document.getElementById('resultHome').addEventListener('click', () => {
+        playSound('click');
+        closeResult();
+        cover.classList.remove('hidden');
+        game.classList.remove('visible');
+      });
 
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && game.classList.contains('visible')) {
@@ -955,13 +1245,15 @@
 
       function undo() {
         if (gameOver || history.length === 0 || aiThinking) return;
-        if (mode === 'pve') {
-          // 撤销两步：玩家 + AI
+        playSound('click');
+        if (mode === 'pve' && history.length >= 2) {
           history.pop();
           history.pop();
-        } else {
+        } else if (mode === 'pvp') {
           history.pop();
           current = current === P1 ? P2 : P1;
+        } else {
+          return;
         }
         initBoard();
         for (const m of history) {
@@ -971,14 +1263,15 @@
           cell.appendChild(piece);
           board[m.r][m.c] = m.player;
         }
-        if (history.length) document.querySelectorAll('.piece').item(history.length - 1).classList.add('latest');
+        if (history.length) {
+          const pieces = boardEl.querySelectorAll('.piece');
+          if (pieces.length) pieces[pieces.length - 1].classList.add('latest');
+        }
         if (mode === 'pve') current = P1;
         updateStatus();
       }
 
-      window.addEventListener('resize', resizeParticles);
-      resizeParticles();
-      drawParticles();
+      // 初始化
       applyScene(0, false);
     })();
   </script>
