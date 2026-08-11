@@ -1054,6 +1054,9 @@
       let wins = { p1: 0, p2: 0 }, round = 1;
       let p1Time = 0, p2Time = 0, moveStart = 0, timerInterval = null;
 
+      // Wziqi API 地址（开发时通过 Vite proxy 转发到 Python 服务器）
+      const API_URL = '/api/move';
+
       const cover = document.getElementById('cover');
       const difficultyModal = document.getElementById('difficultyModal');
       const game = document.getElementById('game');
@@ -1557,10 +1560,50 @@
         }
       }
 
-      /* ══════════════ AI ══════════════ */
-      function aiMove() {
+      /* ══════════════ AI（Wziqi API + 本地回退） ══════════════ */
+      function boardToWziqiFormat() {
+        // 将 0-indexed 二维数组转为 Wziqi API 的 1-indexed 字典格式
+        const qiPan = {};
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            const key = `${r + 1},${c + 1}`;
+            if (board[r][c] === P1) qiPan[key] = 'users';
+            else if (board[r][c] === P2) qiPan[key] = 'api';
+            else qiPan[key] = 'None';
+          }
+        }
+        return qiPan;
+      }
+
+      async function aiMove() {
         if (gameOver) { aiThinking = false; return; }
-        const move = findBestMove(diff);
+        let move = null;
+
+        // 尝试调用 Wziqi Python API
+        try {
+          const qiPan = boardToWziqiFormat();
+          const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ board: qiPan, difficulty: diff })
+          });
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.row && data.col) {
+              // API 返回 1-indexed，转为 0-indexed
+              move = { r: data.row - 1, c: data.col - 1 };
+            }
+          }
+        } catch (e) {
+          // API 不可用，回退到本地 AI
+          console.log('Wziqi API 不可用，使用本地 AI');
+        }
+
+        // 回退到本地 AI
+        if (!move) {
+          move = findBestMove(diff);
+        }
+
         if (move && !gameOver) {
           placePiece(move.r, move.c, P2);
           afterMove(move.r, move.c);
