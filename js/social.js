@@ -1,4 +1,4 @@
-const API = 'https://next-app-one-navy.vercel.app';
+const API = 'https://wenruo-api.vercel.app';
 
 export function initMessageBoard() {
   const board = document.getElementById('messageBoard');
