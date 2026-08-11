@@ -1,4 +1,4 @@
-const API = 'https://wenruo-api.vercel.app';
+const API = 'https://wenruo-api.carglekasemeier602.workers.dev';
 
 export function initMessageBoard() {
   const board = document.getElementById('messageBoard');

@@ -1,7 +1,8 @@
 name = "wenruo-api"
 main = "src/index.js"
 compatibility_date = "2026-08-11"
+account_id = "509fc0ddfe1794a208c10cf4f8e82589"
 
 [[kv_namespaces]]
 binding = "WENRUO_KV"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "5159aa9a69cc43bba6ad04b91a1a4cac"
