@@ -1,21 +1,44 @@
 import { redis } from './lib/redis.js';
-import { json, methodNotAllowed, parseBody } from './_utils.js';
+import { setCors, json, methodNotAllowed, parseBody } from './_utils.js';
 
 const KEY = 'messages';
 const MAX_MESSAGES = 100;
 
+let memoryMessages = [];
+
+async function getMessages() {
+  try {
+    const items = await redis.lrange(KEY, 0, MAX_MESSAGES - 1);
+    return items.map(raw => {
+      try { return JSON.parse(raw); } catch { return null; }
+    }).filter(Boolean);
+  } catch (e) {
+    console.error('Redis getMessages failed:', e.message);
+    return memoryMessages;
+  }
+}
+
+async function addMessage(entry) {
+  try {
+    await redis.lpush(KEY, JSON.stringify(entry));
+    await redis.ltrim(KEY, 0, MAX_MESSAGES - 1);
+  } catch (e) {
+    console.error('Redis addMessage failed:', e.message);
+    memoryMessages.unshift(entry);
+    if (memoryMessages.length > MAX_MESSAGES) memoryMessages.length = MAX_MESSAGES;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
+    setCors(res);
     res.statusCode = 204;
     res.end();
     return;
   }
 
   if (req.method === 'GET') {
-    const items = await redis.lrange(KEY, 0, MAX_MESSAGES - 1);
-    const messages = items.map(raw => {
-      try { return JSON.parse(raw); } catch { return null; }
-    }).filter(Boolean);
+    const messages = await getMessages();
     json(res, 200, { messages });
     return;
   }
@@ -42,10 +65,10 @@ export default async function handler(req, res) {
         time: new Date().toISOString(),
       };
 
-      await redis.lpush(KEY, JSON.stringify(entry));
-      await redis.ltrim(KEY, 0, MAX_MESSAGES - 1);
+      await addMessage(entry);
       json(res, 200, { success: true, entry });
     } catch (e) {
+      console.error('Messages handler error:', e.message);
       json(res, 500, { error: 'Server error' });
     }
     return;

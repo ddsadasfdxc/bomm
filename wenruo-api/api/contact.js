@@ -1,11 +1,25 @@
 import { redis } from './lib/redis.js';
-import { json, methodNotAllowed, parseBody } from './_utils.js';
+import { setCors, json, methodNotAllowed, parseBody } from './_utils.js';
 
 const KEY = 'contacts';
 const MAX_CONTACTS = 100;
 
+let memoryContacts = [];
+
+async function addContact(entry) {
+  try {
+    await redis.lpush(KEY, JSON.stringify(entry));
+    await redis.ltrim(KEY, 0, MAX_CONTACTS - 1);
+  } catch (e) {
+    console.error('Redis addContact failed:', e.message);
+    memoryContacts.unshift(entry);
+    if (memoryContacts.length > MAX_CONTACTS) memoryContacts.length = MAX_CONTACTS;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
+    setCors(res);
     res.statusCode = 204;
     res.end();
     return;
@@ -39,10 +53,10 @@ export default async function handler(req, res) {
         time: new Date().toISOString(),
       };
 
-      await redis.lpush(KEY, JSON.stringify(entry));
-      await redis.ltrim(KEY, 0, MAX_CONTACTS - 1);
+      await addContact(entry);
       json(res, 200, { success: true });
     } catch (e) {
+      console.error('Contact handler error:', e.message);
       json(res, 500, { error: 'Server error' });
     }
     return;
