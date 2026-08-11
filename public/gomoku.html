@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>星河五子棋 · Gomoku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --g-bg: #0b0c15;
+      --g-panel: rgba(255, 255, 255, 0.06);
+      --g-border: rgba(255, 255, 255, 0.12);
+      --g-text: #f3f0ff;
+      --g-sub: #b8b3d1;
+      --g-p1: #7ee7ff;
+      --g-p2: #ff7eb3;
+      --g-gold: #ffd36e;
+      --g-win: #00f5a0;
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--g-bg);
+      color: var(--g-text);
+      font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+      user-select: none;
+    }
+
+    /* 主题场景层 */
+    #sceneLayer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      background-size: cover;
+      background-position: center;
+    }
+    #sceneLayer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(11, 12, 21, 0.55) 70%, rgba(11, 12, 21, 0.92) 100%);
+      pointer-events: none;
+    }
+    .scene-enter { opacity: 0; transform: scale(1.08); }
+    .scene-active { opacity: 1; transform: scale(1); }
+
+    /* 粒子层 */
+    #particleLayer {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp linear forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      10% { opacity: 0.8; }
+      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+    }
+
+    /* 封面 */
+    #cover {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 0%, rgba(126, 231, 255, 0.08), transparent 55%),
+                  radial-gradient(circle at 80% 80%, rgba(255, 126, 179, 0.06), transparent 45%),
+                  var(--g-bg);
+      transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #cover.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
+    .cover-title {
+      font-size: clamp(2.4rem, 8vw, 4.2rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-align: center;
+      background: linear-gradient(135deg, #fff 0%, var(--g-p1) 45%, var(--g-p2) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 40px rgba(126, 231, 255, 0.18);
+      margin-bottom: 0.3em;
+    }
+    .cover-sub {
+      color: var(--g-sub);
+      font-size: 1.05rem;
+      margin-bottom: 2.8em;
+      text-align: center;
+    }
+    .cover-options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: min(320px, 92vw);
+    }
+    .cover-btn {
+      padding: 15px 22px;
+      border-radius: 18px;
+      border: 1px solid var(--g-border);
+      background: var(--g-panel);
+      color: var(--g-text);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .cover-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: rgba(126, 231, 255, 0.35); }
+    .cover-btn.primary { background: linear-gradient(135deg, rgba(126, 231, 255, 0.18), rgba(255, 126, 179, 0.12)); border-color: rgba(126, 231, 255, 0.25); }
+
+    /* 难度浮层 */
+    #difficultyModal {
+      position: fixed;
+      inset: 0;
+      z-index: 11;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+    }
+    #difficultyModal.open { display: flex; }
+    .difficulty-card {
+      width: min(360px, 90vw);
+      padding: 26px;
+      border-radius: 24px;
+      background: rgba(20, 21, 34, 0.92);
+      border: 1px solid var(--g-border);
+      box-shadow: var(--shadow-lg);
+    }
+    .difficulty-card h3 { margin-bottom: 18px; text-align: center; font-size: 1.2rem; }
+    .difficulty-row { display: flex; gap: 10px; margin-bottom: 18px; }
+    .difficulty-row label { font-size: 0.85rem; color: var(--g-sub); width: 70px; display: flex; align-items: center; }
+    .difficulty-btns { display: flex; gap: 8px; flex: 1; }
+    .difficulty-btns button {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 12px;
+      border: 1px solid var(--g-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--g-sub);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .difficulty-btns button.active { background: rgba(126, 231, 255, 0.18); color: var(--g-text); border-color: rgba(126, 231, 255, 0.35); }
+    .difficulty-start {
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
+      color: #0b0c15;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* 游戏主界面 */
+    #game {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #game.visible { opacity: 1; pointer-events: auto; }
+
+    .game-header {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .game-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: linear-gradient(90deg, var(--g-p1), var(--g-p2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .game-controls { display: flex; gap: 10px; }
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--g-border);
+      background: var(--g-panel);
+      color: var(--g-text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(10px);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .icon-btn:hover { transform: scale(1.08); box-shadow: 0 0 16px rgba(126, 231, 255, 0.2); }
+
+    .status-bar {
+      max-width: 640px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 10px 16px;
+      border-radius: 16px;
+      background: var(--g-panel);
+      border: 1px solid var(--g-border);
+      backdrop-filter: blur(10px);
+      font-size: 0.92rem;
+    }
+    .status-player { display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+    .status-dot.p1 { background: var(--g-p1); color: var(--g-p1); }
+    .status-dot.p2 { background: var(--g-p2); color: var(--g-p2); }
+
+    .board-wrap {
+      position: relative;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--g-border);
+      box-shadow: var(--shadow-lg), inset 0 0 40px rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(8px);
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      grid-template-rows: repeat(15, 1fr);
+      width: min(78vw, 78vh - 190px, 520px);
+      height: min(78vw, 78vh - 190px, 520px);
+      position: relative;
+    }
+    .cell {
+      position: relative;
+      cursor: pointer;
+    }
+    .cell::before, .cell::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.22);
+      pointer-events: none;
+    }
+    .cell::before { width: 1px; height: 100%; left: 50%; top: 0; }
+    .cell::after { width: 100%; height: 1px; top: 50%; left: 0; }
+    .cell:nth-child(15n+1)::before { left: 50%; }
+    .cell:nth-child(-n+15)::after { top: 50%; }
+
+    .star-point {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+    }
+
+    .piece {
+      position: absolute;
+      width: 84%;
+      height: 84%;
+      left: 8%;
+      top: 8%;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: placePiece 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      z-index: 3;
+    }
+    @keyframes placePiece {
+      to { transform: scale(1); }
+    }
+    .piece.p1 {
+      background: radial-gradient(circle at 30% 30%, #e0fbff, var(--g-p1) 55%, #3aa8c7 100%);
+      box-shadow: 0 0 14px rgba(126, 231, 255, 0.45), 0 3px 10px rgba(0, 0, 0, 0.35);
+    }
+    .piece.p2 {
+      background: radial-gradient(circle at 30% 30%, #ffd9ea, var(--g-p2) 55%, #c73d7a 100%);
+      box-shadow: 0 0 14px rgba(255, 126, 179, 0.45), 0 3px 10px rgba(0, 0, 0, 0.35);
+    }
+    .piece.latest::after {
+      content: '';
+      position: absolute;
+      inset: 28%;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+      animation: latestPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes latestPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.35); opacity: 0; }
+    }
+
+    /* 棋盘网格霓虹 */
+    .board-glow {
+      position: absolute;
+      inset: 14px;
+      border-radius: 18px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+      background: linear-gradient(135deg, rgba(126, 231, 255, 0.08), rgba(255, 126, 179, 0.08));
+    }
+
+    /* 连珠高亮线 */
+    #winLine {
+      position: absolute;
+      z-index: 4;
+      height: 4px;
+      background: linear-gradient(90deg, var(--g-win), #fff, var(--g-win));
+      border-radius: 2px;
+      box-shadow: 0 0 18px var(--g-win), 0 0 40px var(--g-win);
+      transform-origin: 0 50%;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .winLine-anim { animation: winLineDraw 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes winLineDraw {
+      to { opacity: 1; }
+    }
+
+    /* 特效文字 */
+    .fx-text {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      text-shadow: 0 0 30px currentColor;
+      white-space: nowrap;
+    }
+    .fx-text.show { animation: fxPop 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes fxPop {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      20% { transform: translate(-50%, -65%) scale(1.15); opacity: 1; }
+      80% { transform: translate(-50%, -75%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -90%) scale(0.9); opacity: 0; }
+    }
+
+    /* 结果浮层 */
+    #resultModal {
+      position: fixed;
+      inset: 0;
+      z-index: 15;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+    #resultModal.open { display: flex; }
+    .result-card {
+      text-align: center;
+      padding: 34px 28px;
+      border-radius: 26px;
+      background: rgba(20, 21, 34, 0.94);
+      border: 1px solid var(--g-border);
+      box-shadow: var(--shadow-lg);
+      width: min(340px, 88vw);
+      animation: resultIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes resultIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .result-title { font-size: 1.7rem; margin-bottom: 8px; }
+    .result-sub { color: var(--g-sub); margin-bottom: 22px; }
+    .result-btns { display: flex; gap: 12px; justify-content: center; }
+    .result-btns button {
+      padding: 12px 22px;
+      border-radius: 14px;
+      border: 1px solid var(--g-border);
+      background: var(--g-panel);
+      color: var(--g-text);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .result-btns button:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .result-btns .primary { background: linear-gradient(135deg, var(--g-p1), var(--g-p2)); color: #0b0c15; border: none; }
+
+    /* 底部提示 */
+    .hint {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.78rem;
+      color: var(--g-sub);
+      opacity: 0.7;
+      z-index: 5;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="sceneLayer" class="scene-active"></div>
+  <canvas id="particleLayer"></canvas>
+
+  <!-- 封面 -->
+  <div id="cover">
+    <h1 class="cover-title">星河五子棋</h1>
+    <p class="cover-sub">在宇宙深处，下一颗会发光的棋子</p>
+    <div class="cover-options">
+      <button class="cover-btn primary" data-mode="pvp">✨ 双人对战</button>
+      <button class="cover-btn" data-mode="pve">🤖 人机对战</button>
+    </div>
+  </div>
+
+  <!-- 难度设置 -->
+  <div id="difficultyModal">
+    <div class="difficulty-card">
+      <h3>人机对战设置</h3>
+      <div class="difficulty-row">
+        <label>难度</label>
+        <div class="difficulty-btns" id="diffBtns">
+          <button data-diff="easy">入门</button>
+          <button data-diff="medium" class="active">进阶</button>
+          <button data-diff="hard">大师</button>
+        </div>
+      </div>
+      <div class="difficulty-row">
+        <label>先手</label>
+        <div class="difficulty-btns" id="firstBtns">
+          <button data-first="player" class="active">玩家</button>
+          <button data-first="ai">电脑</button>
+        </div>
+      </div>
+      <button class="difficulty-start" id="startAIBtn">开始对决</button>
+    </div>
+  </div>
+
+  <!-- 游戏界面 -->
+  <div id="game">
+    <div class="game-header">
+      <div class="game-title">星河五子棋</div>
+      <div class="game-controls">
+        <button class="icon-btn" id="sceneBtn" title="切换场景 (空格)">🌌</button>
+        <button class="icon-btn" id="undoBtn" title="悔棋">↩️</button>
+        <button class="icon-btn" id="restartBtn" title="重新开始">⟳</button>
+        <button class="icon-btn" id="homeBtn" title="返回封面">🏠</button>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="status-player" id="statusText">
+        <span class="status-dot p1"></span>
+        <span>蓝方回合</span>
+      </div>
+      <div id="sceneName">星云海</div>
+    </div>
+    <div class="board-wrap">
+      <div class="board-glow"></div>
+      <div id="board"></div>
+      <div id="winLine"></div>
+    </div>
+  </div>
+
+  <div class="fx-text" id="fxText"></div>
+
+  <div id="resultModal">
+    <div class="result-card">
+      <h2 class="result-title" id="resultTitle">蓝方胜</h2>
+      <p class="result-sub" id="resultSub">五子连珠，星河同辉</p>
+      <div class="result-btns">
+        <button id="resultHome">封面</button>
+        <button class="primary" id="resultRestart">再来一局</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">空格切换场景 · 点击棋盘落子</div>
+
+  <script>
+    (function(){
+      const SIZE = 15;
+      const EMPTY = 0, P1 = 1, P2 = 2;
+
+      const scenes = [
+        {
+          name: '星云海',
+          bg: 'radial-gradient(circle at 20% 30%, #1a1f3c 0%, #0b0c15 60%), linear-gradient(135deg, #0f1120, #1c1e38)',
+          accent: '#7ee7ff',
+          particles: ['#7ee7ff', '#b8b3d1', '#ffffff']
+        },
+        {
+          name: '极光雪原',
+          bg: 'linear-gradient(180deg, #0d1f1c 0%, #0b0c15 60%), radial-gradient(circle at 50% 100%, rgba(0, 245, 160, 0.18), transparent 55%)',
+          accent: '#00f5a0',
+          particles: ['#00f5a0', '#a6ffcb', '#ffffff']
+        },
+        {
+          name: '绯红深渊',
+          bg: 'radial-gradient(circle at 80% 20%, #2a0f1a 0%, #0b0c15 65%), linear-gradient(135deg, #1a0b12, #0b0c15)',
+          accent: '#ff7eb3',
+          particles: ['#ff7eb3', '#ffb3d1', '#ffd36e']
+        },
+        {
+          name: '熔金古城',
+          bg: 'radial-gradient(circle at 50% 80%, rgba(255, 211, 110, 0.12), transparent 50%), linear-gradient(135deg, #1f180b, #0b0c15)',
+          accent: '#ffd36e',
+          particles: ['#ffd36e', '#ff9e64', '#ffffff']
+        },
+        {
+          name: '量子迷雾',
+          bg: 'repeating-linear-gradient(45deg, #0f1120 0, #0f1120 10px, #12142a 10px, #12142a 20px), radial-gradient(circle at 50% 50%, rgba(126, 231, 255, 0.06), transparent 60%)',
+          accent: '#c084fc',
+          particles: ['#c084fc', '#7ee7ff', '#ffffff']
+        }
+      ];
+
+      let board = [];
+      let current = P1;
+      let mode = 'pvp';
+      let diff = 'medium';
+      let first = 'player';
+      let gameOver = false;
+      let history = [];
+      let sceneIndex = 0;
+      let aiThinking = false;
+
+      const cover = document.getElementById('cover');
+      const difficultyModal = document.getElementById('difficultyModal');
+      const game = document.getElementById('game');
+      const boardEl = document.getElementById('board');
+      const statusText = document.getElementById('statusText');
+      const sceneName = document.getElementById('sceneName');
+      const sceneLayer = document.getElementById('sceneLayer');
+      const fxText = document.getElementById('fxText');
+      const resultModal = document.getElementById('resultModal');
+      const winLine = document.getElementById('winLine');
+
+      function initBoard() {
+        boardEl.innerHTML = '';
+        board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(EMPTY));
+        current = P1;
+        gameOver = false;
+        history = [];
+        winLine.style.opacity = '0';
+        winLine.className = '';
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.r = r;
+            cell.dataset.c = c;
+            cell.addEventListener('click', () => onCellClick(r, c));
+            boardEl.appendChild(cell);
+          }
+        }
+        [3, 7, 11].forEach(r => {
+          [3, 7, 11].forEach(c => {
+            const star = document.createElement('div');
+            star.className = 'star-point';
+            const cell = boardEl.children[r * SIZE + c];
+            star.style.left = cell.offsetLeft + cell.offsetWidth / 2 + 'px';
+            star.style.top = cell.offsetTop + cell.offsetHeight / 2 + 'px';
+            boardEl.appendChild(star);
+          });
+        });
+        updateStatus();
+      }
+
+      function updateStatus() {
+        const isP1 = current === P1;
+        statusText.innerHTML = `<span class="status-dot ${isP1 ? 'p1' : 'p2'}"></span><span>${isP1 ? '蓝方' : '粉方'}${mode === 'pve' && current === P2 ? '(电脑)' : ''}回合</span>`;
+      }
+
+      function placePiece(r, c, player) {
+        if (board[r][c] !== EMPTY || gameOver || aiThinking) return false;
+        board[r][c] = player;
+        history.push({r, c, player});
+        const cell = boardEl.children[r * SIZE + c];
+        const piece = document.createElement('div');
+        piece.className = `piece ${player === P1 ? 'p1' : 'p2'}`;
+        cell.appendChild(piece);
+        document.querySelectorAll('.piece.latest').forEach(p => p.classList.remove('latest'));
+        piece.classList.add('latest');
+        playSound('place');
+        checkSpecialFX(r, c, player);
+        return true;
+      }
+
+      function onCellClick(r, c) {
+        if (gameOver) return;
+        if (mode === 'pve' && current === P2) return;
+        if (!placePiece(r, c, current)) return;
+        afterMove(r, c);
+      }
+
+      function afterMove(r, c) {
+        const win = checkWin(r, c);
+        if (win) {
+          endGame(win);
+          return;
+        }
+        if (history.length === SIZE * SIZE) {
+          endGame(null);
+          return;
+        }
+        current = current === P1 ? P2 : P1;
+        updateStatus();
+        if (mode === 'pve' && current === P2) {
+          aiThinking = true;
+          setTimeout(() => aiMove(), 420);
+        }
+      }
+
+      function aiMove() {
+        const move = findBestMove(diff);
+        if (move) {
+          placePiece(move.r, move.c, P2);
+          afterMove(move.r, move.c);
+        }
+        aiThinking = false;
+      }
+
+      function checkWin(r, c) {
+        const p = board[r][c];
+        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        for (const [dr, dc] of dirs) {
+          let line = [[r, c]];
+          for (let d = 1; d < 5; d++) {
+            const nr = r + dr * d, nc = c + dc * d;
+            if (inBoard(nr, nc) && board[nr][nc] === p) line.push([nr, nc]);
+            else break;
+          }
+          for (let d = 1; d < 5; d++) {
+            const nr = r - dr * d, nc = c - dc * d;
+            if (inBoard(nr, nc) && board[nr][nc] === p) line.push([nr, nc]);
+            else break;
+          }
+          if (line.length >= 5) return line;
+        }
+        return null;
+      }
+
+      function inBoard(r, c) { return r >= 0 && r < SIZE && c >= 0 && c < SIZE; }
+
+      function endGame(line) {
+        gameOver = true;
+        if (line) {
+          drawWinLine(line);
+          showFX(current === P1 ? '五子连珠 · 蓝方胜' : '五子连珠 · 粉方胜');
+          burstParticles(current === P1 ? '#7ee7ff' : '#ff7eb3');
+          setTimeout(() => openResult(current === P1 ? '蓝方胜' : (mode === 'pve' ? '电脑胜' : '粉方胜'), '星河为之黯淡'), 1200);
+        } else {
+          openResult('平局', '棋盘满载，胜负未分');
+        }
+      }
+
+      function drawWinLine(line) {
+        line.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        const [r1, c1] = line[0];
+        const [r2, c2] = line[line.length - 1];
+        const cell1 = boardEl.children[r1 * SIZE + c1];
+        const cell2 = boardEl.children[r2 * SIZE + c2];
+        const x1 = cell1.offsetLeft + cell1.offsetWidth / 2;
+        const y1 = cell1.offsetTop + cell1.offsetHeight / 2;
+        const x2 = cell2.offsetLeft + cell2.offsetWidth / 2;
+        const y2 = cell2.offsetTop + cell2.offsetHeight / 2;
+        const dx = x2 - x1, dy = y2 - y1;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        winLine.style.width = len + 'px';
+        winLine.style.left = x1 + 'px';
+        winLine.style.top = y1 + 'px';
+        winLine.style.transform = `rotate(${angle}deg)`;
+        winLine.className = 'winLine-anim';
+      }
+
+      function openResult(title, sub) {
+        document.getElementById('resultTitle').textContent = title;
+        document.getElementById('resultSub').textContent = sub;
+        resultModal.classList.add('open');
+      }
+
+      function closeResult() { resultModal.classList.remove('open'); }
+
+      function showFX(text) {
+        fxText.textContent = text;
+        fxText.classList.remove('show');
+        void fxText.offsetWidth;
+        fxText.classList.add('show');
+      }
+
+      // 特效触发
+      function checkSpecialFX(r, c, player) {
+        const patterns = [
+          { name: '双三', check: (r, c, p) => countOpenThrees(r, c, p) >= 2, text: '双三成型！' },
+          { name: '冲四', check: (r, c, p) => countFours(r, c, p) >= 1, text: '冲四！' },
+          { name: '活三', check: (r, c, p) => countOpenThrees(r, c, p) >= 1, text: '活三！' },
+          { name: '连二', check: (r, c, p) => countTwos(r, c, p) >= 2, text: '连二攻势' }
+        ];
+        for (const pat of patterns) {
+          if (pat.check(r, c, player)) {
+            showFX(pat.text);
+            burstParticles(player === P1 ? '#7ee7ff' : '#ff7eb3');
+            break;
+          }
+        }
+      }
+
+      function countOpenThrees(r, c, p) { return countPattern(r, c, p, 3, true); }
+      function countFours(r, c, p) { return countPattern(r, c, p, 4, false); }
+      function countTwos(r, c, p) { return countPattern(r, c, p, 2, true); }
+
+      function countPattern(r, c, p, length, open) {
+        let total = 0;
+        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        for (const [dr, dc] of dirs) {
+          let count = 1;
+          let emptyEnds = 0;
+          for (let side = -1; side <= 1; side += 2) {
+            let len = 0;
+            for (let d = 1; d <= length; d++) {
+              const nr = r + dr * d * side, nc = c + dc * d * side;
+              if (!inBoard(nr, nc)) break;
+              if (board[nr][nc] === p) { len++; }
+              else if (board[nr][nc] === EMPTY) {
+                len++;
+                emptyEnds++;
+                break;
+              } else break;
+            }
+            if (len > 0 && (side === -1 || len >= length)) count += len - 1;
+          }
+          if (count === length && (!open || emptyEnds >= 2)) total++;
+        }
+        return total;
+      }
+
+      // AI 简化评估
+      function findBestMove(level) {
+        const candidates = getCandidateMoves();
+        if (!candidates.length) return { r: 7, c: 7 };
+        if (level === 'easy') {
+          return candidates[Math.floor(Math.random() * Math.min(6, candidates.length))];
+        }
+        let best = null, bestScore = -Infinity;
+        for (const m of candidates.slice(0, level === 'hard' ? 30 : 16)) {
+          const score = evaluatePoint(m.r, m.c, P2) * 1.1 + evaluatePoint(m.r, m.c, P1) * 0.9;
+          if (score > bestScore) { bestScore = score; best = m; }
+        }
+        return best;
+      }
+
+      function getCandidateMoves() {
+        const set = new Set();
+        const moves = [];
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            if (board[r][c] !== EMPTY) {
+              for (let dr = -2; dr <= 2; dr++) {
+                for (let dc = -2; dc <= 2; dc++) {
+                  const nr = r + dr, nc = c + dc;
+                  if (inBoard(nr, nc) && board[nr][nc] === EMPTY && !set.has(`${nr},${nc}`)) {
+                    set.add(`${nr},${nc}`);
+                    moves.push({r: nr, c: nc});
+                  }
+                }
+              }
+            }
+          }
+        }
+        return moves;
+      }
+
+      function evaluatePoint(r, c, p) {
+        board[r][c] = p;
+        let score = 0;
+        const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+        for (const [dr, dc] of dirs) {
+          let count = 1, blocked = 0;
+          for (let side = -1; side <= 1; side += 2) {
+            let len = 0;
+            for (let d = 1; d < 5; d++) {
+              const nr = r + dr * d * side, nc = c + dc * d * side;
+              if (!inBoard(nr, nc)) { blocked++; break; }
+              if (board[nr][nc] === p) len++;
+              else if (board[nr][nc] === EMPTY) break;
+              else { blocked++; break; }
+            }
+            count += len;
+          }
+          if (count >= 5) score += 100000;
+          else if (count === 4 && blocked === 0) score += 10000;
+          else if (count === 4 && blocked === 1) score += 1000;
+          else if (count === 3 && blocked === 0) score += 800;
+          else if (count === 3 && blocked === 1) score += 100;
+          else if (count === 2 && blocked === 0) score += 50;
+          else score += count * 5;
+        }
+        board[r][c] = EMPTY;
+        return score;
+      }
+
+      // 场景切换
+      function applyScene(i, transition = true) {
+        const prev = sceneIndex;
+        sceneIndex = ((i % scenes.length) + scenes.length) % scenes.length;
+        const s = scenes[sceneIndex];
+        sceneName.textContent = s.name;
+        if (transition) {
+          sceneLayer.classList.remove('scene-active');
+          sceneLayer.classList.add('scene-enter');
+          setTimeout(() => {
+            sceneLayer.style.background = s.bg;
+            sceneLayer.classList.remove('scene-enter');
+            sceneLayer.classList.add('scene-active');
+          }, 500);
+        } else {
+          sceneLayer.style.background = s.bg;
+        }
+      }
+      function nextScene() { applyScene(sceneIndex + 1); }
+
+      // 粒子系统
+      const pCanvas = document.getElementById('particleLayer');
+      const pCtx = pCanvas.getContext('2d');
+      let pW, pH, particles = [];
+      function resizeParticles() {
+        pW = pCanvas.width = window.innerWidth;
+        pH = pCanvas.height = window.innerHeight;
+      }
+      function createParticle(x, y, color) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.5,
+          life: 1,
+          decay: Math.random() * 0.015 + 0.008,
+          color,
+          size: Math.random() * 3 + 1
+        });
+      }
+      function burstParticles(color) {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        for (let i = 0; i < 40; i++) createParticle(cx, cy, color);
+      }
+      function drawParticles() {
+        pCtx.clearRect(0, 0, pW, pH);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy;
+          p.vy += 0.08;
+          p.life -= p.decay;
+          if (p.life <= 0) { particles.splice(i, 1); continue; }
+          pCtx.globalAlpha = p.life;
+          pCtx.fillStyle = p.color;
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          pCtx.fill();
+        }
+        pCtx.globalAlpha = 1;
+        requestAnimationFrame(drawParticles);
+      }
+
+      // 音效占位（静音实现，避免突兀）
+      function playSound(type) {}
+
+      // 事件绑定
+      document.querySelectorAll('[data-mode]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          mode = btn.dataset.mode;
+          if (mode === 'pve') {
+            difficultyModal.classList.add('open');
+          } else {
+            startGame();
+          }
+        });
+      });
+
+      document.querySelectorAll('#diffBtns button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#diffBtns button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          diff = btn.dataset.diff;
+        });
+      });
+      document.querySelectorAll('#firstBtns button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#firstBtns button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          first = btn.dataset.first;
+        });
+      });
+
+      document.getElementById('startAIBtn').addEventListener('click', () => {
+        difficultyModal.classList.remove('open');
+        startGame();
+      });
+
+      function startGame() {
+        cover.classList.add('hidden');
+        game.classList.add('visible');
+        initBoard();
+        applyScene(sceneIndex, false);
+        if (mode === 'pve' && first === 'ai') {
+          current = P2;
+          aiThinking = true;
+          setTimeout(() => { aiMove(); }, 500);
+        }
+      }
+
+      document.getElementById('sceneBtn').addEventListener('click', nextScene);
+      document.getElementById('restartBtn').addEventListener('click', () => { closeResult(); initBoard(); if (mode === 'pve' && first === 'ai') { current = P2; aiThinking = true; setTimeout(aiMove, 400); }});
+      document.getElementById('homeBtn').addEventListener('click', () => { cover.classList.remove('hidden'); game.classList.remove('visible'); closeResult(); });
+      document.getElementById('undoBtn').addEventListener('click', undo);
+      document.getElementById('resultRestart').addEventListener('click', () => { closeResult(); initBoard(); if (mode === 'pve' && first === 'ai') { current = P2; aiThinking = true; setTimeout(aiMove, 400); }});
+      document.getElementById('resultHome').addEventListener('click', () => { closeResult(); cover.classList.remove('hidden'); game.classList.remove('visible'); });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && game.classList.contains('visible')) {
+          e.preventDefault();
+          nextScene();
+        }
+      });
+
+      function undo() {
+        if (gameOver || history.length === 0 || aiThinking) return;
+        if (mode === 'pve') {
+          // 撤销两步：玩家 + AI
+          history.pop();
+          history.pop();
+        } else {
+          history.pop();
+          current = current === P1 ? P2 : P1;
+        }
+        initBoard();
+        for (const m of history) {
+          const cell = boardEl.children[m.r * SIZE + m.c];
+          const piece = document.createElement('div');
+          piece.className = `piece ${m.player === P1 ? 'p1' : 'p2'}`;
+          cell.appendChild(piece);
+          board[m.r][m.c] = m.player;
+        }
+        if (history.length) document.querySelectorAll('.piece').item(history.length - 1).classList.add('latest');
+        if (mode === 'pve') current = P1;
+        updateStatus();
+      }
+
+      window.addEventListener('resize', resizeParticles);
+      resizeParticles();
+      drawParticles();
+      applyScene(0, false);
+    })();
+  </script>
+</body>
+</html>
