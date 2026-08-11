@@ -1,0 +1,219 @@
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS },
+  });
+}
+
+function error(message, status = 500) {
+  return json({ error: message }, status);
+}
+
+function getClientIp(request) {
+  return request.headers.get('cf-connecting-ip')
+    || request.headers.get('x-forwarding-for')?.split(',')[0].trim()
+    || 'unknown';
+}
+
+function hash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h) + str.charCodeAt(i);
+    h |= 0;
+  }
+  return String(h);
+}
+
+async function readJson(request) {
+  try {
+    return await request.json();
+  } catch {
+    return {};
+  }
+}
+
+const MAX_MESSAGES = 100;
+const MESSAGES_KEY = 'messages';
+const STATS_KEY = 'stats';
+const UV_KEY = 'uv';
+
+async function getMessages(kv) {
+  const raw = await kv.get(MESSAGES_KEY);
+  if (!raw) return [];
+  try {
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+async function saveMessages(kv, messages) {
+  await kv.put(MESSAGES_KEY, JSON.stringify(messages.slice(0, MAX_MESSAGES)));
+}
+
+async function getStats(kv) {
+  const raw = await kv.get(STATS_KEY);
+  let stats = { pv: 0, plays: 0 };
+  if (raw) {
+    try {
+      stats = JSON.parse(raw);
+    } catch {}
+  }
+  const uvRaw = await kv.get(UV_KEY);
+  let uv = 0;
+  if (uvRaw) {
+    try {
+      const set = new Set(JSON.parse(uvRaw));
+      uv = set.size;
+    } catch {}
+  }
+  return { pv: Number(stats.pv || 0), uv, plays: Number(stats.plays || 0) };
+}
+
+async function recordVisit(kv, request) {
+  const stats = await getStats(kv);
+  stats.pv += 1;
+  await kv.put(STATS_KEY, JSON.stringify(stats));
+
+  const ip = getClientIp(request);
+  const ua = request.headers.get('user-agent') || '';
+  const visitorId = hash(`${ip}:${ua}`);
+
+  const uvRaw = await kv.get(UV_KEY);
+  let uvSet = new Set();
+  if (uvRaw) {
+    try {
+      uvSet = new Set(JSON.parse(uvRaw));
+    } catch {}
+  }
+  uvSet.add(visitorId);
+  await kv.put(UV_KEY, JSON.stringify([...uvSet]));
+}
+
+async function recordPlay(kv) {
+  const stats = await getStats(kv);
+  stats.plays += 1;
+  await kv.put(STATS_KEY, JSON.stringify(stats));
+}
+
+export default {
+  async fetch(request, env, ctx) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
+    const url = new URL(request.url);
+    const kv = env.WENRUO_KV;
+
+    if (url.pathname === '/api/health') {
+      return json({ status: 'ok', time: Date.now() });
+    }
+
+    if (url.pathname === '/api/messages') {
+      if (request.method === 'GET') {
+        const messages = await getMessages(kv);
+        return json({ messages });
+      }
+
+      if (request.method === 'POST') {
+        const body = await readJson(request);
+        const name = String(body.name || '').trim();
+        const message = String(body.message || '').trim();
+
+        if (!name || !message) {
+          return error('Name and message are required', 400);
+        }
+        if (name.length > 30 || message.length > 500) {
+          return error('Content too long', 400);
+        }
+
+        const entry = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          name: name.slice(0, 30),
+          message: message.slice(0, 500),
+          time: new Date().toISOString(),
+        };
+
+        const messages = await getMessages(kv);
+        messages.unshift(entry);
+        await saveMessages(kv, messages);
+        return json({ success: true, entry });
+      }
+
+      return error('Method not allowed', 405);
+    }
+
+    if (url.pathname === '/api/stats') {
+      if (request.method === 'GET') {
+        const stats = await getStats(kv);
+        return json(stats);
+      }
+
+      if (request.method === 'POST') {
+        const body = await readJson(request);
+        const type = body.type === 'play' ? 'play' : 'visit';
+
+        if (type === 'visit') {
+          await recordVisit(kv, request);
+        } else {
+          await recordPlay(kv);
+        }
+
+        const stats = await getStats(kv);
+        return json(stats);
+      }
+
+      return error('Method not allowed', 405);
+    }
+
+    if (url.pathname === '/api/contact') {
+      if (request.method === 'POST') {
+        const body = await readJson(request);
+        const name = String(body.name || '').trim();
+        const email = String(body.email || '').trim();
+        const subject = String(body.subject || '').trim();
+        const message = String(body.message || '').trim();
+
+        if (!name || !email || !message) {
+          return error('Name, email and message are required', 400);
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          return error('Invalid email', 400);
+        }
+
+        const entry = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          name: name.slice(0, 30),
+          email: email.slice(0, 100),
+          subject: subject.slice(0, 100),
+          message: message.slice(0, 2000),
+          time: new Date().toISOString(),
+        };
+
+        const raw = await kv.get('contacts');
+        let contacts = [];
+        if (raw) {
+          try { contacts = JSON.parse(raw); } catch {}
+        }
+        contacts.unshift(entry);
+        if (contacts.length > 100) contacts.length = 100;
+        await kv.put('contacts', JSON.stringify(contacts));
+
+        return json({ success: true });
+      }
+
+      return error('Method not allowed', 405);
+    }
+
+    return error('Not found', 404);
+  },
+};
