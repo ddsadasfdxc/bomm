@@ -7,26 +7,23 @@
   <title>星河五子棋 · Gomoku</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Nunito:wght@400;700;800&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Nunito:wght@400;700;800;900&family=Noto+Serif+SC:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --g-bg: #0b0c15;
-      --g-panel: rgba(255,255,255,0.06);
-      --g-border: rgba(255,255,255,0.12);
+      --g-bg: #06070e;
+      --g-panel: rgba(255,255,255,0.05);
+      --g-border: rgba(255,255,255,0.1);
       --g-text: #f3f0ff;
-      --g-sub: #b8b3d1;
-      --g-p1: #7ee7ff;
-      --g-p2: #ff7eb3;
+      --g-sub: #9d98b8;
+      --g-p1: #5ee7ff;
+      --g-p2: #ff6fa8;
       --g-gold: #ffd36e;
       --g-win: #00f5a0;
-      --shadow-sm: 0 4px 14px rgba(0,0,0,0.25);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.45);
-      --wood-light: #d4a76a;
-      --wood-mid: #b8863e;
-      --wood-dark: #8b5e3c;
-      --wood-deep: #5c3820;
+      --shadow-sm: 0 4px 14px rgba(0,0,0,0.3);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
       --ease-out: cubic-bezier(0.22,1,0.36,1);
       --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+      --ease-smooth: cubic-bezier(0.65,0,0.35,1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -41,16 +38,16 @@
     /* ── 场景层 ── */
     #sceneLayer {
       position: fixed; inset: 0; z-index: 0;
-      transition: opacity 0.8s ease, transform 1s var(--ease-out);
+      transition: opacity 0.8s ease, transform 1.2s var(--ease-out), filter 0.6s ease;
       background-size: cover; background-position: center;
     }
     #sceneLayer::after {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(11,12,21,0.4) 60%, rgba(11,12,21,0.88) 100%);
+      background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(6,7,14,0.35) 55%, rgba(6,7,14,0.92) 100%);
       pointer-events: none;
     }
-    .scene-fade-out { opacity: 0; transform: scale(1.06); }
-    .scene-active { opacity: 1; transform: scale(1); }
+    .scene-fade-out { opacity: 0; transform: scale(1.08); filter: blur(6px); }
+    .scene-active { opacity: 1; transform: scale(1); filter: blur(0); }
 
     /* ── 星空画布 ── */
     #starCanvas {
@@ -62,16 +59,112 @@
       position: fixed; inset: 0; z-index: 3; pointer-events: none;
     }
 
+    /* ── 帷幕过渡层 ── */
+    #curtainL, #curtainR {
+      position: fixed; top: 0; bottom: 0; width: 50%; z-index: 8;
+      background: linear-gradient(135deg, #0a0c18 0%, #12152a 50%, #0a0c18 100%);
+      transition: transform 0.7s var(--ease-smooth);
+      pointer-events: none;
+    }
+    #curtainL { left: 0; transform: translateX(-100%); border-right: 1px solid rgba(126,231,255,0.15); }
+    #curtainR { right: 0; transform: translateX(100%); border-left: 1px solid rgba(255,126,179,0.15); }
+    #curtainL::after, #curtainR::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 60px;
+      background: linear-gradient(90deg, transparent, rgba(126,231,255,0.08), transparent);
+    }
+    #curtainL::after { right: 0; }
+    #curtainR::after { left: 0; }
+    .curtain-close #curtainL { transform: translateX(0); }
+    .curtain-close #curtainR { transform: translateX(0); }
+
     /* ══════════════ 封面 ══════════════ */
     #cover {
       position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
-      background: radial-gradient(ellipse at 50% 0%, rgba(126,231,255,0.1), transparent 55%),
-                  radial-gradient(ellipse at 80% 80%, rgba(255,126,179,0.08), transparent 45%),
+      background: radial-gradient(ellipse at 50% 0%, rgba(94,231,255,0.08), transparent 55%),
+                  radial-gradient(ellipse at 80% 80%, rgba(255,111,168,0.06), transparent 45%),
+                  radial-gradient(ellipse at 20% 70%, rgba(192,132,252,0.05), transparent 40%),
                   var(--g-bg);
-      transition: opacity 0.6s ease, transform 0.7s var(--ease-out);
+      transition: opacity 0.7s ease, transform 0.8s var(--ease-out), filter 0.6s ease;
+      overflow: hidden;
     }
-    #cover.hidden { opacity: 0; pointer-events: none; transform: scale(1.05); }
+    #cover.hidden { opacity: 0; pointer-events: none; transform: scale(1.08); filter: blur(10px); }
+
+    /* 漂浮棋子 */
+    .float-piece {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      opacity: 0.25;
+    }
+    .float-piece.fp1 {
+      width: 60px; height: 60px;
+      background: radial-gradient(circle at 35% 35%, #f0fdff, var(--g-p1) 50%, #1a6f8a);
+      box-shadow: 0 0 30px rgba(94,231,255,0.3), inset 0 -3px 6px rgba(0,0,0,0.3);
+      animation: float1 12s ease-in-out infinite;
+    }
+    .float-piece.fp2 {
+      width: 45px; height: 45px;
+      background: radial-gradient(circle at 35% 35%, #fff0f5, var(--g-p2) 50%, #8a1a4a);
+      box-shadow: 0 0 25px rgba(255,111,168,0.3), inset 0 -3px 6px rgba(0,0,0,0.3);
+      animation: float2 15s ease-in-out infinite;
+    }
+    .float-piece.fp3 {
+      width: 35px; height: 35px;
+      background: radial-gradient(circle at 35% 35%, #fffef0, var(--g-gold) 50%, #8a6a1a);
+      box-shadow: 0 0 20px rgba(255,211,110,0.25), inset 0 -2px 4px rgba(0,0,0,0.3);
+      animation: float3 18s ease-in-out infinite;
+    }
+    .float-piece.fp4 {
+      width: 80px; height: 80px;
+      background: radial-gradient(circle at 35% 35%, #f0fdff, var(--g-p1) 50%, #1a6f8a);
+      box-shadow: 0 0 40px rgba(94,231,255,0.2), inset 0 -4px 8px rgba(0,0,0,0.3);
+      animation: float4 20s ease-in-out infinite; opacity: 0.12;
+    }
+    .float-piece.fp5 {
+      width: 50px; height: 50px;
+      background: radial-gradient(circle at 35% 35%, #fff0f5, #c084fc 50%, #4a1a6a);
+      box-shadow: 0 0 25px rgba(192,132,252,0.25), inset 0 -3px 6px rgba(0,0,0,0.3);
+      animation: float5 14s ease-in-out infinite;
+    }
+    .float-piece.fp6 {
+      width: 28px; height: 28px;
+      background: radial-gradient(circle at 35% 35%, #fff, var(--g-p1) 50%, #1a6f8a);
+      box-shadow: 0 0 15px rgba(94,231,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.3);
+      animation: float6 10s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(-30vw,-20vh) rotate(0deg)} 50%{transform:translate(25vw,15vh) rotate(180deg)} }
+    @keyframes float2 { 0%,100%{transform:translate(30vw,20vh) rotate(0deg)} 50%{transform:translate(-20vw,-15vh) rotate(-200deg)} }
+    @keyframes float3 { 0%,100%{transform:translate(-20vw,30vh) rotate(0deg)} 33%{transform:translate(15vw,-10vh) rotate(120deg)} 66%{transform:translate(25vw,20vh) rotate(240deg)} }
+    @keyframes float4 { 0%,100%{transform:translate(20vw,-25vh) rotate(0deg) scale(1)} 50%{transform:translate(-25vw,20vh) rotate(360deg) scale(1.1)} }
+    @keyframes float5 { 0%,100%{transform:translate(-35vw,10vh) rotate(0deg)} 50%{transform:translate(30vw,-25vh) rotate(-180deg)} }
+    @keyframes float6 { 0%,100%{transform:translate(10vw,-30vh) rotate(0deg)} 50%{transform:translate(-15vw,25vh) rotate(270deg)} }
+
+    /* 装饰光环 */
+    .halo {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .halo.h1 {
+      width: 500px; height: 500px;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: haloSpin 40s linear infinite;
+      border-color: rgba(94,231,255,0.06);
+      box-shadow: inset 0 0 80px rgba(94,231,255,0.03);
+    }
+    .halo.h2 {
+      width: 700px; height: 700px;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: haloSpin 60s linear infinite reverse;
+      border-color: rgba(255,111,168,0.04);
+    }
+    .halo.h3 {
+      width: 350px; height: 350px;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: haloPulse 4s ease-in-out infinite;
+      border-color: rgba(255,211,110,0.08);
+      box-shadow: 0 0 60px rgba(255,211,110,0.05);
+    }
+    @keyframes haloSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    @keyframes haloPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5} 50%{transform:translate(-50%,-50%) scale(1.15);opacity:1} }
 
     .cover-constellation {
       position: absolute; inset: 0; pointer-events: none;
@@ -87,223 +180,401 @@
         radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.5), transparent),
         radial-gradient(1px 1px at 35% 40%, rgba(255,255,255,0.4), transparent);
       background-size: 200px 200px;
-      animation: twinkleStars 3s ease-in-out infinite alternate;
+      animation: twinkleStars 4s ease-in-out infinite alternate;
     }
     @keyframes twinkleStars {
-      0% { opacity: 0.5; }
+      0% { opacity: 0.4; }
       100% { opacity: 1; }
     }
 
     .cover-logo {
-      font-size: clamp(3rem, 10vw, 5.5rem);
-      font-weight: 800;
-      letter-spacing: 0.06em;
+      font-size: clamp(2.8rem, 9vw, 5.2rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
       text-align: center;
-      line-height: 1.2;
-      margin-bottom: 0.15em;
+      line-height: 1.15;
+      margin-bottom: 0.1em;
       position: relative;
       z-index: 1;
     }
     .cover-logo .t1 {
-      background: linear-gradient(135deg, #fff 0%, var(--g-p1) 40%, var(--g-p2) 100%);
+      background: linear-gradient(135deg, #fff 0%, var(--g-p1) 25%, #c084fc 50%, var(--g-p2) 75%, #fff 100%);
+      background-size: 300% 300%;
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      filter: drop-shadow(0 0 30px rgba(126,231,255,0.3));
+      filter: drop-shadow(0 0 40px rgba(94,231,255,0.25));
+      animation: gradientFlow 6s ease infinite;
+    }
+    @keyframes gradientFlow {
+      0%,100% { background-position: 0% 50%; filter: drop-shadow(0 0 40px rgba(94,231,255,0.25)); }
+      50% { background-position: 100% 50%; filter: drop-shadow(0 0 50px rgba(255,111,168,0.3)); }
     }
     .cover-logo .t2 {
       display: block;
-      font-size: 0.55em;
+      font-size: 0.42em;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.35em;
       background: linear-gradient(90deg, var(--g-gold), #fff, var(--g-gold));
+      background-size: 200% 100%;
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: shimmer 3s ease-in-out infinite;
+      animation: shimmer 3s ease-in-out infinite, goldShine 4s linear infinite;
+      margin-top: 0.3em;
     }
     @keyframes shimmer {
       0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.5); }
+      50% { filter: brightness(1.6); }
+    }
+    @keyframes goldShine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     .cover-sub {
       color: var(--g-sub);
-      font-size: 1.05rem;
-      margin-bottom: 3em;
+      font-size: 1rem;
+      margin-bottom: 2.8em;
       text-align: center;
       position: relative;
       z-index: 1;
+      letter-spacing: 0.15em;
+      animation: subFade 2s ease-out;
     }
+    @keyframes subFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cover-sub::before, .cover-sub::after {
+      content: ''; display: inline-block; width: 30px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--g-sub));
+      vertical-align: middle; margin: 0 12px;
+    }
+    .cover-sub::after { background: linear-gradient(90deg, var(--g-sub), transparent); }
+
     .cover-options {
       display: flex; flex-direction: column; gap: 14px;
-      width: min(340px, 92vw);
+      width: min(320px, 88vw);
       position: relative; z-index: 1;
     }
     .cover-btn {
-      padding: 16px 24px;
-      border-radius: 20px;
-      border: 1px solid var(--g-border);
-      background: var(--g-panel);
+      padding: 18px 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
       color: var(--g-text);
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
+      letter-spacing: 0.05em;
       cursor: pointer;
-      backdrop-filter: blur(16px);
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
       position: relative;
       overflow: hidden;
     }
-    .cover-btn::after {
+    .cover-btn::before {
       content: ''; position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.3s;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.6s ease;
     }
-    .cover-btn:hover::after { opacity: 1; }
-    .cover-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(126,231,255,0.35); }
+    .cover-btn:hover::before { left: 100%; }
+    .cover-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(94,231,255,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+      border-color: rgba(94,231,255,0.3);
+    }
+    .cover-btn:active { transform: translateY(-1px) scale(0.99); }
     .cover-btn.primary {
-      background: linear-gradient(135deg, rgba(126,231,255,0.15), rgba(255,126,179,0.1));
-      border-color: rgba(126,231,255,0.25);
+      background: linear-gradient(135deg, rgba(94,231,255,0.15), rgba(192,132,252,0.12), rgba(255,111,168,0.1));
+      border-color: rgba(94,231,255,0.2);
     }
-    .cover-btn .btn-icon { margin-right: 8px; }
+    .cover-btn.primary:hover {
+      border-color: rgba(94,231,255,0.5);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 40px rgba(94,231,255,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .cover-btn .btn-icon { margin-right: 10px; font-size: 1.2em; }
 
     /* ── 难度弹窗 ── */
     #difficultyModal {
       position: fixed; inset: 0; z-index: 11;
       display: none; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(8px);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
       transition: opacity 0.3s;
       opacity: 0;
     }
     #difficultyModal.open { display: flex; opacity: 1; }
     .difficulty-card {
       width: min(380px, 90vw);
-      padding: 28px;
-      border-radius: 26px;
-      background: rgba(18,20,30,0.94);
-      border: 1px solid var(--g-border);
-      box-shadow: var(--shadow-lg), 0 0 60px rgba(126,231,255,0.08);
-      animation: modalIn 0.4s var(--ease-spring);
+      padding: 32px 28px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(22,24,40,0.96), rgba(14,16,28,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow-lg), 0 0 80px rgba(94,231,255,0.06);
+      animation: modalIn 0.5s var(--ease-spring);
+      position: relative;
+      overflow: hidden;
+    }
+    .difficulty-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(94,231,255,0.3), rgba(255,111,168,0.3), transparent);
     }
     @keyframes modalIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.85) translateY(20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
     }
-    .difficulty-card h3 { margin-bottom: 20px; text-align: center; font-size: 1.25rem; font-weight: 800; }
-    .difficulty-row { display: flex; gap: 12px; margin-bottom: 18px; align-items: center; }
-    .difficulty-row label { font-size: 0.85rem; color: var(--g-sub); width: 60px; flex-shrink: 0; }
+    .difficulty-card h3 { margin-bottom: 24px; text-align: center; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.05em; }
+    .difficulty-row { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+    .difficulty-row label { font-size: 0.85rem; color: var(--g-sub); width: 56px; flex-shrink: 0; }
     .difficulty-btns { display: flex; gap: 8px; flex: 1; }
     .difficulty-btns button {
-      flex: 1; padding: 10px 0; border-radius: 12px;
-      border: 1px solid var(--g-border);
-      background: rgba(255,255,255,0.04);
+      flex: 1; padding: 11px 0; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
       color: var(--g-sub); cursor: pointer;
-      font-size: 0.9rem; font-weight: 700;
+      font-size: 0.88rem; font-weight: 700;
       transition: all 0.25s ease;
     }
+    .difficulty-btns button:hover { border-color: rgba(94,231,255,0.2); color: var(--g-text); }
     .difficulty-btns button.active {
-      background: rgba(126,231,255,0.18);
+      background: linear-gradient(135deg, rgba(94,231,255,0.2), rgba(192,132,252,0.15));
       color: var(--g-text);
-      border-color: rgba(126,231,255,0.4);
-      box-shadow: 0 0 16px rgba(126,231,255,0.15);
+      border-color: rgba(94,231,255,0.35);
+      box-shadow: 0 0 20px rgba(94,231,255,0.12);
     }
     .difficulty-start {
-      width: 100%; padding: 14px; border-radius: 16px; border: none;
-      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
-      color: #0b0c15; font-weight: 800; font-size: 1.05rem;
-      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%; padding: 15px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, var(--g-p1), #c084fc, var(--g-p2));
+      background-size: 200% 200%;
+      color: #06070e; font-weight: 800; font-size: 1.05rem;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+      letter-spacing: 0.08em;
+      animation: gradientBtn 4s ease infinite;
     }
-    .difficulty-start:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(126,231,255,0.3); }
+    @keyframes gradientBtn {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .difficulty-start:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(94,231,255,0.3); }
 
     /* ══════════════ 游戏界面 ══════════════ */
     #game {
       position: fixed; inset: 0; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
-      padding: 12px 12px 16px;
+      padding: 10px 12px 14px;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.6s ease;
     }
     #game.visible { opacity: 1; pointer-events: auto; }
+    #game.shake { animation: screenShake 0.5s ease; }
+    @keyframes screenShake {
+      0%,100% { transform: translate(0,0); }
+      10% { transform: translate(-4px, 2px); }
+      20% { transform: translate(4px, -2px); }
+      30% { transform: translate(-3px, -3px); }
+      40% { transform: translate(3px, 3px); }
+      50% { transform: translate(-2px, 2px); }
+      60% { transform: translate(2px, -2px); }
+      70% { transform: translate(-1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+    }
 
     .game-header {
-      width: 100%; max-width: 640px;
+      width: 100%; max-width: 580px;
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 8px;
-      padding: 8px 14px;
+      padding: 7px 14px;
       border-radius: 16px;
-      background: rgba(20,22,38,0.65);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(14px);
+      background: rgba(14,16,30,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
     .game-title {
-      font-size: 1.1rem; font-weight: 800; letter-spacing: 0.05em;
+      font-size: 1rem; font-weight: 800; letter-spacing: 0.08em;
       background: linear-gradient(90deg, var(--g-p1), var(--g-p2));
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-    .game-controls { display: flex; gap: 6px; }
+    .game-controls { display: flex; gap: 5px; }
     .icon-btn {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
       color: var(--g-text);
-      font-size: 1.05rem; cursor: pointer;
+      font-size: 0.95rem; cursor: pointer;
       display: grid; place-items: center;
       backdrop-filter: blur(8px);
-      transition: transform 0.15s ease, box-shadow 0.2s, background 0.2s;
+      transition: transform 0.2s var(--ease-spring), box-shadow 0.25s, background 0.25s, border-color 0.25s;
     }
-    .icon-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); box-shadow: 0 0 14px rgba(126,231,255,0.2); }
-    .icon-btn:active { transform: scale(0.93); }
+    .icon-btn:hover { transform: scale(1.12); background: rgba(255,255,255,0.08); border-color: rgba(94,231,255,0.25); box-shadow: 0 0 16px rgba(94,231,255,0.15); }
+    .icon-btn:active { transform: scale(0.92); }
+
+    /* ── 记分板 ── */
+    .scoreboard {
+      max-width: 580px; width: 100%;
+      display: flex; align-items: stretch; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .player-card {
+      flex: 1;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(14,16,30,0.6);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(16px);
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .player-card.active {
+      border-color: rgba(94,231,255,0.3);
+      box-shadow: 0 0 24px rgba(94,231,255,0.1), inset 0 0 20px rgba(94,231,255,0.03);
+    }
+    .player-card.p2.active {
+      border-color: rgba(255,111,168,0.3);
+      box-shadow: 0 0 24px rgba(255,111,168,0.1), inset 0 0 20px rgba(255,111,168,0.03);
+    }
+    .player-card.active::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--g-p1), transparent);
+      animation: activeGlow 2s ease-in-out infinite;
+    }
+    .player-card.p2.active::before {
+      background: linear-gradient(90deg, transparent, var(--g-p2), transparent);
+    }
+    @keyframes activeGlow {
+      0%,100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .pc-avatar {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 1.1rem;
+    }
+    .pc-avatar.p1 {
+      background: radial-gradient(circle at 35% 35%, #f0fdff, var(--g-p1) 50%, #1a6f8a);
+      box-shadow: 0 0 16px rgba(94,231,255,0.3);
+    }
+    .pc-avatar.p2 {
+      background: radial-gradient(circle at 35% 35%, #fff0f5, var(--g-p2) 50%, #8a1a4a);
+      box-shadow: 0 0 16px rgba(255,111,168,0.3);
+    }
+    .pc-info { flex: 1; min-width: 0; }
+    .pc-name { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; }
+    .pc-stats { display: flex; gap: 10px; font-size: 0.7rem; color: var(--g-sub); margin-top: 2px; }
+    .pc-stats span { display: flex; align-items: center; gap: 3px; }
+    .pc-timer {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--g-sub);
+      min-width: 48px;
+      text-align: right;
+      transition: color 0.3s;
+    }
+    .player-card.active .pc-timer { color: var(--g-text); }
+    .round-center {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(14,16,30,0.6);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(16px);
+      min-width: 56px;
+    }
+    .round-label { font-size: 0.6rem; color: var(--g-sub); letter-spacing: 0.1em; text-transform: uppercase; }
+    .round-num { font-size: 1.3rem; font-weight: 900; font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, var(--g-gold), #fff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
 
     /* ── 状态栏 ── */
     .status-bar {
-      max-width: 640px; width: 100%;
+      max-width: 580px; width: 100%;
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px;
-      padding: 10px 16px;
-      border-radius: 14px;
-      background: rgba(20,22,38,0.55);
-      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 8px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(14,16,30,0.5);
+      border: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
-    .status-player { display: flex; align-items: center; gap: 8px; }
-    .status-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .status-player { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; animation: dotPulse 1.5s ease-in-out infinite; }
     .status-dot.p1 { background: var(--g-p1); box-shadow: 0 0 12px var(--g-p1); }
     .status-dot.p2 { background: var(--g-p2); box-shadow: 0 0 12px var(--g-p2); }
-    #sceneName { color: var(--g-sub); font-size: 0.82rem; }
+    @keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+    #sceneName { color: var(--g-sub); font-size: 0.78rem; display: flex; align-items: center; gap: 5px; }
 
     /* ── 棋盘外框 ── */
+    .board-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* 坐标标签 */
+    .coord-label {
+      position: absolute;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: rgba(200,170,120,0.5);
+      font-family: 'Orbitron', monospace;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .coord-top, .coord-bottom {
+      display: flex;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .coord-top { top: 2px; }
+    .coord-bottom { bottom: 2px; }
+    .coord-top span, .coord-bottom span {
+      width: calc(100% / 15);
+      text-align: center;
+    }
+    .coord-left, .coord-right {
+      display: flex; flex-direction: column;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .coord-left { left: 2px; }
+    .coord-right { right: 2px; }
+    .coord-left span, .coord-right span {
+      height: calc(100% / 15);
+      display: flex; align-items: center;
+    }
+    .coord-left span { justify-content: center; }
+    .coord-right span { justify-content: center; }
+
     .board-frame {
       position: relative;
-      padding: 16px;
-      border-radius: 24px;
-      background: linear-gradient(145deg, #3d2b1a 0%, #2a1a0e 30%, #1f1208 60%, #2a1a0e 100%);
-      border: 2px solid rgba(180,130,80,0.25);
+      padding: 20px;
+      border-radius: 22px;
+      background: linear-gradient(145deg, #3d2b1a 0%, #2a1a0e 25%, #1f1208 50%, #2a1a0e 75%, #3d2b1a 100%);
+      border: 2px solid rgba(180,130,80,0.2);
       box-shadow:
-        0 0 0 1px rgba(0,0,0,0.5),
-        0 8px 32px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        inset 0 -2px 6px rgba(0,0,0,0.4);
-      /* 木纹纹理 */
-      background-image:
-        repeating-linear-gradient(
-          2deg,
-          transparent,
-          transparent 2px,
-          rgba(0,0,0,0.08) 3px,
-          transparent 3px,
-          transparent 6px
-        ),
-        repeating-linear-gradient(
-          88deg,
-          transparent,
-          transparent 1px,
-          rgba(255,255,255,0.02) 2px,
-          transparent 2px,
-          transparent 5px
-        );
+        0 0 0 1px rgba(0,0,0,0.6),
+        0 12px 40px rgba(0,0,0,0.55),
+        0 0 60px rgba(94,231,255,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        inset 0 -3px 8px rgba(0,0,0,0.5);
     }
     .board-frame::before {
-      content: ''; position: absolute; inset: 6px; border-radius: 18px;
-      border: 1px solid rgba(200,160,100,0.12);
+      content: ''; position: absolute; inset: 5px; border-radius: 17px;
+      border: 1px solid rgba(200,160,100,0.1);
+      pointer-events: none; z-index: 0;
+    }
+    .board-frame::after {
+      content: ''; position: absolute; inset: 0; border-radius: 22px;
+      background:
+        repeating-linear-gradient(2deg, transparent, transparent 3px, rgba(0,0,0,0.04) 4px, transparent 4px, transparent 8px),
+        repeating-linear-gradient(88deg, transparent, transparent 2px, rgba(255,255,255,0.015) 3px, transparent 3px, transparent 7px);
       pointer-events: none; z-index: 0;
     }
 
@@ -312,49 +583,65 @@
       display: grid;
       grid-template-columns: repeat(15, 1fr);
       grid-template-rows: repeat(15, 1fr);
-      width: min(76vw, 76vh - 170px, 500px);
-      height: min(76vw, 76vh - 170px, 500px);
+      width: min(72vw, 68vh - 200px, 460px);
+      height: min(72vw, 68vh - 200px, 460px);
       position: relative;
       background:
-        /* 木纹 */
-        linear-gradient(90deg, rgba(212,167,106,0.5) 0%, rgba(184,134,62,0.4) 3%, rgba(200,150,80,0.4) 6%, rgba(184,134,62,0.4) 9%, rgba(176,120,50,0.4) 12%, rgba(184,134,62,0.4) 15%, rgba(190,142,70,0.4) 18%, rgba(184,134,62,0.4) 21%, rgba(200,155,85,0.4) 24%, rgba(184,134,62,0.4) 27%, rgba(172,118,48,0.4) 30%, rgba(184,134,62,0.4) 33%, rgba(184,134,62,0.4) 36%, rgba(200,155,85,0.4) 39%, rgba(184,134,62,0.4) 42%, rgba(184,134,62,0.4) 45%, rgba(172,118,48,0.4) 48%, rgba(184,134,62,0.4) 51%, rgba(200,155,85,0.4) 54%, rgba(190,142,70,0.4) 56%, rgba(184,134,62,0.4) 59%, rgba(190,142,70,0.4) 62%, rgba(200,155,85,0.4) 65%, rgba(184,134,62,0.4) 67%, rgba(190,142,70,0.4) 69%, rgba(184,134,62,0.4) 72%, rgba(196,148,75,0.4) 75%, rgba(184,134,62,0.4) 78%, rgba(184,134,62,0.4) 81%, rgba(200,155,85,0.4) 84%, rgba(184,134,62,0.4) 87%, rgba(200,155,85,0.4) 90%, rgba(184,134,62,0.4) 93%, rgba(196,148,75,0.4) 96%, rgba(184,134,62,0.4) 100%),
-        linear-gradient(180deg, rgba(212,167,106,0.2) 0%, rgba(184,134,62,0.15) 3%, rgba(200,150,80,0.15) 6%, rgba(184,134,62,0.15) 9%, rgba(176,120,50,0.15) 12%, rgba(184,134,62,0.15) 15%, rgba(190,142,70,0.15) 18%, rgba(184,134,62,0.15) 21%, rgba(200,155,85,0.15) 24%, rgba(184,134,62,0.15) 27%, rgba(172,118,48,0.15) 30%, rgba(184,134,62,0.15) 33%, rgba(184,134,62,0.15) 36%, rgba(200,155,85,0.15) 39%, rgba(184,134,62,0.15) 42%, rgba(184,134,62,0.15) 45%, rgba(172,118,48,0.15) 48%, rgba(184,134,62,0.15) 51%, rgba(200,155,85,0.15) 54%, rgba(190,142,70,0.15) 56%, rgba(184,134,62,0.15) 59%, rgba(190,142,70,0.15) 62%, rgba(200,155,85,0.15) 65%, rgba(184,134,62,0.15) 67%, rgba(190,142,70,0.15) 69%, rgba(184,134,62,0.15) 72%, rgba(196,148,75,0.15) 75%, rgba(184,134,62,0.15) 78%, rgba(184,134,62,0.15) 81%, rgba(200,155,85,0.15) 84%, rgba(184,134,62,0.15) 87%, rgba(200,155,85,0.15) 90%, rgba(184,134,62,0.15) 93%, rgba(196,148,75,0.15) 96%, rgba(184,134,62,0.15) 100%),
+        radial-gradient(ellipse at 30% 20%, rgba(220,180,120,0.15), transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(140,90,40,0.2), transparent 50%),
+        linear-gradient(90deg, rgba(212,167,106,0.45) 0%, rgba(184,134,62,0.35) 3%, rgba(200,150,80,0.35) 6%, rgba(184,134,62,0.35) 9%, rgba(176,120,50,0.35) 12%, rgba(184,134,62,0.35) 15%, rgba(190,142,70,0.35) 18%, rgba(184,134,62,0.35) 21%, rgba(200,155,85,0.35) 24%, rgba(184,134,62,0.35) 27%, rgba(172,118,48,0.35) 30%, rgba(184,134,62,0.35) 33%, rgba(184,134,62,0.35) 36%, rgba(200,155,85,0.35) 39%, rgba(184,134,62,0.35) 42%, rgba(184,134,62,0.35) 45%, rgba(172,118,48,0.35) 48%, rgba(184,134,62,0.35) 51%, rgba(200,155,85,0.35) 54%, rgba(190,142,70,0.35) 56%, rgba(184,134,62,0.35) 59%, rgba(190,142,70,0.35) 62%, rgba(200,155,85,0.35) 65%, rgba(184,134,62,0.35) 67%, rgba(190,142,70,0.35) 69%, rgba(184,134,62,0.35) 72%, rgba(196,148,75,0.35) 75%, rgba(184,134,62,0.35) 78%, rgba(184,134,62,0.35) 81%, rgba(200,155,85,0.35) 84%, rgba(184,134,62,0.35) 87%, rgba(200,155,85,0.35) 90%, rgba(184,134,62,0.35) 93%, rgba(196,148,75,0.35) 96%, rgba(184,134,62,0.35) 100%),
+        linear-gradient(180deg, rgba(212,167,106,0.15) 0%, rgba(184,134,62,0.12) 50%, rgba(140,90,40,0.18) 100%),
         #5c3820;
-      background-color: #4a2c14;
+      background-color: #5c3820;
       background-blend-mode: overlay, overlay, normal;
-      border-radius: 4px;
-      box-shadow: inset 0 2px 12px rgba(0,0,0,0.3);
+      border-radius: 3px;
+      box-shadow: inset 0 3px 15px rgba(0,0,0,0.35), inset 0 -1px 4px rgba(0,0,0,0.2);
+      z-index: 1;
     }
 
     .cell {
       position: relative; cursor: pointer;
     }
     .cell::before, .cell::after {
-      content: ''; position: absolute; background: rgba(0,0,0,0.28); pointer-events: none;
+      content: ''; position: absolute; background: rgba(0,0,0,0.3); pointer-events: none;
     }
     .cell::before { width: 1px; height: 100%; left: 50%; top: 0; }
     .cell::after { width: 100%; height: 1px; top: 50%; left: 0; }
-    .cell:nth-child(15n+1)::before { left: 50%; }
-    .cell:nth-child(-n+15)::after { top: 50%; }
+    .cell:first-child::before { left: 50%; }
+    .cell:nth-last-child(-n+15)::after { top: 50%; }
 
-    .cell:hover::after {
-      content: '';
+    /* 悬停预览棋子 */
+    .hover-piece {
       position: absolute;
-      inset: 0;
-      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+      width: 80%; height: 80%;
+      left: 10%; top: 10%;
       border-radius: 50%;
+      z-index: 2;
       pointer-events: none;
-      z-index: 1;
+      animation: hoverFade 0.15s ease;
+    }
+    @keyframes hoverFade {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .hover-piece.p1-turn {
+      background: radial-gradient(circle at 35% 35%, rgba(240,253,255,0.4), rgba(94,231,255,0.22) 50%, rgba(26,111,138,0.12));
+      box-shadow: 0 0 14px rgba(94,231,255,0.2);
+    }
+    .hover-piece.p2-turn {
+      background: radial-gradient(circle at 35% 35%, rgba(255,240,245,0.4), rgba(255,111,168,0.22) 50%, rgba(138,26,74,0.12));
+      box-shadow: 0 0 14px rgba(255,111,168,0.2);
     }
 
     .star-point {
       position: absolute;
-      width: 8px; height: 8px;
-      background: rgba(0,0,0,0.5);
+      width: 7px; height: 7px;
+      background: rgba(0,0,0,0.55);
       border-radius: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.08), 0 0 0 1px rgba(0,0,0,0.1);
+      z-index: 1;
     }
 
     /* ── 棋子 ── */
@@ -364,149 +651,222 @@
       left: 9%; top: 9%;
       border-radius: 50%;
       transform: scale(0);
-      animation: placePiece 0.4s var(--ease-spring) forwards;
+      animation: placePiece 0.45s var(--ease-spring) forwards;
       z-index: 3;
       pointer-events: none;
     }
     @keyframes placePiece {
-      to { transform: scale(1); }
+      0% { transform: scale(0) translateY(-8px); }
+      60% { transform: scale(1.12) translateY(0); }
+      100% { transform: scale(1) translateY(0); }
     }
     .piece.p1 {
-      background: radial-gradient(circle at 35% 35%, #f0fdff 0%, var(--g-p1) 40%, #2a8fbf 85%, #1a5f80 100%);
+      background: radial-gradient(circle at 32% 30%, #f0fdff 0%, #d0f7ff 20%, var(--g-p1) 50%, #2a9fbf 80%, #166078 100%);
       box-shadow:
-        0 2px 6px rgba(0,0,0,0.4),
-        0 0 18px rgba(126,231,255,0.5),
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+        0 3px 8px rgba(0,0,0,0.45),
+        0 0 22px rgba(94,231,255,0.45),
+        inset 0 -3px 6px rgba(0,0,0,0.25),
+        inset 0 2px 4px rgba(255,255,255,0.5);
     }
     .piece.p2 {
-      background: radial-gradient(circle at 35% 35%, #fff0f5 0%, var(--g-p2) 40%, #c73d7a 85%, #8a1a4a 100%);
+      background: radial-gradient(circle at 32% 30%, #fff0f5 0%, #ffd9e6 20%, var(--g-p2) 50%, #c73d7a 80%, #7a1640 100%);
       box-shadow:
-        0 2px 6px rgba(0,0,0,0.4),
-        0 0 18px rgba(255,126,179,0.5),
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+        0 3px 8px rgba(0,0,0,0.45),
+        0 0 22px rgba(255,111,168,0.45),
+        inset 0 -3px 6px rgba(0,0,0,0.25),
+        inset 0 2px 4px rgba(255,255,255,0.5);
     }
     .piece.latest::after {
       content: '';
       position: absolute;
-      inset: 26%;
-      border: 2.5px solid rgba(255,255,255,0.9);
+      inset: 28%;
+      border: 2px solid rgba(255,255,255,0.85);
       border-radius: 50%;
-      animation: latestPulse 1.8s ease-in-out infinite;
+      animation: latestPulse 2s ease-in-out infinite;
     }
     @keyframes latestPulse {
-      0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.4); opacity: 0; }
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.5); opacity: 0; }
     }
 
     /* ── 胜利线 ── */
     #winLine {
       position: absolute; z-index: 4;
-      height: 4px;
-      background: linear-gradient(90deg, var(--g-win), #fff, var(--g-win));
-      border-radius: 2px;
-      box-shadow: 0 0 20px var(--g-win), 0 0 50px var(--g-win), 0 0 80px rgba(0,245,160,0.3);
+      height: 5px;
+      background: linear-gradient(90deg, var(--g-win), #fff, var(--g-gold), #fff, var(--g-win));
+      background-size: 200% 100%;
+      border-radius: 3px;
+      box-shadow: 0 0 25px var(--g-win), 0 0 60px var(--g-win), 0 0 100px rgba(0,245,160,0.4);
       transform-origin: 0 50%;
       opacity: 0;
       pointer-events: none;
+      animation: winLineShimmer 2s linear infinite;
     }
-    .winLine-anim { animation: winLineDraw 0.7s var(--ease-out) forwards; }
+    @keyframes winLineShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .winLine-anim { animation: winLineDraw 0.8s var(--ease-out) forwards, winLineShimmer 2s linear infinite 0.8s; }
     @keyframes winLineDraw {
-      to { opacity: 1; }
+      from { opacity: 0; transform: rotate(var(--angle)) scaleX(0); }
+      to { opacity: 1; transform: rotate(var(--angle)) scaleX(1); }
     }
 
     /* ── 特效文字 ── */
     .fx-text {
       position: fixed;
-      left: 50%; top: 50%;
+      left: 50%; top: 42%;
       transform: translate(-50%, -50%) scale(0.5);
-      font-size: clamp(1.5rem, 5vw, 2.8rem);
-      font-weight: 800; letter-spacing: 0.06em;
+      font-size: clamp(1.4rem, 4.5vw, 2.6rem);
+      font-weight: 900; letter-spacing: 0.08em;
       pointer-events: none; z-index: 20; opacity: 0;
-      text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+      text-shadow: 0 0 30px currentColor, 0 0 60px currentColor, 0 0 90px currentColor;
       white-space: nowrap;
     }
     .fx-text.show {
-      animation: fxPop 1s var(--ease-out) forwards;
+      animation: fxPop 1.2s var(--ease-out) forwards;
     }
     @keyframes fxPop {
-      0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
-      15% { transform: translate(-50%, -60%) scale(1.2); opacity: 1; }
-      70% { transform: translate(-50%, -70%) scale(1); opacity: 1; }
-      100% { transform: translate(-50%, -85%) scale(0.85); opacity: 0; }
+      0% { transform: translate(-50%, -50%) scale(0.3) rotate(-5deg); opacity: 0; }
+      15% { transform: translate(-50%, -55%) scale(1.25) rotate(2deg); opacity: 1; }
+      30% { transform: translate(-50%, -58%) scale(0.95) rotate(-1deg); opacity: 1; }
+      70% { transform: translate(-50%, -65%) scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: translate(-50%, -75%) scale(0.8) rotate(0deg); opacity: 0; }
+    }
+
+    /* 胜利大字 */
+    .victory-title {
+      position: fixed;
+      left: 50%; top: 28%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      pointer-events: none; z-index: 19;
+      text-align: center;
+      opacity: 0;
+    }
+    .victory-title.show {
+      animation: victoryIn 1.5s var(--ease-spring) forwards;
+    }
+    .victory-title.p1 {
+      background: linear-gradient(135deg, #fff, var(--g-p1), #c084fc, var(--g-p1), #fff);
+      background-size: 300% 300%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 40px rgba(94,231,255,0.5));
+      animation: victoryIn 1.5s var(--ease-spring) forwards, gradientFlow 3s ease infinite 1.5s;
+    }
+    .victory-title.p2 {
+      background: linear-gradient(135deg, #fff, var(--g-p2), #c084fc, var(--g-p2), #fff);
+      background-size: 300% 300%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 40px rgba(255,111,168,0.5));
+      animation: victoryIn 1.5s var(--ease-spring) forwards, gradientFlow 3s ease infinite 1.5s;
+    }
+    @keyframes victoryIn {
+      0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.15) rotate(3deg); opacity: 1; }
+      70% { transform: translate(-50%, -50%) scale(0.95) rotate(-1deg); }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
     }
 
     /* ── 结果弹窗 ── */
     #resultModal {
       position: fixed; inset: 0; z-index: 15;
       display: none; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(16px);
     }
     #resultModal.open { display: flex; }
     .result-card {
       text-align: center;
-      padding: 36px 30px;
-      border-radius: 28px;
-      background: rgba(16,18,28,0.95);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: var(--shadow-lg), 0 0 80px rgba(126,231,255,0.06);
+      padding: 40px 32px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(20,22,38,0.97), rgba(10,12,22,0.99));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: var(--shadow-lg), 0 0 100px rgba(94,231,255,0.05);
       width: min(360px, 88vw);
-      animation: resultIn 0.5s var(--ease-spring);
+      animation: resultIn 0.6s var(--ease-spring);
+      position: relative;
+      overflow: hidden;
+    }
+    .result-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--g-p1), var(--g-gold), var(--g-p2), transparent);
     }
     @keyframes resultIn {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.8) translateY(30px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
     }
-    .result-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
-    .result-icon { font-size: 3rem; margin-bottom: 8px; }
-    .result-sub { color: var(--g-sub); margin-bottom: 22px; font-size: 0.95rem; }
+    .result-icon { font-size: 3.5rem; margin-bottom: 10px; animation: iconBounce 1s var(--ease-spring) 0.3s both; }
+    @keyframes iconBounce {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .result-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 6px; letter-spacing: 0.05em; }
+    .result-sub { color: var(--g-sub); margin-bottom: 26px; font-size: 0.92rem; letter-spacing: 0.05em; }
     .result-btns { display: flex; gap: 12px; justify-content: center; }
     .result-btns button {
-      padding: 12px 24px; border-radius: 14px;
+      padding: 13px 26px; border-radius: 14px;
       border: 1px solid var(--g-border);
       background: var(--g-panel);
       color: var(--g-text); font-weight: 700; cursor: pointer;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
+      font-size: 0.92rem;
+      transition: all 0.25s ease;
+      letter-spacing: 0.03em;
     }
-    .result-btns button:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .result-btns button:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: rgba(94,231,255,0.2); }
     .result-btns .primary {
-      background: linear-gradient(135deg, var(--g-p1), var(--g-p2));
-      color: #0b0c15; border: none;
+      background: linear-gradient(135deg, var(--g-p1), #c084fc, var(--g-p2));
+      background-size: 200% 200%;
+      color: #06070e; border: none;
+      animation: gradientBtn 4s ease infinite;
     }
+    .result-btns .primary:hover { box-shadow: 0 0 30px rgba(94,231,255,0.3); }
 
     /* ── 底部提示 ── */
     .hint {
-      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
-      font-size: 0.75rem; color: var(--g-sub); opacity: 0.6;
+      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+      font-size: 0.7rem; color: var(--g-sub); opacity: 0.4;
       z-index: 5; text-align: center;
-      pointer-events: none;
+      pointer-events: none; letter-spacing: 0.1em;
     }
 
     /* ── 音效开关 ── */
     #soundToggle {
-      position: fixed; bottom: 14px; right: 14px;
+      position: fixed; bottom: 12px; right: 12px;
       z-index: 6;
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: var(--g-text); font-size: 1rem;
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--g-text); font-size: 0.95rem;
       cursor: pointer;
       display: grid; place-items: center;
-      backdrop-filter: blur(8px);
-      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
     }
-    #soundToggle:hover { transform: scale(1.1); }
-    #soundToggle.muted { opacity: 0.4; }
+    #soundToggle:hover { transform: scale(1.12); border-color: rgba(94,231,255,0.2); }
+    #soundToggle.muted { opacity: 0.35; }
 
     @media (max-width: 640px) {
       .game-header { padding: 6px 10px; }
-      .icon-btn { width: 30px; height: 30px; font-size: 0.9rem; }
-      .board-frame { padding: 10px; border-radius: 18px; }
-      #board { width: min(84vw, 84vh - 150px, 400px); height: min(84vw, 84vh - 150px, 400px); }
-      .status-bar { padding: 8px 12px; font-size: 0.8rem; }
+      .icon-btn { width: 28px; height: 28px; font-size: 0.85rem; }
+      .board-frame { padding: 14px; border-radius: 16px; }
+      #board { width: min(82vw, 72vh - 180px, 380px); height: min(82vw, 72vh - 180px, 380px); }
+      .status-bar { padding: 7px 12px; font-size: 0.78rem; }
+      .player-card { padding: 8px 10px; }
+      .pc-avatar { width: 30px; height: 30px; font-size: 0.95rem; }
+      .pc-name { font-size: 0.75rem; }
+      .pc-stats { font-size: 0.62rem; }
+      .pc-timer { font-size: 0.82rem; min-width: 40px; }
+      .round-center { padding: 6px 8px; min-width: 44px; }
+      .round-num { font-size: 1.1rem; }
+      .coord-label { font-size: 0.5rem; }
+      .float-piece { display: none; }
+    }
+    @media (max-height: 640px) {
+      .scoreboard { display: none; }
     }
   </style>
 </head>
@@ -515,17 +875,33 @@
   <canvas id="starCanvas"></canvas>
   <canvas id="particleCanvas"></canvas>
 
+  <!-- 帷幕过渡 -->
+  <div id="curtainL"></div>
+  <div id="curtainR"></div>
+
   <!-- ══════════════ 封面 ══════════════ -->
   <div id="cover">
     <div class="cover-constellation"></div>
+    <!-- 装饰光环 -->
+    <div class="halo h1"></div>
+    <div class="halo h2"></div>
+    <div class="halo h3"></div>
+    <!-- 漂浮棋子 -->
+    <div class="float-piece fp1" style="top:15%;left:10%;animation-delay:0s"></div>
+    <div class="float-piece fp2" style="top:60%;left:80%;animation-delay:-3s"></div>
+    <div class="float-piece fp3" style="top:75%;left:15%;animation-delay:-6s"></div>
+    <div class="float-piece fp4" style="top:20%;left:75%;animation-delay:-9s"></div>
+    <div class="float-piece fp5" style="top:40%;left:5%;animation-delay:-4s"></div>
+    <div class="float-piece fp6" style="top:80%;left:60%;animation-delay:-7s"></div>
+
     <h1 class="cover-logo">
       <span class="t1">星河五子棋</span>
       <span class="t2">STELLAR GOMOKU</span>
     </h1>
     <p class="cover-sub">在宇宙深处，落下一颗会发光的棋子</p>
     <div class="cover-options">
-      <button class="cover-btn primary" data-mode="pvp"><span class="btn-icon">✨</span> 双人对战</button>
-      <button class="cover-btn" data-mode="pve"><span class="btn-icon">🤖</span> 人机对战</button>
+      <button class="cover-btn primary" data-mode="pvp"><span class="btn-icon">✨</span>双人对战</button>
+      <button class="cover-btn" data-mode="pve"><span class="btn-icon">🤖</span>人机对战</button>
     </div>
   </div>
 
@@ -563,13 +939,45 @@
         <button class="icon-btn" id="homeBtn" title="返回封面">🏠</button>
       </div>
     </div>
+
+    <!-- 记分板 -->
+    <div class="scoreboard">
+      <div class="player-card p1 active" id="p1Card">
+        <div class="pc-avatar p1"></div>
+        <div class="pc-info">
+          <div class="pc-name">蓝方</div>
+          <div class="pc-stats">
+            <span>🏆 <b id="p1Wins">0</b></span>
+            <span>● <b id="p1Moves">0</b></span>
+          </div>
+        </div>
+        <div class="pc-timer" id="p1Timer">00:00</div>
+      </div>
+      <div class="round-center">
+        <div class="round-label">ROUND</div>
+        <div class="round-num" id="roundNum">1</div>
+      </div>
+      <div class="player-card p2" id="p2Card">
+        <div class="pc-timer" id="p2Timer">00:00</div>
+        <div class="pc-info" style="text-align:right">
+          <div class="pc-name" id="p2Name">粉方</div>
+          <div class="pc-stats" style="justify-content:flex-end">
+            <span>🏆 <b id="p2Wins">0</b></span>
+            <span>● <b id="p2Moves">0</b></span>
+          </div>
+        </div>
+        <div class="pc-avatar p2"></div>
+      </div>
+    </div>
+
     <div class="status-bar">
       <div class="status-player" id="statusText">
         <span class="status-dot p1"></span>
         <span>蓝方回合</span>
       </div>
-      <div id="sceneName">星云海</div>
+      <div id="sceneName">✦ 星云海</div>
     </div>
+
     <div class="board-frame">
       <div id="board"></div>
       <div id="winLine"></div>
@@ -577,6 +985,7 @@
   </div>
 
   <div class="fx-text" id="fxText"></div>
+  <div class="victory-title" id="victoryTitle"></div>
 
   <!-- ══════════════ 结果弹窗 ══════════════ -->
   <div id="resultModal">
@@ -598,48 +1007,52 @@
     (function() {
       const SIZE = 15;
       const EMPTY = 0, P1 = 1, P2 = 2;
+      const COLS = 'ABCDEFGHIJKLMNO';
 
       /* ══════════════ 场景系统 ══════════════ */
       const scenes = [
         {
           name: '星云海',
-          bg: 'radial-gradient(ellipse at 20% 30%, #1a2a5c 0%, #0b0c15 55%), linear-gradient(135deg, #0f1328, #161a38)',
-          accent: '#7ee7ff',
-          pColors: ['#7ee7ff', '#b8b3d1', '#ffffff', '#a0d8ff'],
-          glow: 'rgba(126,231,255,0.06)'
+          bg: 'radial-gradient(ellipse at 20% 30%, #1a2a5c 0%, #06070e 55%), linear-gradient(135deg, #0f1328, #161a38)',
+          accent: '#5ee7ff',
+          glow: 'rgba(94,231,255,0.06)'
         },
         {
           name: '极光雪原',
-          bg: 'linear-gradient(180deg, #0d1f1c 0%, #0b0c15 55%), radial-gradient(ellipse at 50% 100%, rgba(0,245,160,0.15), transparent 60%)',
+          bg: 'linear-gradient(180deg, #0d1f1c 0%, #06070e 55%), radial-gradient(ellipse at 50% 100%, rgba(0,245,160,0.15), transparent 60%)',
           accent: '#00f5a0',
-          pColors: ['#00f5a0', '#a6ffcb', '#ffffff', '#80ffc0'],
           glow: 'rgba(0,245,160,0.06)'
         },
         {
           name: '绯红深渊',
-          bg: 'radial-gradient(ellipse at 80% 20%, #2a0f1a 0%, #0b0c15 60%), linear-gradient(135deg, #1a0b12, #0b0c15)',
-          accent: '#ff7eb3',
-          pColors: ['#ff7eb3', '#ffb3d1', '#ffd36e', '#ff9ec4'],
-          glow: 'rgba(255,126,179,0.06)'
+          bg: 'radial-gradient(ellipse at 80% 20%, #2a0f1a 0%, #06070e 60%), linear-gradient(135deg, #1a0b12, #06070e)',
+          accent: '#ff6fa8',
+          glow: 'rgba(255,111,168,0.06)'
         },
         {
           name: '熔金古城',
-          bg: 'radial-gradient(ellipse at 50% 80%, rgba(255,211,110,0.12), transparent 50%), linear-gradient(135deg, #1f180b, #0b0c15)',
+          bg: 'radial-gradient(ellipse at 50% 80%, rgba(255,211,110,0.12), transparent 50%), linear-gradient(135deg, #1f180b, #06070e)',
           accent: '#ffd36e',
-          pColors: ['#ffd36e', '#ff9e64', '#ffffff', '#ffe0a0'],
           glow: 'rgba(255,211,110,0.06)'
         },
         {
           name: '量子迷雾',
-          bg: 'radial-gradient(ellipse at 50% 50%, rgba(192,132,252,0.08), transparent 60%), linear-gradient(135deg, #1a1030, #0b0c15)',
+          bg: 'radial-gradient(ellipse at 50% 50%, rgba(192,132,252,0.08), transparent 60%), linear-gradient(135deg, #1a1030, #06070e)',
           accent: '#c084fc',
-          pColors: ['#c084fc', '#e0c0ff', '#7ee7ff', '#ffffff'],
           glow: 'rgba(192,132,252,0.06)'
+        },
+        {
+          name: '翠影秘境',
+          bg: 'radial-gradient(ellipse at 30% 70%, rgba(52,211,153,0.1), transparent 50%), linear-gradient(135deg, #0a1f18, #06070e)',
+          accent: '#34d399',
+          glow: 'rgba(52,211,153,0.06)'
         }
       ];
 
       let board = [], current = P1, mode = 'pvp', diff = 'medium', first = 'player';
       let gameOver = false, history = [], sceneIndex = 0, aiThinking = false, soundOn = true;
+      let wins = { p1: 0, p2: 0 }, round = 1;
+      let p1Time = 0, p2Time = 0, moveStart = 0, timerInterval = null;
 
       const cover = document.getElementById('cover');
       const difficultyModal = document.getElementById('difficultyModal');
@@ -652,6 +1065,9 @@
       const resultModal = document.getElementById('resultModal');
       const winLine = document.getElementById('winLine');
       const soundToggle = document.getElementById('soundToggle');
+      const victoryTitle = document.getElementById('victoryTitle');
+      const p1Card = document.getElementById('p1Card');
+      const p2Card = document.getElementById('p2Card');
 
       /* ══════════════ Web Audio 音效引擎 ══════════════ */
       let audioCtx = null;
@@ -673,74 +1089,109 @@
           const t = ctx.currentTime;
 
           if (type === 'place') {
-            // 木质落子声
             const osc = ctx.createOscillator();
             const g = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(800, t);
-            osc.frequency.exponentialRampToValueAtTime(200, t + 0.08);
-            g.gain.setValueAtTime(0.11, t);
-            g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+            osc.frequency.exponentialRampToValueAtTime(180, t + 0.09);
+            g.gain.setValueAtTime(0.12, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
             osc.connect(g); g.connect(ctx.destination);
-            osc.start(t); osc.stop(t + 0.12);
-            // 共鸣
+            osc.start(t); osc.stop(t + 0.14);
             const osc2 = ctx.createOscillator();
             const g2 = ctx.createGain();
             osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(1200, t);
-            osc2.frequency.exponentialRampToValueAtTime(400, t + 0.06);
+            osc2.frequency.setValueAtTime(1400, t);
+            osc2.frequency.exponentialRampToValueAtTime(350, t + 0.06);
             g2.gain.setValueAtTime(0.04, t);
-            g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+            g2.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
             osc2.connect(g2); g2.connect(ctx.destination);
-            osc2.start(t); osc2.stop(t + 0.1);
+            osc2.start(t); osc2.stop(t + 0.11);
+            // 低频冲击
+            const osc3 = ctx.createOscillator();
+            const g3 = ctx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(120, t);
+            osc3.frequency.exponentialRampToValueAtTime(50, t + 0.08);
+            g3.gain.setValueAtTime(0.08, t);
+            g3.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+            osc3.connect(g3); g3.connect(ctx.destination);
+            osc3.start(t); osc3.stop(t + 0.12);
           } else if (type === 'special') {
-            // 组合特效音：上升琶音
-            [523, 659, 784, 1047].forEach((freq, i) => {
+            [523, 659, 784, 1047, 1319].forEach((freq, i) => {
               const osc = ctx.createOscillator();
               const g = ctx.createGain();
               osc.type = 'triangle';
               osc.frequency.value = freq;
-              const start = t + i * 0.06;
-              g.gain.setValueAtTime(0.08, start);
-              g.gain.exponentialRampToValueAtTime(0.001, start + 0.2);
+              const start = t + i * 0.05;
+              g.gain.setValueAtTime(0.07, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
               osc.connect(g); g.connect(ctx.destination);
-              osc.start(start); osc.stop(start + 0.22);
+              osc.start(start); osc.stop(start + 0.27);
             });
           } else if (type === 'victory') {
-            // 胜利旋律
-            [523, 659, 784, 1047, 784, 1047].forEach((freq, i) => {
+            // 胜利旋律：更华丽
+            const melody = [523, 659, 784, 1047, 784, 1047, 1319, 1047];
+            melody.forEach((freq, i) => {
               const osc = ctx.createOscillator();
               const g = ctx.createGain();
-              osc.type = 'triangle';
+              osc.type = i % 2 === 0 ? 'triangle' : 'sine';
               osc.frequency.value = freq;
-              const start = t + i * 0.1;
-              g.gain.setValueAtTime(0.1, start);
-              g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+              const start = t + i * 0.09;
+              g.gain.setValueAtTime(0.09, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
               osc.connect(g); g.connect(ctx.destination);
-              osc.start(start); osc.stop(start + 0.4);
+              osc.start(start); osc.stop(start + 0.45);
+            });
+            // 和弦垫底
+            [262, 330, 392].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.value = freq;
+              g.gain.setValueAtTime(0.03, t);
+              g.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+              osc.connect(g); g.connect(ctx.destination);
+              osc.start(t); osc.stop(t + 1.3);
             });
           } else if (type === 'click') {
             const osc = ctx.createOscillator();
             const g = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(1800, t);
-            g.gain.setValueAtTime(0.06, t);
+            g.gain.setValueAtTime(0.05, t);
             g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
             osc.connect(g); g.connect(ctx.destination);
             osc.start(t); osc.stop(t + 0.05);
           } else if (type === 'scene') {
-            // 场景切换：风铃音
-            [880, 1100, 1320].forEach((freq, i) => {
+            [880, 1100, 1320, 1760].forEach((freq, i) => {
               const osc = ctx.createOscillator();
               const g = ctx.createGain();
               osc.type = 'sine';
               osc.frequency.value = freq;
-              const start = t + i * 0.05;
-              g.gain.setValueAtTime(0.06, start);
-              g.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+              const start = t + i * 0.04;
+              g.gain.setValueAtTime(0.05, start);
+              g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
               osc.connect(g); g.connect(ctx.destination);
-              osc.start(start); osc.stop(start + 0.35);
+              osc.start(start); osc.stop(start + 0.4);
             });
+          } else if (type === 'confetti') {
+            // 彩纸音效：短促的沙沙声
+            const bufferSize = ctx.sampleRate * 0.15;
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+            }
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            const g = ctx.createGain();
+            g.gain.value = 0.06;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 2000;
+            source.connect(filter); filter.connect(g); g.connect(ctx.destination);
+            source.start(t);
           }
         } catch (e) {}
       }
@@ -760,7 +1211,7 @@
         starCanvas.width = window.innerWidth;
         starCanvas.height = window.innerHeight;
         stars = [];
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 150; i++) {
           stars.push({
             x: Math.random() * starCanvas.width,
             y: Math.random() * starCanvas.height,
@@ -782,8 +1233,8 @@
           starCtx.fill();
           if (s.r > 1.1) {
             starCtx.beginPath();
-            starCtx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
-            starCtx.fillStyle = `rgba(200,220,255,${alpha * 0.15})`;
+            starCtx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+            starCtx.fillStyle = `rgba(200,220,255,${alpha * 0.1})`;
             starCtx.fill();
           }
         }
@@ -796,7 +1247,7 @@
       /* ══════════════ 粒子系统 ══════════════ */
       const pCanvas = document.getElementById('particleCanvas');
       const pCtx = pCanvas.getContext('2d');
-      let pW, pH, particles = [];
+      let pW, pH, particles = [], confetti = [];
       function resizeParticles() {
         pW = pCanvas.width = window.innerWidth;
         pH = pCanvas.height = window.innerHeight;
@@ -817,63 +1268,173 @@
           size: Math.random() * 3.5 + 1
         });
       }
-      function burstParticles(color, count = 50) {
-        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+      function burstParticles(color, count = 50, x, y) {
+        const cx = x !== undefined ? x : window.innerWidth / 2;
+        const cy = y !== undefined ? y : window.innerHeight / 2;
         for (let i = 0; i < count; i++) spawnParticle(cx, cy, color, 1.5);
       }
       function ringParticles(color, count = 30) {
         const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
         for (let i = 0; i < count; i++) {
           const angle = (Math.PI * 2 * i) / count;
-          const r = 80 + Math.random() * 40;
           particles.push({
             x: cx + Math.cos(angle) * 10,
             y: cy + Math.sin(angle) * 10,
-            vx: Math.cos(angle) * 4,
-            vy: Math.sin(angle) * 4,
-            life: 1, decay: 0.015, color, size: 2
+            vx: Math.cos(angle) * 5,
+            vy: Math.sin(angle) * 5,
+            life: 1, decay: 0.012, color, size: 2.5
           });
         }
       }
+
+      /* 烟花 */
+      function firework(x, y, color) {
+        const count = 40 + Math.floor(Math.random() * 20);
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + Math.random() * 0.2;
+          const spd = 2 + Math.random() * 4;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * spd,
+            vy: Math.sin(angle) * spd,
+            life: 1,
+            decay: 0.008 + Math.random() * 0.008,
+            color,
+            size: Math.random() * 3 + 1.5
+          });
+        }
+        // 白色闪光核心
+        for (let i = 0; i < 10; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * 1.5,
+            vy: Math.sin(angle) * 1.5,
+            life: 1, decay: 0.03,
+            color: '#ffffff', size: 3
+          });
+        }
+      }
+
+      /* 彩纸 */
+      function spawnConfetti(count = 120) {
+        const colors = ['#5ee7ff', '#ff6fa8', '#ffd36e', '#c084fc', '#00f5a0', '#ffffff', '#ff9e64'];
+        for (let i = 0; i < count; i++) {
+          confetti.push({
+            x: Math.random() * pW,
+            y: -20 - Math.random() * 200,
+            vx: (Math.random() - 0.5) * 3,
+            vy: 2 + Math.random() * 4,
+            rot: Math.random() * Math.PI * 2,
+            vrot: (Math.random() - 0.5) * 0.2,
+            w: Math.random() * 8 + 4,
+            h: Math.random() * 12 + 6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            life: 1,
+            wobble: Math.random() * Math.PI * 2,
+            wobbleSpeed: 0.03 + Math.random() * 0.03
+          });
+        }
+      }
+
       function drawParticles() {
         pCtx.clearRect(0, 0, pW, pH);
-        const s = scenes[sceneIndex];
+
+        // 普通粒子
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.x += p.vx; p.y += p.vy;
-          p.vy += 0.06;
+          p.vy += 0.05;
+          p.vx *= 0.99;
           p.life -= p.decay;
           if (p.life <= 0) { particles.splice(i, 1); continue; }
-          pCtx.globalAlpha = p.life * 0.8;
+          pCtx.globalAlpha = p.life * 0.85;
           pCtx.fillStyle = p.color;
           pCtx.shadowColor = p.color;
-          pCtx.shadowBlur = 6 * p.life;
+          pCtx.shadowBlur = 8 * p.life;
           pCtx.beginPath();
           pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           pCtx.fill();
         }
+
+        // 彩纸
+        for (let i = confetti.length - 1; i >= 0; i--) {
+          const c = confetti[i];
+          c.wobble += c.wobbleSpeed;
+          c.x += c.vx + Math.sin(c.wobble) * 1.5;
+          c.y += c.vy;
+          c.rot += c.vrot;
+          if (c.y > pH + 30) { confetti.splice(i, 1); continue; }
+          pCtx.save();
+          pCtx.translate(c.x, c.y);
+          pCtx.rotate(c.rot);
+          pCtx.globalAlpha = 0.85;
+          pCtx.fillStyle = c.color;
+          pCtx.shadowColor = c.color;
+          pCtx.shadowBlur = 4;
+          pCtx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+          pCtx.restore();
+        }
+
         pCtx.shadowBlur = 0;
         pCtx.globalAlpha = 1;
         requestAnimationFrame(drawParticles);
       }
       drawParticles();
 
-      /* ══════════════ 场景切换 ══════════════ */
+      /* ══════════════ 计时器 ══════════════ */
+      function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+      }
+      function startTimer() {
+        stopTimer();
+        moveStart = Date.now();
+        timerInterval = setInterval(() => {
+          if (gameOver || aiThinking) return;
+          const elapsed = Math.floor((Date.now() - moveStart) / 1000);
+          if (current === P1) {
+            p1Time++;
+            document.getElementById('p1Timer').textContent = formatTime(p1Time);
+          } else {
+            p2Time++;
+            document.getElementById('p2Timer').textContent = formatTime(p2Time);
+          }
+        }, 1000);
+      }
+      function stopTimer() {
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      }
+      function resetTimers() {
+        p1Time = 0; p2Time = 0;
+        document.getElementById('p1Timer').textContent = '00:00';
+        document.getElementById('p2Timer').textContent = '00:00';
+      }
+
+      /* ══════════════ 场景切换（帷幕） ══════════════ */
+      let curtainBusy = false;
       function applyScene(i, transition = true) {
         sceneIndex = ((i % scenes.length) + scenes.length) % scenes.length;
         const s = scenes[sceneIndex];
-        sceneName.textContent = s.name;
         if (transition) {
-          sceneLayer.classList.remove('scene-active');
-          sceneLayer.classList.add('scene-fade-out');
+          if (curtainBusy) return;
+          curtainBusy = true;
           playSound('scene');
+          // 帷幕合上
+          document.body.classList.add('curtain-close');
           setTimeout(() => {
             sceneLayer.style.background = s.bg;
-            sceneLayer.classList.remove('scene-fade-out');
-            sceneLayer.classList.add('scene-active');
-          }, 450);
+            sceneName.textContent = '✦ ' + s.name;
+            // 帷幕打开
+            setTimeout(() => {
+              document.body.classList.remove('curtain-close');
+              setTimeout(() => { curtainBusy = false; }, 700);
+            }, 200);
+          }, 500);
         } else {
           sceneLayer.style.background = s.bg;
+          sceneName.textContent = '✦ ' + s.name;
         }
       }
       function nextScene() { applyScene(sceneIndex + 1); }
@@ -887,6 +1448,9 @@
         history = [];
         winLine.style.opacity = '0';
         winLine.className = '';
+        victoryTitle.classList.remove('show', 'p1', 'p2');
+        resetTimers();
+
         for (let r = 0; r < SIZE; r++) {
           for (let c = 0; c < SIZE; c++) {
             const cell = document.createElement('div');
@@ -894,25 +1458,58 @@
             cell.dataset.r = r;
             cell.dataset.c = c;
             cell.addEventListener('click', () => onCellClick(r, c));
+            cell.addEventListener('mouseenter', () => onCellHover(r, c));
+            cell.addEventListener('mouseleave', () => clearHover());
             boardEl.appendChild(cell);
           }
         }
         // 星位
-        [3, 7, 11].forEach(r => {
-          [3, 7, 11].forEach(c => {
-            const star = document.createElement('div');
-            star.className = 'star-point';
-            star.style.left = (c + 0.5) / SIZE * 100 + '%';
-            star.style.top = (r + 0.5) / SIZE * 100 + '%';
-            boardEl.appendChild(star);
-          });
+        [[3,3],[3,7],[3,11],[7,3],[7,7],[7,11],[11,3],[11,7],[11,11]].forEach(([r,c]) => {
+          const star = document.createElement('div');
+          star.className = 'star-point';
+          star.style.left = (c + 0.5) / SIZE * 100 + '%';
+          star.style.top = (r + 0.5) / SIZE * 100 + '%';
+          boardEl.appendChild(star);
         });
         updateStatus();
+        updateScoreboard();
+        startTimer();
+      }
+
+      let hoverEl = null;
+      function onCellHover(r, c) {
+        if (gameOver || board[r][c] !== EMPTY || aiThinking) return;
+        if (mode === 'pve' && current === P2) return;
+        clearHover();
+        const cell = boardEl.children[r * SIZE + c];
+        hoverEl = document.createElement('div');
+        hoverEl.className = 'hover-piece ' + (current === P1 ? 'p1-turn' : 'p2-turn');
+        cell.appendChild(hoverEl);
+      }
+      function clearHover() {
+        if (hoverEl && hoverEl.parentNode) hoverEl.parentNode.removeChild(hoverEl);
+        hoverEl = null;
       }
 
       function updateStatus() {
         const isP1 = current === P1;
-        statusText.innerHTML = `<span class="status-dot ${isP1 ? 'p1' : 'p2'}"></span><span>${isP1 ? '蓝方' : '粉方'}${mode === 'pve' && current === P2 ? ' (电脑)' : ''}回合</span>`;
+        const name = mode === 'pve' && current === P2 ? '电脑' : (isP1 ? '蓝方' : '粉方');
+        statusText.innerHTML = `<span class="status-dot ${isP1 ? 'p1' : 'p2'}"></span><span>${name}回合</span>`;
+        // 更新记分板高亮
+        p1Card.classList.toggle('active', isP1);
+        p2Card.classList.toggle('active', !isP1);
+        // P2名称
+        document.getElementById('p2Name').textContent = mode === 'pve' ? '电脑' : '粉方';
+      }
+
+      function updateScoreboard() {
+        document.getElementById('p1Wins').textContent = wins.p1;
+        document.getElementById('p2Wins').textContent = wins.p2;
+        const p1Count = history.filter(h => h.player === P1).length;
+        const p2Count = history.filter(h => h.player === P2).length;
+        document.getElementById('p1Moves').textContent = p1Count;
+        document.getElementById('p2Moves').textContent = p2Count;
+        document.getElementById('roundNum').textContent = round;
       }
 
       function placePiece(r, c, player) {
@@ -925,14 +1522,16 @@
         cell.appendChild(piece);
         document.querySelectorAll('.piece.latest').forEach(p => p.classList.remove('latest'));
         piece.classList.add('latest');
+        clearHover();
         playSound('place');
         // 落子粒子
         const rect = cell.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
-        for (let i = 0; i < 8; i++) {
-          spawnParticle(cx, cy, player === P1 ? '#7ee7ff' : '#ff7eb3', 0.5);
+        for (let i = 0; i < 10; i++) {
+          spawnParticle(cx, cy, player === P1 ? '#5ee7ff' : '#ff6fa8', 0.6);
         }
+        updateScoreboard();
         checkSpecialFX(r, c, player);
         return true;
       }
@@ -950,9 +1549,11 @@
         if (history.length === SIZE * SIZE) { endGame(null); return; }
         current = current === P1 ? P2 : P1;
         updateStatus();
+        startTimer();
         if (mode === 'pve' && current === P2 && !gameOver) {
           aiThinking = true;
-          setTimeout(() => { aiMove(); }, 380);
+          stopTimer();
+          setTimeout(() => { aiMove(); }, 420);
         }
       }
 
@@ -965,6 +1566,7 @@
           afterMove(move.r, move.c);
         }
         aiThinking = false;
+        if (!gameOver) startTimer();
       }
 
       function checkWin(r, c) {
@@ -991,19 +1593,51 @@
 
       function endGame(line) {
         gameOver = true;
+        stopTimer();
         if (line) {
           drawWinLine(line);
           const winner = board[line[0][0]][line[0][1]];
-          const color = winner === P1 ? '#7ee7ff' : '#ff7eb3';
-          showFX(winner === P1 ? '五子连珠 · 蓝方胜！' : '五子连珠 · 粉方胜！');
-          burstParticles(color, 80);
+          const color = winner === P1 ? '#5ee7ff' : '#ff6fa8';
+          if (winner === P1) wins.p1++; else wins.p2++;
+          updateScoreboard();
+
+          // 全屏震动
+          game.classList.add('shake');
+          setTimeout(() => game.classList.remove('shake'), 500);
+
+          // 大字胜利标题
+          victoryTitle.textContent = winner === P1 ? '蓝方胜' : (mode === 'pve' ? '电脑胜' : '粉方胜');
+          victoryTitle.classList.add('show', winner === P1 ? 'p1' : 'p2');
+
+          // 特效文字
+          showFX('✦ 五子连珠 ✦');
+
+          // 粒子爆发
+          burstParticles(color, 60);
           ringParticles(color, 40);
-          playSound('victory');
+
+          // 烟花
+          setTimeout(() => {
+            firework(pW * 0.25, pH * 0.3, color);
+            playSound('victory');
+          }, 200);
+          setTimeout(() => firework(pW * 0.75, pH * 0.25, '#ffd36e'), 500);
+          setTimeout(() => firework(pW * 0.5, pH * 0.2, '#c084fc'), 800);
+          setTimeout(() => firework(pW * 0.3, pH * 0.35, '#00f5a0'), 1100);
+          setTimeout(() => firework(pW * 0.7, pH * 0.35, color), 1400);
+
+          // 彩纸
+          setTimeout(() => {
+            spawnConfetti(150);
+            playSound('confetti');
+          }, 300);
+          setTimeout(() => spawnConfetti(80), 1000);
+
           setTimeout(() => {
             const title = winner === P1 ? '✨ 蓝方胜' : (mode === 'pve' ? '🤖 电脑胜' : '💖 粉方胜');
             document.getElementById('resultIcon').textContent = winner === P1 ? '🏆' : (mode === 'pve' ? '🤖' : '🏆');
             openResult(title, '五子连珠，星河为之黯淡');
-          }, 1400);
+          }, 2200);
         } else {
           document.getElementById('resultIcon').textContent = '🤝';
           openResult('平局', '棋盘满载，胜负未分');
@@ -1022,11 +1656,13 @@
         const y2 = cell2.offsetTop + cell2.offsetHeight / 2;
         const dx = x2 - x1, dy = y2 - y1;
         const len = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        const angle = Math.atan2(dy, dx);
         winLine.style.width = len + 'px';
         winLine.style.left = x1 + 'px';
         winLine.style.top = y1 + 'px';
-        winLine.style.transform = `rotate(${angle}deg)`;
+        winLine.style.setProperty('--angle', angle + 'rad');
+        winLine.style.transformOrigin = '0 50%';
+        winLine.style.transform = `rotate(${angle}rad)`;
         winLine.className = 'winLine-anim';
       }
 
@@ -1056,7 +1692,7 @@
         for (const pat of patterns) {
           if (pat.check(r, c, player)) {
             showFX(pat.text);
-            burstParticles(player === P1 ? '#7ee7ff' : '#ff7eb3', 30);
+            burstParticles(player === P1 ? '#5ee7ff' : '#ff6fa8', 25);
             break;
           }
         }
@@ -1192,10 +1828,25 @@
       function startGame() {
         cover.classList.add('hidden');
         game.classList.add('visible');
+        round = 1;
+        wins = { p1: 0, p2: 0 };
         initBoard();
         applyScene(sceneIndex, false);
         if (mode === 'pve' && first === 'ai') {
           current = P2;
+          updateStatus();
+          aiThinking = true;
+          setTimeout(() => { aiMove(); }, 600);
+        }
+      }
+
+      function doRestart() {
+        closeResult();
+        round++;
+        initBoard();
+        if (mode === 'pve' && first === 'ai') {
+          current = P2;
+          updateStatus();
           aiThinking = true;
           setTimeout(() => { aiMove(); }, 500);
         }
@@ -1204,16 +1855,11 @@
       document.getElementById('sceneBtn').addEventListener('click', nextScene);
       document.getElementById('restartBtn').addEventListener('click', () => {
         playSound('click');
-        closeResult();
-        initBoard();
-        if (mode === 'pve' && first === 'ai') {
-          current = P2;
-          aiThinking = true;
-          setTimeout(() => { aiMove(); }, 400);
-        }
+        doRestart();
       });
       document.getElementById('homeBtn').addEventListener('click', () => {
         playSound('click');
+        stopTimer();
         cover.classList.remove('hidden');
         game.classList.remove('visible');
         closeResult();
@@ -1221,16 +1867,11 @@
       document.getElementById('undoBtn').addEventListener('click', undo);
       document.getElementById('resultRestart').addEventListener('click', () => {
         playSound('click');
-        closeResult();
-        initBoard();
-        if (mode === 'pve' && first === 'ai') {
-          current = P2;
-          aiThinking = true;
-          setTimeout(() => { aiMove(); }, 400);
-        }
+        doRestart();
       });
       document.getElementById('resultHome').addEventListener('click', () => {
         playSound('click');
+        stopTimer();
         closeResult();
         cover.classList.remove('hidden');
         game.classList.remove('visible');
@@ -1269,6 +1910,8 @@
         }
         if (mode === 'pve') current = P1;
         updateStatus();
+        updateScoreboard();
+        startTimer();
       }
 
       // 初始化
