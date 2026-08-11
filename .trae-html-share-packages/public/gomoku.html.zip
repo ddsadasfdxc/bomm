@@ -1054,8 +1054,8 @@
       let wins = { p1: 0, p2: 0 }, round = 1;
       let p1Time = 0, p2Time = 0, moveStart = 0, timerInterval = null;
 
-      // Wziqi API 地址（开发时通过 Vite proxy 转发到 Python 服务器）
-      const API_URL = '/api/move';
+      // Wziqi API 地址（部署在 Vercel 上）
+      const API_URL = 'https://wuziqi-vercel.vercel.app/api/move';
 
       const cover = document.getElementById('cover');
       const difficultyModal = document.getElementById('difficultyModal');
