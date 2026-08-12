@@ -16,10 +16,11 @@ import { initSwordfly } from './swordfly.js';
 import './runner.js';
 import { initMinecraft } from './minecraft.js';
 import { initScrollReveal, initTilt, initProgressInk } from './utils/scroll-reveal.js';
-import { hideInkLoader } from './utils/ink-loader.js';
+import { initInkLoader, hideInkLoader } from './utils/ink-loader.js';
 import * as THREE from 'three';
 
 export async function initApp() {
+  const inkReady = initInkLoader();
   loadBackgroundImage(document.getElementById('bg-image'));
 
   const content = await loadContent();
@@ -86,6 +87,7 @@ export async function initApp() {
   initScrollReveal();
   initTilt();
   initProgressInk();
+  await inkReady;
   hideInkLoader();
   trackVisit();
   loadStats(document.getElementById('statsBar'));

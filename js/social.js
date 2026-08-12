@@ -423,10 +423,9 @@ export function initSaveBackgroundImage() {
   btn.addEventListener('click', async () => {
     const bg = document.getElementById('bg-image');
     if (!bg) return;
-    const style = window.getComputedStyle(bg).backgroundImage;
-    const match = style.match(/url\(["']?([^"')]+)["']?\)/);
-    const url = match ? match[1] : '';
-    if (!url || url.startsWith('data:')) {
+
+    const objectUrl = bg.dataset.bgObjectUrl;
+    if (!objectUrl) {
       btn.textContent = '暂无背景可保存';
       setTimeout(() => { btn.textContent = '保存当前背景'; }, 2000);
       return;
@@ -434,27 +433,20 @@ export function initSaveBackgroundImage() {
 
     btn.textContent = '下载中…';
     try {
-      const res = await fetch(url, { mode: 'cors' });
-      if (!res.ok) throw new Error('fetch failed');
+      const res = await fetch(objectUrl);
       const blob = await res.blob();
-      const objectUrl = URL.createObjectURL(blob);
+      const downloadUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = objectUrl;
+      a.href = downloadUrl;
       const ext = blob.type.split('/')[1] || 'jpg';
       a.download = `wenruo-bg-${Date.now()}.${ext}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(objectUrl);
+      URL.revokeObjectURL(downloadUrl);
       btn.textContent = '已保存';
     } catch (e) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `wenruo-bg-${Date.now()}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      btn.textContent = '已尝试保存';
+      btn.textContent = '保存失败';
     }
     setTimeout(() => { btn.textContent = '保存当前背景'; }, 2000);
   });
