@@ -17,7 +17,7 @@ export function initIntroScene(content) {
 
   tl.to(titleChars, {
     strokeDashoffset: 0,
-    fill: '#f5f0e6',
+    fill: 'url(#title-gradient)',
     duration: 2.5,
     stagger: 0.4,
     ease: 'power2.inOut'

@@ -2,6 +2,7 @@ import { InkParticles } from './effects/ink-particles.js';
 import { CloudLayer } from './effects/clouds.js';
 import { CursorAura } from './effects/cursor-aura.js';
 import { loadBackgroundImage } from './effects/bg-image.js';
+import { initRainCollision } from './effects/rain-collision.js';
 import { initIntroScene } from './scenes/intro-scene.js';
 import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
@@ -89,6 +90,11 @@ export async function initApp() {
   initProgressInk();
   await inkReady;
   hideInkLoader();
+
+  if (!prefersReducedMotion()) {
+    initRainCollision(document.getElementById('rain-canvas'));
+  }
+
   trackVisit();
   loadStats(document.getElementById('statsBar'));
 
