@@ -13,13 +13,14 @@
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
-      </style>  <script type="module" crossorigin src="./assets/index-D6cwjVu8.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-Ci1XeaU3.css">
+      </style>  <script type="module" crossorigin src="./assets/index-CrrvVkff.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-EHLuxVq8.css">
 </head>
 <body>
   <div id="bg-image" aria-hidden="true"></div>
   <div id="webgl-bg"></div>
   <canvas id="cursor-aura"></canvas>
+  <canvas id="rain-canvas" aria-hidden="true"></canvas>
 
   <div class="ink-loader" id="inkLoader" aria-hidden="true">
   <div class="ink-loader-drop"></div>
@@ -56,8 +57,29 @@
       <section id="intro" class="section section-intro">
         <div class="intro-content" style="">
           <svg class="intro-title" viewBox="0 0 400 160" aria-label="温若">
-            <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen">温</text>
-            <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo">若</text>
+            <defs>
+              <linearGradient id="title-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fff9f0" />
+                <stop offset="50%" stop-color="#f5f0e6" />
+                <stop offset="100%" stop-color="#d9cfc0" />
+              </linearGradient>
+              <filter id="title-emboss" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+                <feOffset in="blur" dx="2" dy="3" result="offsetBlur"/>
+                <feFlood flood-color="#0c0f0a" flood-opacity="0.55" result="shadowColor"/>
+                <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow"/>
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="glowBlur"/>
+                <feFlood flood-color="rgba(196, 90, 74, 0.35)" result="glowColor"/>
+                <feComposite in="glowColor" in2="glowBlur" operator="in" result="glow"/>
+                <feMerge>
+                  <feMergeNode in="shadow"/>
+                  <feMergeNode in="glow"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <text x="28%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-wen" filter="url(#title-emboss)">温</text>
+            <text x="72%" y="50%" dominant-baseline="middle" text-anchor="middle" class="brush-text" id="title-ruo" filter="url(#title-emboss)">若</text>
           </svg>
           <p class="intro-subtitle">散修 · 剑修</p>
           <p class="intro-quote" id="hitokotoQuote">清风不识字，何故乱翻书。</p>
