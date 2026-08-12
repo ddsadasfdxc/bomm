@@ -920,6 +920,67 @@
   box-shadow: 0 0 0 3px rgba(196, 90, 74, 0.08);
 }
 
+.blog-media-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.blog-media-add {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: rgba(245, 240, 230, 0.03);
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.blog-media-add:hover {
+  border-color: var(--accent-cinnabar);
+  color: var(--accent-cinnabar);
+}
+
+.blog-media-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.blog-media-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blog-media-row input {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+
+.blog-media-remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.blog-media-remove:hover {
+  border-color: var(--accent-cinnabar);
+  color: var(--accent-cinnabar);
+}
+
 .blog-submit {
   padding: 12px 36px;
   border-radius: 999px;
@@ -992,6 +1053,24 @@
   font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 0.05em;
+}
+
+.blog-card-media {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.blog-media-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(245, 240, 230, 0.05);
+  border: 1px solid var(--glass-border);
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .blog-read-more {
@@ -1102,6 +1181,30 @@
   color: var(--text-paper);
   line-height: 2;
   white-space: pre-wrap;
+}
+
+.blog-detail-images,
+.blog-detail-videos {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-detail-images img {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  object-fit: cover;
+}
+
+.blog-detail-videos video,
+.blog-detail-videos iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: #000;
 }
 
 .blog-modal-loading {

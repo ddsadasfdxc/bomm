@@ -24,6 +24,18 @@ export function initBlog() {
     });
   }
 
+  if (panel) {
+    panel.addEventListener('click', (e) => {
+      if (e.target.classList.contains('blog-media-add')) {
+        const type = e.target.dataset.type;
+        addMediaInput(panel, type);
+      }
+      if (e.target.classList.contains('blog-media-remove')) {
+        e.target.closest('.blog-media-row')?.remove();
+      }
+    });
+  }
+
   if (submitBtn) {
     submitBtn.addEventListener('click', async () => {
       const password = document.getElementById('blogPassword')?.value.trim();
@@ -36,6 +48,11 @@ export function initBlog() {
         return;
       }
 
+      const imageUrls = [...panel.querySelectorAll('.blog-media-row[data-type="image"] input')]
+        .map((i) => i.value.trim()).filter(Boolean);
+      const videoUrls = [...panel.querySelectorAll('.blog-media-row[data-type="video"] input')]
+        .map((i) => i.value.trim()).filter(Boolean);
+
       submitBtn.disabled = true;
       submitBtn.textContent = '发布中…';
 
@@ -43,7 +60,7 @@ export function initBlog() {
         const res = await fetch(`${API}/api/posts`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password, title, content }),
+          body: JSON.stringify({ password, title, content, media: { images: imageUrls, videos: videoUrls } }),
         });
 
         if (res.status === 401) {
@@ -54,6 +71,7 @@ export function initBlog() {
           submitBtn.textContent = '发布成功';
           document.getElementById('blogTitle').value = '';
           document.getElementById('blogContent').value = '';
+          panel.querySelectorAll('.blog-media-row').forEach((r) => r.remove());
           await loadBlogList(listEl);
         }
       } catch (e) {
@@ -64,6 +82,20 @@ export function initBlog() {
       }
     });
   }
+}
+
+function addMediaInput(panel, type) {
+  const container = panel.querySelector('.blog-media-list');
+  if (!container) return;
+  const placeholder = type === 'image' ? '图片链接，例如 https://i.imgur.com/xxx.jpg' : '视频链接，例如 https://.../xxx.mp4 或 B站/YouTube 链接';
+  const row = document.createElement('div');
+  row.className = 'blog-media-row';
+  row.dataset.type = type;
+  row.innerHTML = `
+    <input type="text" placeholder="${placeholder}">
+    <button type="button" class="blog-media-remove" title="移除">×</button>
+  `;
+  container.appendChild(row);
 }
 
 async function loadBlogList(listEl) {
@@ -78,16 +110,20 @@ async function loadBlogList(listEl) {
       return;
     }
 
-    listEl.innerHTML = posts.map((post) => `
+    listEl.innerHTML = posts.map((post) => {
+      const media = post.media || { images: [], videos: [] };
+      const hasMedia = media.images?.length || media.videos?.length;
+      return `
       <article class="blog-card" data-id="${escapeHtml(post.id)}">
         <h4 class="blog-card-title">${escapeHtml(post.title)}</h4>
         <p class="blog-card-summary">${escapeHtml(post.summary || '')}</p>
+        ${hasMedia ? '<div class="blog-card-media">' + renderMediaIcons(media) + '</div>' : ''}
         <div class="blog-card-meta">
           <span>${formatTime(post.createdAt)}</span>
           <button class="blog-read-more">阅读全文</button>
         </div>
-      </article>
-    `).join('');
+      </article>`;
+    }).join('');
 
     listEl.querySelectorAll('.blog-read-more').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -100,6 +136,13 @@ async function loadBlogList(listEl) {
     listEl.innerHTML = '<div class="blog-empty">博客加载失败，点击重试</div>';
     listEl.querySelector('.blog-empty')?.addEventListener('click', () => loadBlogList(listEl));
   }
+}
+
+function renderMediaIcons(media) {
+  const icons = [];
+  if (media.images?.length) icons.push(`<span class="blog-media-tag">📷 ${media.images.length}</span>`);
+  if (media.videos?.length) icons.push(`<span class="blog-media-tag">🎬 ${media.videos.length}</span>`);
+  return icons.join('');
 }
 
 async function openBlogDetail(id) {
@@ -118,6 +161,18 @@ async function openBlogDetail(id) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const post = data.post;
+    const media = post.media || { images: [], videos: [] };
+
+    let mediaHtml = '';
+    if (media.images?.length) {
+      mediaHtml += `<div class="blog-detail-images">${media.images.map((url) => `<img src="${escapeHtml(url)}" alt="" loading="lazy">`).join('')}</div>`;
+    }
+    if (media.videos?.length) {
+      mediaHtml += `<div class="blog-detail-videos">${media.videos.map((url) => {
+        const embed = getVideoEmbed(url);
+        return embed || `<video src="${escapeHtml(url)}" controls preload="metadata"></video>`;
+      }).join('')}</div>`;
+    }
 
     overlay.innerHTML = `
       <div class="blog-modal">
@@ -125,12 +180,37 @@ async function openBlogDetail(id) {
         <h3 class="blog-modal-title">${escapeHtml(post.title)}</h3>
         <div class="blog-modal-meta">${formatTime(post.createdAt)}</div>
         <div class="blog-modal-body">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+        ${mediaHtml}
       </div>`;
 
     overlay.querySelector('.blog-modal-close').addEventListener('click', close);
   } catch (e) {
     overlay.innerHTML = '<div class="blog-modal"><p>加载失败</p></div>';
   }
+}
+
+function getVideoEmbed(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('bilibili.com') || u.hostname.includes('b23.tv')) {
+      let bvid = u.searchParams.get('bvid');
+      if (!bvid) {
+        const m = u.pathname.match(/\/(BV[a-zA-Z0-9]+)\/?/i) || u.pathname.match(/^(BV[a-zA-Z0-9]+)\/?$/i);
+        bvid = m ? m[1] : '';
+      }
+      if (bvid) {
+        const page = u.searchParams.get('p') || '1';
+        return `<iframe src="https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&page=${encodeURIComponent(page)}" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>`;
+      }
+    }
+    if (u.hostname.includes('youtube.com') || u.hostname.includes('youtu.be')) {
+      let vid = '';
+      if (u.hostname.includes('youtu.be')) vid = u.pathname.slice(1).split('/')[0];
+      else vid = u.searchParams.get('v');
+      if (vid) return `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(vid)}" frameborder="0" allowfullscreen></iframe>`;
+    }
+  } catch {}
+  return '';
 }
 
 function skeletonHtml() {

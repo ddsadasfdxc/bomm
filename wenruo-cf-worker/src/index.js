@@ -245,6 +245,7 @@ export default {
             id: p.id,
             title: p.title,
             summary: p.summary,
+            media: p.media || { images: [], videos: [] },
             createdAt: p.createdAt,
             updatedAt: p.updatedAt,
           })),
@@ -267,15 +268,26 @@ export default {
           return error('Content too long', 400);
         }
 
+        const rawMedia = body.media || {};
+        const images = Array.isArray(rawMedia.images)
+          ? rawMedia.images.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 10)
+          : [];
+        const videos = Array.isArray(rawMedia.videos)
+          ? rawMedia.videos.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 5)
+          : [];
+
         const now = new Date().toISOString();
         const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-        const summary = content.replace(/[#*`_\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+        let summary = content.replace(/[#*`_\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+        if (!summary && images.length) summary = '[包含图片]';
+        if (!summary && videos.length) summary = '[包含视频]';
 
         const entry = {
           id,
           title: title.slice(0, 120),
           content: content.slice(0, 20000),
           summary,
+          media: { images, videos },
           createdAt: now,
           updatedAt: now,
         };
