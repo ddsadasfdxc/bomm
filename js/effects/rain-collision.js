@@ -1,8 +1,8 @@
 /**
- * 超逼真雨滴碰撞系统
+ * 超逼真雨滴碰撞系统（像素级）
  * - 雨滴下落并受重力加速
- * - 与 DOM 文字元素（如 .brush-text）发生矩形碰撞后反弹/溅射
- * - 落地后产生涟漪
+ * - 与页面上真实文字像素发生碰撞，碰到笔画后反弹/溅射
+ * - 落底后产生涟漪
  */
 
 export function initRainCollision(canvas) {
@@ -13,15 +13,15 @@ export function initRainCollision(canvas) {
   let drops = [];
   let splashes = [];
   let ripples = [];
-  let obstacles = [];
+  let textMask = null;
   let lastTime = 0;
   let rafId = null;
   let active = true;
 
-  const MAX_DROPS = 180;
-  const GRAVITY = 0.35;
-  const WIND = 0.3;
-  const AIR_RESISTANCE = 0.992;
+  const MAX_DROPS = 220;
+  const GRAVITY = 0.38;
+  const WIND = 0.35;
+  const AIR_RESISTANCE = 0.994;
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -32,76 +32,123 @@ export function initRainCollision(canvas) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    updateObstacles();
+    buildTextMask();
   }
 
-  function updateObstacles() {
-    obstacles = [];
-    document.querySelectorAll('.brush-text, .intro-subtitle, .intro-quote, .blog-title').forEach((el) => {
+  async function buildTextMask() {
+    await document.fonts.ready;
+    const maskCanvas = document.createElement('canvas');
+    const mw = Math.max(1, Math.floor(width * dpr));
+    const mh = Math.max(1, Math.floor(height * dpr));
+    maskCanvas.width = mw;
+    maskCanvas.height = mh;
+    const mctx = maskCanvas.getContext('2d');
+    mctx.clearRect(0, 0, mw, mh);
+
+    const selectors = '.brush-text, .intro-subtitle, .intro-quote, .blog-title, .section-title';
+    document.querySelectorAll(selectors).forEach((el) => {
       const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        obstacles.push({
-          x: rect.left,
-          y: rect.top,
-          w: rect.width,
-          h: rect.height,
-          el,
-        });
-      }
+      if (rect.width < 2 || rect.height < 2) return;
+      const style = window.getComputedStyle(el);
+      const fontSize = parseFloat(style.fontSize) || 16;
+      const fontWeight = style.fontWeight || 700;
+      const fontFamily = style.fontFamily || '"LXGW WenKai", serif';
+      const text = el.textContent?.trim();
+      if (!text) return;
+
+      mctx.save();
+      mctx.scale(dpr, dpr);
+      mctx.fillStyle = 'rgba(0,0,0,1)';
+      mctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+      mctx.textAlign = 'center';
+      mctx.textBaseline = 'middle';
+      mctx.fillText(text, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      mctx.restore();
     });
+
+    textMask = {
+      data: mctx.getImageData(0, 0, mw, mh).data,
+      width: mw,
+      height: mh,
+      dpr,
+    };
+  }
+
+  function getAlpha(x, y) {
+    if (!textMask) return 0;
+    const ix = Math.floor(x * textMask.dpr);
+    const iy = Math.floor(y * textMask.dpr);
+    if (ix < 0 || ix >= textMask.width || iy < 0 || iy >= textMask.height) return 0;
+    return textMask.data[(iy * textMask.width + ix) * 4 + 3];
+  }
+
+  function getNormal(x, y) {
+    const r = 3;
+    let dx = 0, dy = 0, total = 0;
+    for (let oy = -r; oy <= r; oy++) {
+      for (let ox = -r; ox <= r; ox++) {
+        const a = getAlpha(x + ox, y + oy);
+        dx += ox * a;
+        dy += oy * a;
+        total += a;
+      }
+    }
+    if (total < 1) return { x: 0, y: -1 };
+    const len = Math.hypot(dx, dy);
+    if (len < 1) return { x: 0, y: -1 };
+    return { x: dx / len, y: dy / len };
   }
 
   function createDrop() {
     return {
       x: Math.random() * (width + 200) - 100,
-      y: -Math.random() * 80 - 20,
-      vx: (Math.random() - 0.5) * 1.5 + WIND,
-      vy: Math.random() * 3 + 6,
-      len: Math.random() * 12 + 8,
-      width: Math.random() * 1.2 + 0.6,
+      y: -Math.random() * 120 - 20,
+      vx: (Math.random() - 0.5) * 1.2 + WIND,
+      vy: Math.random() * 3 + 7,
+      len: Math.random() * 14 + 9,
+      width: Math.random() * 1.3 + 0.5,
       alpha: Math.random() * 0.35 + 0.25,
-      life: 1,
+      collided: false,
+      collideCooldown: 0,
     };
   }
 
   function spawnSplash(x, y, nx, ny) {
-    const count = Math.floor(Math.random() * 4) + 3;
+    const count = Math.floor(Math.random() * 5) + 3;
     for (let i = 0; i < count; i++) {
-      const speed = Math.random() * 3 + 1.5;
-      const angle = Math.atan2(-ny, nx) + (Math.random() - 0.5) * 1.6;
+      const speed = Math.random() * 3.5 + 1.2;
+      const spread = 1.4;
+      const angle = Math.atan2(-ny, nx) + (Math.random() - 0.5) * spread;
       splashes.push({
         x,
         y,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1.5,
+        vy: Math.sin(angle) * speed - 1.2,
         life: 1,
-        alpha: Math.random() * 0.5 + 0.3,
-        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.55 + 0.35,
+        size: Math.random() * 1.8 + 0.4,
       });
     }
   }
 
   function spawnRipple(x, y) {
-    if (Math.random() > 0.6) return;
+    if (Math.random() > 0.55) return;
     ripples.push({
       x,
       y,
       r: 0,
-      maxR: Math.random() * 18 + 10,
-      alpha: Math.random() * 0.35 + 0.25,
+      maxR: Math.random() * 20 + 10,
+      alpha: Math.random() * 0.35 + 0.2,
       life: 1,
     });
   }
 
   function reflectVelocity(vx, vy, nx, ny) {
     const dot = vx * nx + vy * ny;
-    const restitution = 0.4 + Math.random() * 0.25;
-    const friction = 0.85;
-    const rx = (vx - 2 * dot * nx) * restitution;
-    const ry = (vy - 2 * dot * ny) * restitution;
+    const restitution = 0.35 + Math.random() * 0.25;
     return {
-      x: nx === 0 ? rx * friction : rx,
-      y: ny === 0 ? ry * friction : ry,
+      x: (vx - 2 * dot * nx) * restitution,
+      y: (vy - 2 * dot * ny) * restitution,
     };
   }
 
@@ -109,59 +156,51 @@ export function initRainCollision(canvas) {
     drop.vy += GRAVITY;
     drop.vx *= AIR_RESISTANCE;
     drop.vy *= AIR_RESISTANCE;
-    drop.x += drop.vx;
-    drop.y += drop.vy;
 
-    let collided = false;
-    for (const ob of obstacles) {
-      const nextX = drop.x + drop.vx;
-      const nextY = drop.y + drop.vy;
-      if (
-        nextX >= ob.x &&
-        nextX <= ob.x + ob.w &&
-        nextY >= ob.y &&
-        nextY <= ob.y + ob.h
-      ) {
-        const prevX = drop.x - drop.vx;
-        const prevY = drop.y - drop.vy;
-        let nx = 0, ny = 0;
-        if (prevX < ob.x) nx = -1;
-        else if (prevX > ob.x + ob.w) nx = 1;
-        else if (prevY < ob.y) ny = -1;
-        else ny = 1;
+    const steps = Math.max(1, Math.ceil(Math.hypot(drop.vx, drop.vy) / 4));
+    const stepX = drop.vx / steps;
+    const stepY = drop.vy / steps;
 
-        const reflected = reflectVelocity(drop.vx, drop.vy, nx, ny);
-        drop.vx = reflected.x;
-        drop.vy = reflected.y;
+    for (let s = 0; s < steps; s++) {
+      drop.x += stepX;
+      drop.y += stepY;
 
-        if (nx !== 0) {
-          drop.x = nx < 0 ? ob.x - 1 : ob.x + ob.w + 1;
-        } else {
-          drop.y = ny < 0 ? ob.y - 1 : ob.y + ob.h + 1;
+      if (drop.collideCooldown > 0) drop.collideCooldown--;
+
+      if (drop.collideCooldown <= 0) {
+        const alpha = getAlpha(drop.x, drop.y);
+        if (alpha > 40) {
+          const normal = getNormal(drop.x, drop.y);
+          const reflected = reflectVelocity(drop.vx, drop.vy, normal.x, normal.y);
+          drop.vx = reflected.x + normal.x * 1.5;
+          drop.vy = reflected.y + normal.y * 1.5;
+
+          // 沿法线反向推出笔画，避免卡在里面
+          drop.x -= normal.x * 3;
+          drop.y -= normal.y * 3;
+
+          spawnSplash(drop.x, drop.y, normal.x, normal.y);
+          drop.collideCooldown = 8;
+          break;
         }
-
-        spawnSplash(drop.x, drop.y, nx, ny);
-        collided = true;
-        break;
       }
     }
 
-    if (!collided && drop.y > height + 10) {
+    if (drop.y > height + 10) {
       spawnRipple(drop.x, height - 4);
       Object.assign(drop, createDrop());
     }
   }
 
   function drawDrop(drop) {
-    const speed = Math.hypot(drop.vx, drop.vy);
     const angle = Math.atan2(drop.vy, drop.vx);
     ctx.save();
     ctx.translate(drop.x, drop.y);
     ctx.rotate(angle);
     const grad = ctx.createLinearGradient(-drop.len / 2, 0, drop.len / 2, 0);
-    grad.addColorStop(0, `rgba(200, 210, 220, 0)`);
-    grad.addColorStop(0.5, `rgba(210, 220, 230, ${drop.alpha})`);
-    grad.addColorStop(1, `rgba(200, 210, 220, 0)`);
+    grad.addColorStop(0, `rgba(210, 220, 230, 0)`);
+    grad.addColorStop(0.5, `rgba(220, 230, 240, ${drop.alpha})`);
+    grad.addColorStop(1, `rgba(210, 220, 230, 0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.ellipse(0, 0, drop.len / 2, drop.width / 2, 0, 0, Math.PI * 2);
@@ -170,23 +209,23 @@ export function initRainCollision(canvas) {
   }
 
   function drawSplash(s) {
-    ctx.fillStyle = `rgba(210, 220, 230, ${s.alpha * s.life})`;
+    ctx.fillStyle = `rgba(215, 225, 235, ${s.alpha * s.life})`;
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
     ctx.fill();
   }
 
   function drawRipple(r) {
-    ctx.strokeStyle = `rgba(200, 210, 220, ${r.alpha * r.life})`;
+    ctx.strokeStyle = `rgba(205, 215, 225, ${r.alpha * r.life})`;
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.ellipse(r.x, r.y, r.r, r.r * 0.25, 0, 0, Math.PI * 2);
+    ctx.ellipse(r.x, r.y, r.r, r.r * 0.28, 0, 0, Math.PI * 2);
     ctx.stroke();
   }
 
   function frame(timestamp) {
     if (!active) return;
-    const dt = Math.min((timestamp - lastTime) / 16.67, 2);
+    const dt = Math.min((timestamp - lastTime) / 16.67, 2) || 1;
     lastTime = timestamp;
 
     ctx.clearRect(0, 0, width, height);
@@ -204,7 +243,7 @@ export function initRainCollision(canvas) {
       s.vy += GRAVITY * 0.6;
       s.x += s.vx;
       s.y += s.vy;
-      s.life -= 0.03 * dt;
+      s.life -= 0.032 * dt;
       if (s.life <= 0) {
         splashes.splice(i, 1);
       } else {
@@ -214,7 +253,7 @@ export function initRainCollision(canvas) {
 
     for (let i = ripples.length - 1; i >= 0; i--) {
       const r = ripples[i];
-      r.r += 0.6 * dt;
+      r.r += 0.55 * dt;
       r.life -= 0.018 * dt;
       if (r.life <= 0 || r.r >= r.maxR) {
         ripples.splice(i, 1);
@@ -227,18 +266,17 @@ export function initRainCollision(canvas) {
   }
 
   resize();
+
   window.addEventListener('resize', () => {
-    resize();
+    clearTimeout(resize.resizeTimer);
+    resize.resizeTimer = setTimeout(resize, 120);
   });
 
-  const observer = new MutationObserver(updateObstacles);
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-  let resizeTimer;
-  window.addEventListener('scroll', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateObstacles, 100);
+  const observer = new MutationObserver(() => {
+    clearTimeout(resize.resizeTimer);
+    resize.resizeTimer = setTimeout(buildTextMask, 150);
   });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
 
   rafId = requestAnimationFrame(frame);
 

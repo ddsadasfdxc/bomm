@@ -1,19 +1,20 @@
 /**
- * 随机背景图 — 调用 yppp API
+ * 随机背景图 — 通过 Worker 代理 yppp API，避免 CORS 问题
  * 桌面端使用横图 pc.php，移动端使用竖图 pe.php
  * 加载成功后使用 Object URL 固定当前图片，避免保存时再次请求随机接口
  */
 
-const API_PC = 'https://api.yppp.net/pc.php';
-const API_PE = 'https://api.yppp.net/pe.php';
+import { API } from '../social.js';
+
+const isMobile = /Android|iP(hone|od)|Mobile|Opera Mobi|BlackBerry|Palm(OS)?/i.test(navigator.userAgent);
 
 export function loadBackgroundImage(container) {
   if (!container) return;
 
-  const isMobile = /Android|iP(hone|od)|Mobile|Opera Mobi|BlackBerry|Palm(OS)?/i.test(navigator.userAgent);
-  const apiUrl = `${isMobile ? API_PE : API_PC}?_=${Date.now()}`;
+  const type = isMobile ? 'pe' : 'pc';
+  const proxyUrl = `${API}/api/proxy-image?type=${type}&_=${Date.now()}`;
 
-  fetch(apiUrl, { mode: 'cors' })
+  fetch(proxyUrl)
     .then((res) => {
       if (!res.ok) throw new Error('fetch failed');
       return res.blob();
@@ -33,7 +34,7 @@ export function loadBackgroundImage(container) {
       };
     })
     .catch(() => {
-      console.warn('Background image load failed:', apiUrl);
+      console.warn('Background image load failed:', proxyUrl);
       container.classList.add('fallback');
     });
 }

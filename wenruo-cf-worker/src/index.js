@@ -204,6 +204,26 @@ export default {
       return json({ status: 'ok', time: Date.now() });
     }
 
+    if (url.pathname === '/api/proxy-image') {
+      const type = url.searchParams.get('type') === 'pe' ? 'pe' : 'pc';
+      const upstream = `https://api.yppp.net/${type}.php?_=${Date.now()}`;
+      try {
+        const upstreamRes = await fetch(upstream, { redirect: 'follow' });
+        if (!upstreamRes.ok) throw new Error('upstream failed');
+        const blob = await upstreamRes.blob();
+        return new Response(blob, {
+          status: 200,
+          headers: {
+            'Content-Type': blob.type || 'image/jpeg',
+            'Cache-Control': 'no-store',
+            ...CORS_HEADERS,
+          },
+        });
+      } catch (e) {
+        return error('image proxy failed', 502);
+      }
+    }
+
     if (url.pathname === '/api/messages') {
       if (request.method === 'GET') {
         const messages = await getMessages(kv);
