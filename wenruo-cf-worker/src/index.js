@@ -1,6 +1,8 @@
+const ADMIN_PASSWORD = 'admin';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+  'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
@@ -42,6 +44,8 @@ const MAX_MESSAGES = 100;
 const MESSAGES_KEY = 'messages';
 const STATS_KEY = 'stats';
 const UV_KEY = 'uv';
+const POSTS_KEY = 'posts';
+const MAX_POSTS = 50;
 
 async function getMessages(kv) {
   const raw = await kv.get(MESSAGES_KEY);
@@ -101,6 +105,25 @@ async function recordPlay(kv) {
   const stats = await getStats(kv);
   stats.plays += 1;
   await kv.put(STATS_KEY, JSON.stringify(stats));
+}
+
+async function getPosts(kv) {
+  const raw = await kv.get(POSTS_KEY);
+  if (!raw) return [];
+  try {
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+async function savePosts(kv, posts) {
+  await kv.put(POSTS_KEY, JSON.stringify(posts.slice(0, MAX_POSTS)));
+}
+
+function verifyAdmin(body) {
+  return body && String(body.password || '') === ADMIN_PASSWORD;
 }
 
 export default {
@@ -208,6 +231,88 @@ export default {
         if (contacts.length > 100) contacts.length = 100;
         await kv.put('contacts', JSON.stringify(contacts));
 
+        return json({ success: true });
+      }
+
+      return error('Method not allowed', 405);
+    }
+
+    if (url.pathname === '/api/posts') {
+      if (request.method === 'GET') {
+        const posts = await getPosts(kv);
+        return json({
+          posts: posts.map((p) => ({
+            id: p.id,
+            title: p.title,
+            summary: p.summary,
+            createdAt: p.createdAt,
+            updatedAt: p.updatedAt,
+          })),
+        });
+      }
+
+      if (request.method === 'POST') {
+        const body = await readJson(request);
+        if (!verifyAdmin(body)) {
+          return error('Unauthorized', 401);
+        }
+
+        const title = String(body.title || '').trim();
+        const content = String(body.content || '').trim();
+
+        if (!title || !content) {
+          return error('Title and content are required', 400);
+        }
+        if (title.length > 120 || content.length > 20000) {
+          return error('Content too long', 400);
+        }
+
+        const now = new Date().toISOString();
+        const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        const summary = content.replace(/[#*`_\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+
+        const entry = {
+          id,
+          title: title.slice(0, 120),
+          content: content.slice(0, 20000),
+          summary,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        const posts = await getPosts(kv);
+        posts.unshift(entry);
+        await savePosts(kv, posts);
+        return json({ success: true, post: entry });
+      }
+
+      return error('Method not allowed', 405);
+    }
+
+    const postDetailMatch = url.pathname.match(/^\/api\/posts\/([a-zA-Z0-9_-]+)$/);
+    if (postDetailMatch) {
+      const postId = postDetailMatch[1];
+
+      if (request.method === 'GET') {
+        const posts = await getPosts(kv);
+        const post = posts.find((p) => p.id === postId);
+        if (!post) {
+          return error('Post not found', 404);
+        }
+        return json({ post });
+      }
+
+      if (request.method === 'DELETE') {
+        const body = await readJson(request);
+        if (!verifyAdmin(body)) {
+          return error('Unauthorized', 401);
+        }
+        const posts = await getPosts(kv);
+        const filtered = posts.filter((p) => p.id !== postId);
+        if (filtered.length === posts.length) {
+          return error('Post not found', 404);
+        }
+        await savePosts(kv, filtered);
         return json({ success: true });
       }
 

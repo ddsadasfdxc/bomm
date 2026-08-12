@@ -6,6 +6,133 @@ export function initMessageBoard() {
   renderMessages(board);
 }
 
+export function initBlog() {
+  const listEl = document.getElementById('blogList');
+  const toggleBtn = document.getElementById('blogAdminToggle');
+  const panel = document.getElementById('blogAdminPanel');
+  const submitBtn = document.getElementById('blogSubmit');
+
+  if (!listEl) return;
+
+  loadBlogList(listEl);
+
+  if (toggleBtn && panel) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+      toggleBtn.textContent = isHidden ? '收起发文' : '管理员发文';
+    });
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener('click', async () => {
+      const password = document.getElementById('blogPassword')?.value.trim();
+      const title = document.getElementById('blogTitle')?.value.trim();
+      const content = document.getElementById('blogContent')?.value.trim();
+
+      if (!password || !title || !content) {
+        submitBtn.textContent = '请填写完整';
+        setTimeout(() => { submitBtn.textContent = '发布'; }, 1500);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '发布中…';
+
+      try {
+        const res = await fetch(`${API}/api/posts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password, title, content }),
+        });
+
+        if (res.status === 401) {
+          submitBtn.textContent = '密码错误';
+        } else if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        } else {
+          submitBtn.textContent = '发布成功';
+          document.getElementById('blogTitle').value = '';
+          document.getElementById('blogContent').value = '';
+          await loadBlogList(listEl);
+        }
+      } catch (e) {
+        submitBtn.textContent = '发布失败';
+      } finally {
+        submitBtn.disabled = false;
+        setTimeout(() => { submitBtn.textContent = '发布'; }, 2000);
+      }
+    });
+  }
+}
+
+async function loadBlogList(listEl) {
+  listEl.innerHTML = '<div class="blog-loading">加载中…</div>';
+  try {
+    const res = await fetch(`${API}/api/posts`);
+    const data = await res.json();
+    const posts = data.posts || [];
+
+    if (posts.length === 0) {
+      listEl.innerHTML = '<div class="blog-empty">暂无文章，管理员可点击右上角发文。</div>';
+      return;
+    }
+
+    listEl.innerHTML = posts.map((post) => `
+      <article class="blog-card" data-id="${escapeHtml(post.id)}">
+        <h4 class="blog-card-title">${escapeHtml(post.title)}</h4>
+        <p class="blog-card-summary">${escapeHtml(post.summary || '')}</p>
+        <div class="blog-card-meta">
+          <span>${formatTime(post.createdAt)}</span>
+          <button class="blog-read-more">阅读全文</button>
+        </div>
+      </article>
+    `).join('');
+
+    listEl.querySelectorAll('.blog-read-more').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.blog-card');
+        const id = card?.dataset.id;
+        if (id) openBlogDetail(id);
+      });
+    });
+  } catch (e) {
+    listEl.innerHTML = '<div class="blog-empty">博客加载失败，点击重试</div>';
+    listEl.querySelector('.blog-empty')?.addEventListener('click', () => loadBlogList(listEl));
+  }
+}
+
+async function openBlogDetail(id) {
+  const overlay = document.createElement('div');
+  overlay.className = 'blog-modal-overlay';
+  overlay.innerHTML = '<div class="blog-modal-loading">加载中…</div>';
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+
+  try {
+    const res = await fetch(`${API}/api/posts/${encodeURIComponent(id)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const post = data.post;
+
+    overlay.innerHTML = `
+      <div class="blog-modal">
+        <button class="blog-modal-close" aria-label="关闭">&times;</button>
+        <h3 class="blog-modal-title">${escapeHtml(post.title)}</h3>
+        <div class="blog-modal-meta">${formatTime(post.createdAt)}</div>
+        <div class="blog-modal-body">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+      </div>`;
+
+    overlay.querySelector('.blog-modal-close').addEventListener('click', close);
+  } catch (e) {
+    overlay.innerHTML = '<div class="blog-modal"><p>加载失败</p></div>';
+  }
+}
+
 function skeletonHtml() {
   return `<div class="msg-skeleton">
     <div class="msg-skeleton-item"></div>

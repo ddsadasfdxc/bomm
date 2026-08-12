@@ -7,7 +7,7 @@ import { loadContent } from './utils/load-content.js';
 import { prefersReducedMotion, isMobile } from './utils/prefers-reduced-motion.js';
 import { initMusicPlayer } from './music-player.js';
 import { initNotes } from './notes.js';
-import { initMessageBoard, initContactForm, trackVisit, loadStats } from './social.js';
+import { initMessageBoard, initContactForm, initBlog, trackVisit, loadStats } from './social.js';
 import { initChat } from './chat.js';
 import { initPath } from './path.js';
 import { initFortune } from './fortune.js';
@@ -71,6 +71,7 @@ export async function initApp() {
   initNotes();
   initMessageBoard();
   initContactForm();
+  initBlog();
   initChat();
   initPath();
   initFortune();

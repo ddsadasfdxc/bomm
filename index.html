@@ -258,6 +258,20 @@
             <button type="submit" class="contact-submit">发送</button>
           </form>
         </div>
+
+        <div class="blog-section">
+          <div class="blog-header">
+            <h3 class="blog-title">随笔记</h3>
+            <button class="blog-admin-toggle" id="blogAdminToggle">管理员发文</button>
+          </div>
+          <div class="blog-admin-panel" id="blogAdminPanel" style="display:none">
+            <input type="password" id="blogPassword" placeholder="管理密码">
+            <input type="text" id="blogTitle" placeholder="标题" maxlength="120">
+            <textarea id="blogContent" placeholder="正文内容…" rows="8"></textarea>
+            <button class="blog-submit" id="blogSubmit">发布</button>
+          </div>
+          <div class="blog-list" id="blogList"></div>
+        </div>
       </section>
     </div>
 

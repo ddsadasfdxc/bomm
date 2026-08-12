@@ -840,6 +840,301 @@
   }
 }
 
+.blog-section {
+  max-width: 720px;
+  margin: 56px auto 0;
+  padding: 28px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+}
+
+.blog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.blog-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-paper);
+}
+
+.blog-admin-toggle {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.blog-admin-toggle:hover {
+  border-color: var(--accent-cinnabar);
+  color: var(--accent-cinnabar);
+}
+
+.blog-admin-panel {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(245, 240, 230, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  animation: blog-panel-in 0.35s ease backwards;
+}
+
+@keyframes blog-panel-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.blog-admin-panel input,
+.blog-admin-panel textarea {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(245, 240, 230, 0.03);
+  color: var(--text-paper);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s ease;
+  resize: vertical;
+}
+
+.blog-admin-panel input:focus,
+.blog-admin-panel textarea:focus {
+  border-color: rgba(196, 90, 74, 0.4);
+  background: rgba(245, 240, 230, 0.05);
+  box-shadow: 0 0 0 3px rgba(196, 90, 74, 0.08);
+}
+
+.blog-submit {
+  padding: 12px 36px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent-cinnabar), var(--accent-cinnabar-light));
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(196, 90, 74, 0.25);
+}
+
+.blog-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(196, 90, 74, 0.35);
+}
+
+.blog-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-card {
+  padding: 20px;
+  background: rgba(245, 240, 230, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.blog-card:hover {
+  background: rgba(245, 240, 230, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.blog-card-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-paper);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.blog-card-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.blog-read-more {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.blog-read-more:hover {
+  border-color: var(--accent-cinnabar);
+  color: var(--accent-cinnabar);
+}
+
+.blog-loading,
+.blog-empty {
+  text-align: center;
+  padding: 44px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.blog-empty {
+  cursor: pointer;
+  border-radius: 14px;
+  transition: all 0.25s ease;
+}
+
+.blog-empty:hover {
+  background: rgba(196, 90, 74, 0.08);
+  color: var(--text-paper);
+}
+
+.blog-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 7, 14, 0.85);
+  backdrop-filter: blur(8px);
+  animation: blog-modal-in 0.3s ease backwards;
+}
+
+@keyframes blog-modal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.blog-modal {
+  position: relative;
+  max-width: 680px;
+  max-height: 80vh;
+  width: 100%;
+  overflow-y: auto;
+  padding: 36px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  backdrop-filter: blur(16px);
+}
+
+.blog-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.blog-modal-close:hover {
+  color: var(--text-paper);
+}
+
+.blog-modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-paper);
+  margin-bottom: 12px;
+  padding-right: 40px;
+  line-height: 1.4;
+}
+
+.blog-modal-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
+}
+
+.blog-modal-body {
+  font-size: 15px;
+  color: var(--text-paper);
+  line-height: 2;
+  white-space: pre-wrap;
+}
+
+.blog-modal-loading {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .blog-section {
+    padding: 20px;
+    margin-top: 40px;
+  }
+
+  .blog-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .blog-admin-toggle {
+    align-self: flex-end;
+  }
+
+  .blog-modal {
+    padding: 24px 20px;
+    max-height: 85vh;
+  }
+
+  .blog-modal-title {
+    font-size: 18px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
