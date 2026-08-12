@@ -2,7 +2,7 @@ const ADMIN_PASSWORD = 'admin';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+  'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
@@ -122,6 +122,71 @@ async function savePosts(kv, posts) {
   await kv.put(POSTS_KEY, JSON.stringify(posts.slice(0, MAX_POSTS)));
 }
 
+function sortPosts(posts) {
+  return posts.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+}
+
+function buildSummary(content, images, videos) {
+  let summary = String(content || '').replace(/[#*`\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
+  if (!summary && images.length) summary = '[包含图片]';
+  if (!summary && videos.length) summary = '[包含视频]';
+  return summary;
+}
+
+function sanitizeMedia(rawMedia) {
+  const images = Array.isArray(rawMedia?.images)
+    ? rawMedia.images.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 10)
+    : [];
+  const videos = Array.isArray(rawMedia?.videos)
+    ? rawMedia.videos.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 5)
+    : [];
+  return { images, videos };
+}
+
+async function sendContactEmail(env, entry) {
+  const apiKey = env.RESEND_API_KEY || env.SENDGRID_API_KEY || '';
+  const to = env.ADMIN_EMAIL || '';
+  if (!apiKey || !to) return;
+
+  const subject = `[温若小站] 新联系表单：${entry.subject || '无主题'} - ${entry.name}`;
+  const text = `姓名：${entry.name}\n邮箱：${entry.email}\n主题：${entry.subject || '无'}\n时间：${entry.time}\n\n留言：\n${entry.message}`;
+
+  if (env.RESEND_API_KEY) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: env.FROM_EMAIL || 'onboarding@resend.dev',
+          to,
+          subject,
+          text,
+        }),
+      });
+    } catch {}
+    return;
+  }
+
+  if (env.SENDGRID_API_KEY) {
+    try {
+      await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: to }] }],
+          from: { email: env.FROM_EMAIL || 'noreply@example.com' },
+          subject,
+          content: [{ type: 'text/plain', value: text }],
+        }),
+      });
+    } catch {}
+  }
+}
+
 function verifyAdmin(body) {
   return body && String(body.password || '') === ADMIN_PASSWORD;
 }
@@ -231,6 +296,7 @@ export default {
         if (contacts.length > 100) contacts.length = 100;
         await kv.put('contacts', JSON.stringify(contacts));
 
+        ctx.waitUntil(sendContactEmail(env, entry));
         return json({ success: true });
       }
 
@@ -239,12 +305,13 @@ export default {
 
     if (url.pathname === '/api/posts') {
       if (request.method === 'GET') {
-        const posts = await getPosts(kv);
+        const posts = sortPosts(await getPosts(kv));
         return json({
           posts: posts.map((p) => ({
             id: p.id,
             title: p.title,
             summary: p.summary,
+            pinned: !!p.pinned,
             media: p.media || { images: [], videos: [] },
             createdAt: p.createdAt,
             updatedAt: p.updatedAt,
@@ -268,19 +335,12 @@ export default {
           return error('Content too long', 400);
         }
 
-        const rawMedia = body.media || {};
-        const images = Array.isArray(rawMedia.images)
-          ? rawMedia.images.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 10)
-          : [];
-        const videos = Array.isArray(rawMedia.videos)
-          ? rawMedia.videos.filter((u) => typeof u === 'string' && u.trim().startsWith('http')).slice(0, 5)
-          : [];
+        const { images, videos } = sanitizeMedia(body.media);
+        const pinned = body.pinned === true;
 
         const now = new Date().toISOString();
         const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-        let summary = content.replace(/[#*`_\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200);
-        if (!summary && images.length) summary = '[包含图片]';
-        if (!summary && videos.length) summary = '[包含视频]';
+        const summary = buildSummary(content, images, videos);
 
         const entry = {
           id,
@@ -288,11 +348,12 @@ export default {
           content: content.slice(0, 20000),
           summary,
           media: { images, videos },
+          pinned,
           createdAt: now,
           updatedAt: now,
         };
 
-        const posts = await getPosts(kv);
+        const posts = sortPosts(await getPosts(kv));
         posts.unshift(entry);
         await savePosts(kv, posts);
         return json({ success: true, post: entry });
@@ -312,6 +373,63 @@ export default {
           return error('Post not found', 404);
         }
         return json({ post });
+      }
+
+      if (request.method === 'PUT') {
+        const body = await readJson(request);
+        if (!verifyAdmin(body)) {
+          return error('Unauthorized', 401);
+        }
+
+        const title = String(body.title || '').trim();
+        const content = String(body.content || '').trim();
+        if (!title || !content) {
+          return error('Title and content are required', 400);
+        }
+        if (title.length > 120 || content.length > 20000) {
+          return error('Content too long', 400);
+        }
+
+        const posts = sortPosts(await getPosts(kv));
+        const index = posts.findIndex((p) => p.id === postId);
+        if (index === -1) {
+          return error('Post not found', 404);
+        }
+
+        const { images, videos } = sanitizeMedia(body.media);
+        const pinned = body.pinned === true;
+        const now = new Date().toISOString();
+
+        posts[index] = {
+          ...posts[index],
+          title: title.slice(0, 120),
+          content: content.slice(0, 20000),
+          summary: buildSummary(content, images, videos),
+          media: { images, videos },
+          pinned,
+          updatedAt: now,
+        };
+
+        await savePosts(kv, posts);
+        return json({ success: true, post: posts[index] });
+      }
+
+      if (request.method === 'PATCH') {
+        const body = await readJson(request);
+        if (!verifyAdmin(body)) {
+          return error('Unauthorized', 401);
+        }
+
+        const posts = sortPosts(await getPosts(kv));
+        const index = posts.findIndex((p) => p.id === postId);
+        if (index === -1) {
+          return error('Post not found', 404);
+        }
+
+        posts[index].pinned = body.pinned === true;
+        posts[index].updatedAt = new Date().toISOString();
+        await savePosts(kv, sortPosts(posts));
+        return json({ success: true, post: posts[index] });
       }
 
       if (request.method === 'DELETE') {

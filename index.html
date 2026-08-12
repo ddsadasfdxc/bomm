@@ -262,7 +262,14 @@
         <div class="blog-section">
           <div class="blog-header">
             <h3 class="blog-title">随笔记</h3>
-            <button class="blog-admin-toggle" id="blogAdminToggle">管理员发文</button>
+            <div class="blog-header-actions">
+              <button class="blog-admin-toggle" id="blogManageToggle">管理</button>
+              <button class="blog-admin-toggle" id="blogAdminToggle">管理员发文</button>
+            </div>
+          </div>
+          <div class="blog-manage-panel" id="blogManagePanel" style="display:none">
+            <input type="password" id="managePassword" placeholder="管理密码">
+            <button class="blog-submit" id="manageLoginBtn">进入管理模式</button>
           </div>
           <div class="blog-admin-panel" id="blogAdminPanel" style="display:none">
             <input type="password" id="blogPassword" placeholder="管理密码">
@@ -276,6 +283,7 @@
             <button class="blog-submit" id="blogSubmit">发布</button>
           </div>
           <div class="blog-list" id="blogList"></div>
+          <button class="blog-save-bg" id="saveBgImage" type="button">保存当前背景</button>
         </div>
       </section>
     </div>
