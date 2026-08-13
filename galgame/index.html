@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09080e"><meta name="description" content="绯色回响——多角色恋爱剧情与记忆合成游戏">
+<title>绯色回响 · 恋爱抽卡物语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Noto+Sans+SC:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./game.css"></head>
+<body>
+<div id="app" class="app" data-scene="home">
+  <div class="ambient" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="hud">
+    <a href="../" class="back" aria-label="返回博客">← <span>温若小站</span></a>
+    <div class="brand"><b>绯色回响</b><small>SCARLET ECHOES</small></div>
+    <div class="resources"><span>LV.<b id="level">1</b></span><span>◇ <b id="gems">3200</b></span><span>¢ <b id="gold">5000</b></span></div>
+  </header>
+  <main id="view" tabindex="-1"></main>
+  <nav class="dock" aria-label="游戏导航">
+    <button data-nav="home" class="active"><i>⌂</i><span>主页</span></button>
+    <button data-nav="story"><i>◇</i><span>剧情</span></button>
+    <button data-nav="gacha"><i>✦</i><span>合成</span></button>
+    <button data-nav="gallery"><i>▦</i><span>图鉴</span></button>
+    <button data-nav="meta"><i>⚙</i><span>终端</span></button>
+  </nav>
+  <div id="toast" class="toasts" aria-live="polite"></div>
+  <div id="modal" class="modal" hidden></div>
+</div>
+<noscript><p class="fatal">需要启用 JavaScript 才能进入绯色回响。</p></noscript>
+<script type="module" src="./game.js"></script></body></html>
