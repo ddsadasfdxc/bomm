@@ -91,10 +91,8 @@ export async function initApp() {
   await inkReady;
   hideInkLoader();
 
-  let weatherSystem = null;
   if (!prefersReducedMotion()) {
-    weatherSystem = initWeather(document.getElementById('rain-canvas'));
-    initWeatherPanel(weatherSystem);
+    initWeather(document.getElementById('rain-canvas'));
   }
 
   trackVisit();
@@ -121,42 +119,7 @@ async function loadHitokoto(el, fallback) {
   }
 }
 
-function initWeatherPanel(system) {
-  if (!system) return;
-
-  const panel = document.getElementById('weatherPanel');
-  const toggle = document.getElementById('weatherToggle');
-  if (!panel || !toggle) return;
-
-  const options = panel.querySelectorAll('[data-weather]');
-
-  function updateActive(mode) {
-    options.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.weather === mode);
-    });
-  }
-
-  updateActive(system.getMode());
-
-  toggle.addEventListener('click', () => {
-    const hidden = panel.classList.contains('hidden');
-    panel.classList.toggle('hidden', !hidden);
-  });
-
-  panel.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-weather]');
-    if (!btn) return;
-    const mode = btn.dataset.weather;
-    system.setMode(mode);
-    updateActive(mode);
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!panel.contains(e.target) && e.target !== toggle && !panel.classList.contains('hidden')) {
-      panel.classList.add('hidden');
-    }
-  });
-}
+// Rain is fixed; no weather controls are registered.
 
 function initNav() {
   const tabs = document.querySelectorAll('.ios-nav-tab');
