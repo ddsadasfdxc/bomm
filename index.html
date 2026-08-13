@@ -30,6 +30,26 @@
   <div id="webgl-bg"></div>
   <canvas id="cursor-aura"></canvas>
   <canvas id="rain-canvas" aria-hidden="true"></canvas>
+  <button id="weatherToggle" class="weather-toggle" aria-label="天气设置" title="天气">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+    </svg>
+  </button>
+  <div id="weatherPanel" class="weather-panel hidden">
+    <div class="weather-panel-title">天气</div>
+    <button class="weather-option" data-weather="rain">
+      <span class="weather-icon">🌧</span>
+      <span class="weather-label">雨</span>
+    </button>
+    <button class="weather-option" data-weather="snow">
+      <span class="weather-icon">❄</span>
+      <span class="weather-label">雪</span>
+    </button>
+    <button class="weather-option" data-weather="none">
+      <span class="weather-icon">☀</span>
+      <span class="weather-label">晴</span>
+    </button>
+  </div>
 
   <div class="ink-loader" id="inkLoader" aria-hidden="true">
   <div class="ink-loader-drop"></div>
