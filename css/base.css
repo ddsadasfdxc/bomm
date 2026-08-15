@@ -27,8 +27,24 @@ body {
   background-position: center;
   background-size: cover;
   opacity: 0;
-  transition: opacity 1.8s var(--ease-silk);
+  transition: opacity 1.2s var(--ease-silk);
   filter: brightness(0.42) saturate(0.82) contrast(1.05);
+  /* 提升为独立合成层，滚动时避免整层重绘 */
+  will-change: opacity, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 背景轮换双层：主层与次层交叉淡入 */
+.bg-fade-layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-silk);
+  filter: none;
 }
 
 #bg-image.loaded,

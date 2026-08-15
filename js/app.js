@@ -23,7 +23,7 @@ import * as THREE from 'three';
 
 export async function initApp() {
   const inkReady = initInkLoader();
-  loadBackgroundImage(document.getElementById('bg-image'));
+  const bgCleanup = loadBackgroundImage(document.getElementById('bg-image'));
 
   const content = await loadContent();
 
@@ -104,6 +104,7 @@ export async function initApp() {
     if (animationId) cancelAnimationFrame(animationId);
     if (inkParticles) inkParticles.destroy();
     if (cursorAura) cursorAura.destroy();
+    if (bgCleanup) bgCleanup();
   };
 }
 
@@ -125,17 +126,28 @@ async function loadHitokoto(el, fallback) {
 
 function initNav() {
   const tabs = document.querySelectorAll('.ios-nav-tab');
-  const pages = document.querySelectorAll('.page');
   const track = document.getElementById('iosNavTrack');
 
   function moveTrackTo(activeTab) {
     if (!track || !activeTab) return;
     const pill = activeTab.parentElement;
+    const icon = activeTab.querySelector('svg') || activeTab;
     const pillRect = pill.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
     const tabRect = activeTab.getBoundingClientRect();
-    const x = tabRect.left - pillRect.left - 4;
-    track.style.width = tabRect.width + 'px';
-    track.style.transform = `translateX(${x}px)`;
+
+    // 以图标几何中心为锚，轨道包裹图标内容并保持呼吸感；
+    // 宽度不超过标签（桌面 38→36 留白，移动端 32→32 正好）
+    const iconCenterX = iconRect.left + iconRect.width / 2;
+    const iconCenterY = iconRect.top + iconRect.height / 2;
+    const trackWidth = Math.max(iconRect.width + 12, Math.min(tabRect.width, 36));
+    const trackHeight = Math.max(iconRect.height + 12, Math.min(tabRect.height, 30));
+
+    track.style.width = trackWidth + 'px';
+    track.style.height = trackHeight + 'px';
+    track.style.left = (iconCenterX - pillRect.left - trackWidth / 2) + 'px';
+    track.style.top = (iconCenterY - pillRect.top - trackHeight / 2) + 'px';
+    track.style.transform = 'none';
     track.style.opacity = '0.9';
   }
 
