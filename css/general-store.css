@@ -1,1 +1,205 @@
-CONTENT_GS_CSS
+/* ================================
+   解忧杂货铺 · General Store
+   ================================ */
+
+.gs-section {
+  margin: 64px auto 0;
+  max-width: 620px;
+}
+
+.gs-card {
+  position: relative;
+  padding: 34px 30px 28px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.gs-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(196, 90, 74, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(91, 122, 118, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.gs-card-head {
+  position: relative;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.gs-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--accent-cinnabar-light);
+  border: 1px solid rgba(196, 90, 74, 0.35);
+  border-radius: 999px;
+  background: rgba(196, 90, 74, 0.08);
+  margin-bottom: 14px;
+}
+
+.gs-card-desc {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.gs-form {
+  position: relative;
+}
+
+.gs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gs-input,
+.gs-textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(245, 240, 230, 0.03);
+  color: var(--text-paper);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s ease;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.gs-input:focus,
+.gs-textarea:focus {
+  border-color: rgba(196, 90, 74, 0.4);
+  background: rgba(245, 240, 230, 0.05);
+  box-shadow: 0 0 0 3px rgba(196, 90, 74, 0.08);
+}
+
+.gs-textarea {
+  min-height: 120px;
+  margin-bottom: 14px;
+}
+
+.gs-form-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gs-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.gs-count em {
+  font-style: normal;
+  color: var(--accent-cinnabar-light);
+}
+
+.gs-submit {
+  padding: 13px 32px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent-cinnabar), var(--accent-cinnabar-light));
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(196, 90, 74, 0.25);
+}
+
+.gs-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(196, 90, 74, 0.35);
+}
+
+.gs-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.gs-hint {
+  position: relative;
+  margin-top: 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.gs-fallback {
+  position: relative;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--accent-gold);
+  line-height: 1.8;
+}
+
+.gs-fallback a {
+  color: var(--accent-cinnabar-light);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.gs-success {
+  padding: 16px 0 4px;
+}
+
+.gs-success-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 16px rgba(196, 90, 74, 0.3));
+}
+
+.gs-success-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-paper);
+  margin-bottom: 10px;
+}
+
+.gs-success-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.gs-done {
+  transition: all 0.4s var(--ease-silk);
+}
+
+@media (max-width: 640px) {
+  .gs-section {
+    margin-top: 44px;
+  }
+  .gs-card {
+    padding: 26px 20px 22px;
+  }
+  .gs-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gs-submit {
+    padding: 13px 24px;
+  }
+}
