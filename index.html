@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/css/enhance.css">
   <link rel="stylesheet" href="/css/cosmos.css">
   <link rel="stylesheet" href="/css/galgame-entry.css">
+  <link rel="stylesheet" href="/css/redesign.css">
   <link rel="manifest" href="/site.webmanifest">
 <style id="trae-panel-enter-style">
         @keyframes trae-panel-enter {
@@ -221,6 +222,13 @@
             <div class="note-card-icon">⚗️</div>
             <h3>海森堡控制台</h3>
             <p>Heisenberg Console · Say My Name</p>
+            <div class="note-card-brush"></div>
+          </div>
+          <div class="note-card note-card-climb" id="climbCard" role="button" tabindex="0" aria-label="打开绝命高塔游戏">
+            <div class="note-card-icon">🏜️</div>
+            <h3>绝命高塔</h3>
+            <p>沙漠肉鸽卡牌 · 在 Albuquerque 登顶</p>
+            <span class="note-card-tag">PLAY</span>
             <div class="note-card-brush"></div>
           </div>
           <div class="note-card" onclick="window.open('/saul.html','_blank')">
@@ -434,4 +442,50 @@
 
   <script type="module" src="/js/main.js"></script>
 
+  <!-- 绝命高塔 游戏弹层 -->
+  <div class="climb-modal-overlay" id="climbModalOverlay" aria-hidden="true">
+    <div class="climb-modal" role="dialog" aria-modal="true" aria-label="绝命高塔 - 内嵌游戏">
+      <div class="climb-modal-bar">
+        <span class="climb-modal-title">🗻 绝命高塔 · THE CLIMB</span>
+        <button class="climb-modal-close" id="climbModalClose" aria-label="关闭游戏">×</button>
+      </div>
+      <iframe class="climb-modal-frame" id="climbFrame" title="绝命高塔" loading="lazy" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var overlay = document.getElementById('climbModalOverlay');
+      var card = document.getElementById('climbCard');
+      var closeBtn = document.getElementById('climbModalClose');
+      var frame = document.getElementById('climbFrame');
+      if (!overlay || !card || !closeBtn || !frame) return;
+
+      function openClimb() {
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        // 每次打开刷新游戏（防止旧存档残留界面）
+        frame.src = '/climb/?t=' + Date.now();
+      }
+
+      function closeClimb() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      card.addEventListener('click', openClimb);
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openClimb(); }
+      });
+      closeBtn.addEventListener('click', closeClimb);
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeClimb();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) closeClimb();
+      });
+    })();
+  </script>
 </body></html>

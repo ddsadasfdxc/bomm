@@ -1,0 +1,449 @@
+/* ═══════════════════════════════════════════════════════════
+   redesign.css — 大幅重构美化层 · 温若小站 UI 升级
+   水墨意境 × 现代玻璃质感 × 鎏金细节点缀
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --ink-deep: #080a07;
+  --ink-panel: rgba(18, 22, 16, 0.72);
+  --gold-line: rgba(184, 160, 122, 0.35);
+  --gold-strong: #c9b08a;
+  --shadow-lift: 0 20px 60px rgba(0, 0, 0, 0.5), 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ── 1. 全局氛围：颗粒纹理 + 柔和光晕 ── */
+html {
+  background: var(--ink-deep);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196, 90, 74, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 90%, rgba(91, 122, 118, 0.04) 0%, transparent 55%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+#scroll-container {
+  z-index: 3;
+}
+
+/* ── 2. 顶部导航：墨玉浮舟 ── */
+.ios-nav {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+}
+
+.ios-nav-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px;
+  background: linear-gradient(160deg, rgba(26, 30, 23, 0.88), rgba(14, 17, 12, 0.92));
+  border: 1px solid var(--gold-line);
+  border-radius: 999px;
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(245, 240, 230, 0.06);
+}
+
+.ios-nav-pill::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(184, 160, 122, 0.5), transparent 40%, transparent 60%, rgba(184, 160, 122, 0.25));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.ios-nav-track {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(196, 90, 74, 0.22), rgba(91, 122, 118, 0.18));
+  border: 1px solid rgba(196, 90, 74, 0.28);
+  box-shadow: 0 0 18px rgba(196, 90, 74, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: width 0.35s var(--ease-silk), transform 0.35s var(--ease-silk), opacity 0.3s ease;
+}
+
+.ios-nav-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: rgba(245, 240, 230, 0.45);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.3s var(--ease-silk), transform 0.3s var(--ease-silk);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios-nav-tab:hover {
+  color: rgba(245, 240, 230, 0.75);
+  transform: translateY(-1px);
+}
+
+.ios-nav-tab.active {
+  color: var(--text-primary);
+}
+
+.ios-nav-tab.active svg {
+  filter: drop-shadow(0 0 6px rgba(196, 90, 74, 0.4));
+}
+
+.nav-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent-cinnabar);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.ios-nav-tab.active .nav-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── 3. 探索页标题区：朱砂分隔线 ── */
+.explore-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 36px;
+  padding-bottom: 18px;
+}
+
+.explore-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-cinnabar), transparent);
+  border-radius: 2px;
+}
+
+.explore-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  color: var(--text-primary);
+  position: relative;
+  display: inline-block;
+}
+
+.explore-title::before,
+.explore-title::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 28px;
+  height: 1px;
+  background: var(--gold-line);
+}
+
+.explore-title::before {
+  right: calc(100% + 14px);
+}
+
+.explore-title::after {
+  left: calc(100% + 14px);
+}
+
+.explore-desc {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+}
+
+/* ── 4. 探索卡片：悬窗卷轴 ── */
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+  gap: 22px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.note-card {
+  position: relative;
+  background: linear-gradient(165deg, rgba(26, 30, 23, 0.66), rgba(14, 17, 12, 0.55));
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 30px 26px 26px;
+  cursor: pointer;
+  min-height: 132px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.45s var(--ease-silk), box-shadow 0.45s var(--ease-silk), border-color 0.45s ease, background 0.45s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 卡片右上角装饰：朱砂印 */
+.note-card::after {
+  content: '';
+  position: absolute;
+  top: -26px;
+  right: -26px;
+  width: 76px;
+  height: 76px;
+  border: 1.5px solid rgba(196, 90, 74, 0.18);
+  border-radius: 50%;
+  transition: all 0.5s var(--ease-silk);
+  pointer-events: none;
+}
+
+/* 内部光晕跟随鼠标 */
+.note-card::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(196, 90, 74, 0.14), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-silk);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.note-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(184, 160, 122, 0.4);
+  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(245, 240, 230, 0.05);
+}
+
+.note-card:hover::before {
+  opacity: 1;
+}
+
+.note-card:hover::after {
+  transform: scale(1.15);
+  border-color: rgba(196, 90, 74, 0.35);
+  box-shadow: 0 0 24px rgba(196, 90, 74, 0.12);
+}
+
+.note-card:active {
+  transform: scale(0.975);
+}
+
+/* 卡片图标：辉光容器 */
+.note-card-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 16px;
+  font-size: 24px;
+  border-radius: 14px;
+  background: linear-gradient(150deg, rgba(245, 240, 230, 0.08), rgba(245, 240, 230, 0.02));
+  border: 1px solid var(--glass-border);
+  transition: all 0.45s var(--ease-silk);
+  pointer-events: none;
+}
+
+.note-card:hover .note-card-icon {
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(196, 90, 74, 0.4);
+  background: linear-gradient(150deg, rgba(196, 90, 74, 0.16), rgba(196, 90, 74, 0.04));
+  box-shadow: 0 6px 20px rgba(196, 90, 74, 0.18);
+}
+
+.note-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-paper);
+  margin-bottom: 7px;
+  transition: color 0.3s ease;
+}
+
+.note-card:hover h3 {
+  color: #fff;
+}
+
+.note-card p {
+  font-size: 0.8rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.note-card-brush {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--accent-cinnabar), rgba(196, 90, 74, 0.4), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s var(--ease-brush);
+  border-radius: 2px;
+}
+
+.note-card:hover .note-card-brush {
+  transform: scaleX(1);
+}
+
+/* ── 5. 游戏嵌入：绝命高塔全屏弹层 ── */
+.note-card.note-card-climb {
+  background: linear-gradient(165deg, rgba(30, 34, 26, 0.72), rgba(10, 12, 9, 0.6));
+  border-color: rgba(184, 160, 122, 0.28);
+}
+
+.note-card-climb .note-card-icon {
+  background: linear-gradient(150deg, rgba(184, 160, 122, 0.22), rgba(184, 160, 122, 0.06));
+  border-color: rgba(184, 160, 122, 0.45);
+  color: #d8c39a;
+}
+
+.note-card-climb .note-card-tag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 3px 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--gold-strong);
+  border: 1px solid rgba(184, 160, 122, 0.35);
+  border-radius: 999px;
+  background: rgba(184, 160, 122, 0.08);
+}
+
+.climb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(5, 6, 4, 0.82);
+  backdrop-filter: blur(20px) saturate(0.9);
+  -webkit-backdrop-filter: blur(20px) saturate(0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-silk);
+}
+
+.climb-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.climb-modal {
+  position: relative;
+  width: min(940px, 96vw);
+  height: min(660px, 92vh);
+  background: var(--ink-deep);
+  border-radius: 16px;
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(245, 240, 230, 0.06);
+  overflow: hidden;
+  transform: scale(0.94) translateY(14px);
+  transition: transform 0.45s var(--ease-spring);
+  display: flex;
+  flex-direction: column;
+}
+
+.climb-modal-overlay.open .climb-modal {
+  transform: scale(1) translateY(0);
+}
+
+.climb-modal-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: linear-gradient(160deg, rgba(26, 30, 23, 0.9), rgba(14, 17, 12, 0.95));
+  border-bottom: 1px solid var(--gold-line);
+  flex-shrink: 0;
+}
+
+.climb-modal-title {
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  color: var(--gold-strong);
+  flex: 1;
+  text-align: center;
+}
+
+.climb-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-silk);
+}
+
+.climb-modal-close:hover {
+  color: #fff;
+  border-color: var(--accent-cinnabar);
+  background: rgba(196, 90, 74, 0.15);
+  transform: rotate(90deg);
+}
+
+.climb-modal-frame {
+  flex: 1;
+  border: none;
+  background: var(--ink-deep);
+}
+
+/* 窄屏适配 */
+@media (max-width: 640px) {
+  .climb-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+
+  .climb-modal-overlay {
+    padding: 0;
+  }
+}
