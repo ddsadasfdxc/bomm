@@ -6,3 +6,6 @@ account_id = "509fc0ddfe1794a208c10cf4f8e82589"
 [[kv_namespaces]]
 binding = "WENRUO_KV"
 id = "5159aa9a69cc43bba6ad04b91a1a4cac"
+
+[vars]
+GENERAL_STORE_EMAIL = "3156219708@qq.com"
