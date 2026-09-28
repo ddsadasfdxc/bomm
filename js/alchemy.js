@@ -21,7 +21,7 @@
     { id: 'r6', rank: '仙品', name: '太乙仙丹', rate: 0.008, color: '#d4553f', glow: 'rgba(212, 85, 63, 0.36)' },
   ];
   const RARITY_BY_ID = RARITIES.reduce((map, item) => { map[item.id] = item; return map; }, {});
-  const GUARANTEE_ID = 'r3';
+  const GUARANTEE_ID = 'r3'; // 十连保底：至少中品
 
   const els = {
     total: document.getElementById('alchemyTotal'),
@@ -39,6 +39,16 @@
   };
 
   let state = loadState();
+  let busy = false;
+  let flashEl = null;
+
+  /* ── 工具 ── */
+  function rankIndex(id) {
+    for (let i = 0; i < RARITIES.length; i += 1) {
+      if (RARITIES[i].id === id) return i;
+    }
+    return 0;
+  }
 
   /* ── 状态读写 ── */
   function blankState() {
@@ -65,7 +75,10 @@
         base.counts[id] = Math.max(0, Number(data.counts && data.counts[id]) || 0);
       });
       if (Array.isArray(data.history)) {
-        base.history = data.history.filter((h) => h && RARITY_BY_ID[h.id]).slice(0, HISTORY_LIMIT);
+        base.history = data.history
+          .filter((h) => h && RARITY_BY_ID[h.id])
+          .map((h) => ({ id: h.id, ts: Number(h.ts) || Date.now() }))
+          .slice(0, HISTORY_LIMIT);
       }
       base.createdAt = Number(data.createdAt) || base.createdAt;
       base.updatedAt = Number(data.updatedAt) || base.updatedAt;
@@ -82,6 +95,41 @@
     } catch (err) {
       /* 隐私模式或容量不足时静默失败，不影响本次抽卡 */
     }
+  }
+
+  /* ── 抽卡核心 ── */
+  function rollRarity() {
+    const r = Math.random();
+    let acc = 0;
+    for (let i = 0; i < RARITIES.length; i += 1) {
+      acc += RARITIES[i].rate;
+      if (r < acc) return RARITIES[i];
+    }
+    return RARITIES[0];
+  }
+
+  /* 执行 count 次抽卡并按序推进保底；返回品级对象数组 */
+  function performDraw(count) {
+    const results = [];
+    for (let i = 0; i < count; i += 1) {
+      const isLast = (i === count - 1);
+      const isHardPity = (state.pity + 1) >= PITY_MAX;
+      let item;
+      if (isHardPity) {
+        item = RARITY_BY_ID.r6; // 90 抽仙品硬保底
+      } else if (count === 10 && isLast && !results.some((r) => rankIndex(r.id) >= rankIndex(GUARANTEE_ID))) {
+        item = RARITY_BY_ID[GUARANTEE_ID]; // 十连保底至少中品
+      } else {
+        item = rollRarity();
+      }
+      results.push(item);
+      state.total += 1;
+      state.counts[item.id] += 1;
+      state.pity = item.id === 'r6' ? 0 : state.pity + 1;
+      state.history.unshift({ id: item.id, ts: Date.now() });
+    }
+    if (state.history.length > HISTORY_LIMIT) state.history.length = HISTORY_LIMIT;
+    return results;
   }
 
   /* ── 渲染 ── */
@@ -134,6 +182,7 @@
     }
     state.history.slice(0, 30).forEach((h) => {
       const item = RARITY_BY_ID[h.id];
+      if (!item) return;
       const li = document.createElement('li');
       li.className = 'alchemy-history-item';
       li.style.setProperty('--al-color', item.color);
@@ -143,9 +192,119 @@
     });
   }
 
+  function renderResult(results, isTen) {
+    if (!els.result) return;
+    els.result.innerHTML = '';
+    const best = results.reduce((a, b) => (rankIndex(b.id) > rankIndex(a.id) ? b : a), results[0]);
+
+    const head = document.createElement('div');
+    head.className = 'alchemy-result-head';
+    head.innerHTML = '<span class="alchemy-result-title">' + (isTen ? '十连 · 开鼎' : '一炉 · 丹成') + '</span>'
+      + '<span class="alchemy-result-sub">本次最高 · ' + best.rank + ' ' + best.name + '</span>';
+    els.result.appendChild(head);
+
+    const grid = document.createElement('div');
+    grid.className = 'alchemy-cards ' + (isTen ? 'alchemy-cards-ten' : 'alchemy-cards-single');
+    results.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'alchemy-card alchemy-card--' + item.id;
+      card.style.setProperty('--al-color', item.color);
+      card.style.setProperty('--al-glow', item.glow);
+      card.style.animationDelay = (i * 0.07).toFixed(2) + 's';
+      card.innerHTML = '<span class="alchemy-card-glow"></span>'
+        + '<span class="alchemy-card-rank">' + item.rank + '</span>'
+        + '<span class="alchemy-card-name">' + item.name + '</span>';
+      grid.appendChild(card);
+    });
+    els.result.appendChild(grid);
+
+    if (results.some((r) => r.id === 'r6')) {
+      window.setTimeout(() => fireFlash(), isTen ? 380 : 120);
+    }
+  }
+
   function renderAll() {
     renderStats();
     renderLegend();
     renderHistory();
   }
+
+  /* ── 特效 ── */
+  function spawnSparks(intensity) {
+    const box = els.sparks;
+    if (!box) return;
+    const n = intensity === 'ten' ? 22 : 12;
+    for (let i = 0; i < n; i += 1) {
+      const s = document.createElement('span');
+      s.className = 'furnace-spark';
+      const dist = 60 + Math.random() * 150;
+      s.style.setProperty('--spark-x', (Math.cos(-Math.PI / 2) * dist + (Math.random() - 0.5) * 60).toFixed(1) + 'px');
+      s.style.setProperty('--spark-y', (-dist).toFixed(1) + 'px');
+      s.style.left = (44 + Math.random() * 12).toFixed(1) + '%';
+      s.style.animationDuration = (0.8 + Math.random() * 0.6).toFixed(2) + 's';
+      s.style.animationDelay = (Math.random() * 0.18).toFixed(2) + 's';
+      box.appendChild(s);
+      s.addEventListener('animationend', () => s.remove(), { once: true });
+    }
+    window.setTimeout(() => { box.innerHTML = ''; }, 2000);
+  }
+
+  function fireFlash() {
+    if (!flashEl) {
+      flashEl = document.createElement('div');
+      flashEl.className = 'alchemy-flash';
+      flashEl.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(flashEl);
+    }
+    flashEl.classList.remove('fire');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('fire');
+  }
+
+  function playCasting(duration) {
+    root.classList.add('casting', 'shake');
+    window.setTimeout(() => root.classList.remove('casting', 'shake'), duration);
+  }
+
+  /* ── 交互 ── */
+  function setBusy(flag) {
+    busy = flag;
+    if (els.single) els.single.disabled = flag;
+    if (els.ten) els.ten.disabled = flag;
+  }
+
+  function handleDraw(count) {
+    if (busy) return;
+    setBusy(true);
+    const isTen = count === 10;
+    playCasting(isTen ? 1250 : 950);
+    spawnSparks(isTen ? 'ten' : 'single');
+    if (isTen) fireFlash();
+
+    window.setTimeout(() => {
+      const results = performDraw(count);
+      saveState();
+      renderResult(results, isTen);
+      renderStats();
+      renderLegend();
+      renderHistory();
+      setBusy(false);
+    }, isTen ? 880 : 680);
+  }
+
+  if (els.single) els.single.addEventListener('click', () => handleDraw(1));
+  if (els.ten) els.ten.addEventListener('click', () => handleDraw(10));
+
+  if (els.clear) {
+    els.clear.addEventListener('click', () => {
+      if (!state.total && !state.history.length) return;
+      if (!window.confirm('确定清空丹录与全部统计数据？此操作不可撤销。')) return;
+      state = blankState();
+      saveState();
+      if (els.result) els.result.innerHTML = '';
+      renderAll();
+    });
+  }
+
+  renderAll();
 })();

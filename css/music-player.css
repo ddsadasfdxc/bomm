@@ -11,6 +11,8 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
+  /* 容器本身不接收指针事件：否则其包裹盒（面板尺寸）会遮挡/拦截页面点击与滚动 */
+  pointer-events: none;
 }
 
 /* ── 悬浮按钮 ── */
@@ -34,6 +36,8 @@
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+  /* 容器已设为 pointer-events:none，这里恢复按钮自身的可点击/可拖拽 */
+  pointer-events: auto;
 }
 
 .music-widget.dragging .music-btn {
