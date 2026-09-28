@@ -22,8 +22,8 @@
   width: 100%;
   padding: 0;
   overflow: clip;
-  /* 纯静态半透明层：只压暗动态背景，不参与重绘/模糊，避免滚动卡顿与断层 */
-  background: linear-gradient(180deg, rgba(6, 8, 6, 0.5) 0%, rgba(6, 8, 6, 0.18) 18%, rgba(6, 8, 6, 0.18) 82%, rgba(6, 8, 6, 0.55) 100%);
+  /* 完全透明：让全局动态背景自然透出，不设任何全屏叠加层 */
+  background: transparent;
   isolation: isolate;
 }
 
