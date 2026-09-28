@@ -376,6 +376,37 @@
     if (els.ten) els.ten.disabled = flag;
   }
 
+  function rollRarity() {
+    if (state.pity >= PITY_MAX) return RARITY_BY_ID.r6;
+    const r = Math.random();
+    let acc = 0;
+    for (let i = 0; i < RARITIES.length; i += 1) {
+      acc += RARITIES[i].rate;
+      if (r < acc) return RARITIES[i];
+    }
+    return RARITIES[0];
+  }
+  function performDraw(count) {
+    const results = [];
+    for (let i = 0; i < count; i += 1) {
+      results.push(rollRarity());
+    }
+    if (count > 1) {
+      const minRank = rankIndex(GUARANTEE_ID);
+      const hasGood = results.some((item) => rankIndex(item.id) >= minRank);
+      if (!hasGood) results[count - 1] = RARITY_BY_ID[GUARANTEE_ID];
+    }
+    const now = Date.now();
+    results.forEach((item) => {
+      state.total += 1;
+      state.counts[item.id] = (state.counts[item.id] || 0) + 1;
+      state.history.unshift({ id: item.id, ts: now });
+      if (item.id === 'r6') state.pity = 0;
+      else state.pity = Math.min(PITY_MAX, state.pity + 1);
+    });
+    if (state.history.length > HISTORY_LIMIT) state.history.length = HISTORY_LIMIT;
+    return results;
+  }
   function handleDraw(count) {
     if (busy) return;
     setBusy(true);
