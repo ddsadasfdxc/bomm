@@ -22,9 +22,8 @@
   width: 100%;
   padding: 0;
   overflow: clip;
-  background:
-    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(196, 90, 74, 0.05), transparent 60%),
-    linear-gradient(180deg, #0a0c08 0%, #0d100b 40%, #0a0c08 100%);
+  /* 纯静态半透明层：只压暗动态背景，不参与重绘/模糊，避免滚动卡顿与断层 */
+  background: linear-gradient(180deg, rgba(6, 8, 6, 0.5) 0%, rgba(6, 8, 6, 0.18) 18%, rgba(6, 8, 6, 0.18) 82%, rgba(6, 8, 6, 0.55) 100%);
   isolation: isolate;
 }
 
@@ -44,33 +43,7 @@
   overflow: hidden;
 }
 
-.fr-bg {
-  position: absolute;
-  inset: -12% -6%;
-  z-index: 0;
-  background-image: var(--fr-img);
-  background-size: cover;
-  background-position: center;
-  opacity: 0.26;
-  filter: grayscale(0.55) sepia(0.28) contrast(1.08) brightness(0.7);
-  transform: translate3d(0, var(--fr-shift, 0px), 0) scale(1.06);
-  will-change: transform;
-  pointer-events: none;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 72%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 72%, transparent 100%);
-}
 
-.section-fanren::after {
-  /* 全卷统一墨雾，避免图片之间出现生硬接缝 */
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 60% 30% at 20% 30%, rgba(126, 156, 142, 0.05), transparent 60%),
-    radial-gradient(ellipse 50% 26% at 82% 68%, rgba(196, 90, 74, 0.05), transparent 62%);
-}
 
 .fr-prologue-inner {
   position: relative;
@@ -113,6 +86,7 @@
   font-size: clamp(0.9rem, 2.6vw, 1.1rem);
   letter-spacing: 0.42em;
   color: var(--fr-jade);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
 }
 
 .fr-verse {
@@ -239,12 +213,10 @@
   flex: 1 1 auto;
   max-width: 640px;
   padding: clamp(26px, 4vw, 44px);
-  background: var(--fr-glass);
+  background: rgba(9, 12, 9, 0.7);
   border: 1px solid var(--fr-line);
   border-radius: 22px;
-  backdrop-filter: blur(16px) saturate(1.1);
-  -webkit-backdrop-filter: blur(16px) saturate(1.1);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(236, 229, 216, 0.05);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(236, 229, 216, 0.05);
   overflow: hidden;
   opacity: 0;
   transform: translateY(48px);
@@ -465,6 +437,7 @@
   border-radius: 60% 0 60% 0;
   opacity: 0;
   animation: frFall linear infinite;
+  will-change: transform;
 }
 
 @keyframes frFall {
@@ -485,7 +458,6 @@
   min-height: 88vh;
   padding: clamp(72px, 12vh, 150px) 24px;
   text-align: center;
-  background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(91, 122, 118, 0.08), transparent 70%);
 }
 
 .fr-stars {
@@ -528,7 +500,8 @@
 .fr-finale-line {
   font-size: clamp(0.9rem, 2.6vw, 1.05rem);
   letter-spacing: 0.22em;
-  color: rgba(236, 229, 216, 0.6);
+  color: rgba(236, 229, 216, 0.66);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
 }
 
 .fr-finale-line--main {
@@ -537,6 +510,7 @@
   font-size: clamp(1.3rem, 4.4vw, 2rem);
   letter-spacing: 0.3em;
   color: var(--fr-paper);
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.7);
 }
 
 .fr-finale-actions {
@@ -643,9 +617,6 @@
 
 /* ── 7. 无障碍与降级 ── */
 @media (prefers-reduced-motion: reduce) {
-  .fr-bg {
-    transform: none !important;
-  }
 
   .fr-petal {
     display: none;

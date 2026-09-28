@@ -1,6 +1,6 @@
 /* fanren.js — 《凡人修仙传》同人长卷交互
    1) 章节滚动显现  2) 章节展开余韵  3) 卷首/卷尾按钮
-   4) 背景视差  5) 右侧卷轴进度  6) 卷尾星图点亮  7) 飘落花瓣
+   4) 右侧卷轴进度  6) 卷尾星图点亮  7) 飘落花瓣
    全部为渐进增强：JS 失效时内容依然可读。
 */
 (() => {
@@ -51,11 +51,10 @@
     });
   });
 
-  /* ── 4. 背景视差 + 5. 右侧卷轴进度 ── */
+  /* ── 4. 右侧卷轴进度 ── */
   const rail = root.querySelector('.fr-rail');
   const fill = root.querySelector('.fr-rail-fill');
   const dots = Array.from(root.querySelectorAll('.fr-rail-dot'));
-  const bgs = Array.from(root.querySelectorAll('.fr-bg'));
   let raf = 0;
 
   const update = () => {
@@ -72,16 +71,6 @@
       dots.forEach((dot, i) => dot.classList.toggle('is-on', i === idx && raw >= 0 && raw <= 1));
     }
 
-    if (!reduceMotion) {
-      const vh = window.innerHeight;
-      bgs.forEach((bg) => {
-        const host = bg.parentElement;
-        if (!host) return;
-        const rect = host.getBoundingClientRect();
-        const shift = ((rect.top + rect.height / 2) - vh / 2) * -0.045;
-        bg.style.setProperty('--fr-shift', shift.toFixed(1) + 'px');
-      });
-    }
   };
 
   const onScroll = () => {
@@ -110,7 +99,7 @@
   /* ── 7. 飘落花瓣 ── */
   const petalHost = root.querySelector('.fr-petals');
   if (petalHost && !reduceMotion) {
-    const count = window.innerWidth < 760 ? 8 : 16;
+    const count = window.innerWidth < 760 ? 4 : 8;
     for (let i = 0; i < count; i += 1) {
       const petal = document.createElement('i');
       petal.className = 'fr-petal';
