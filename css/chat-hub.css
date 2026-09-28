@@ -1,0 +1,540 @@
+/* ═══════════════════════════════════════════════════════════
+   chat-hub.css — 灵犀主界面（入口 + 超爽炼丹炉）与「灵犀·论道」子界面
+   说明：全部使用实色半透明底 + transform/opacity 动画，
+   不使用 backdrop-filter，避免长页面滚动与抽卡特效的性能问题。
+   ═══════════════════════════════════════════════════════════ */
+
+#page-chat {
+  overflow: hidden;
+}
+
+/* ── 1. 灵犀主界面容器 ── */
+.chat-hub {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: clamp(18px, 3vw, 34px) clamp(14px, 3vw, 28px) 64px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.chat-hub-inner,
+.chat-hub > * {
+  width: 100%;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hub-head {
+  text-align: center;
+  padding: 8px 0 26px;
+}
+
+.hub-eyebrow {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 0.62rem;
+  letter-spacing: 0.48em;
+  color: rgba(201, 176, 138, 0.8);
+  text-transform: uppercase;
+}
+
+.hub-title {
+  margin-top: 12px;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  color: var(--text-paper, #e8e3da);
+  text-shadow: 0 4px 26px rgba(0, 0, 0, 0.55);
+}
+
+.hub-sub {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0.26em;
+  color: rgba(232, 227, 218, 0.55);
+}
+
+/* ── 2. 进入子界面按钮 ── */
+.hub-enter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 22px;
+  text-align: left;
+  background: linear-gradient(135deg, rgba(24, 29, 22, 0.86), rgba(13, 17, 12, 0.9));
+  border: 1px solid rgba(201, 176, 138, 0.26);
+  border-radius: 20px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-silk, ease), border-color 0.4s ease, box-shadow 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hub-enter-glow {
+  position: absolute;
+  top: -60%;
+  left: -30%;
+  width: 60%;
+  height: 220%;
+  background: linear-gradient(100deg, transparent, rgba(196, 90, 74, 0.16), rgba(201, 176, 138, 0.12), transparent);
+  transform: translateX(-120%) rotate(8deg);
+  animation: hubSweep 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hubSweep {
+  0%, 55% { transform: translateX(-120%) rotate(8deg); }
+  85%, 100% { transform: translateX(260%) rotate(8deg); }
+}
+
+.hub-enter-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  font-size: 1.3rem;
+  color: #f3ece0;
+  background: radial-gradient(circle at 35% 30%, rgba(196, 90, 74, 0.9), rgba(120, 44, 36, 0.9));
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(196, 90, 74, 0.28);
+}
+
+.hub-enter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.hub-enter-body strong {
+  font-family: var(--font-serif);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--text-primary, #f5f0e6);
+}
+
+.hub-enter-body span {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: rgba(232, 227, 218, 0.5);
+}
+
+.hub-enter-arrow {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: rgba(201, 176, 138, 0.75);
+  transition: transform 0.4s var(--ease-silk, ease);
+}
+
+.hub-enter:hover {
+  transform: translateY(-3px);
+  border-color: rgba(196, 90, 74, 0.5);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.5), 0 0 32px rgba(196, 90, 74, 0.1);
+}
+
+.hub-enter:hover .hub-enter-arrow {
+  transform: translateX(5px);
+}
+
+/* ── 3. 灵犀 · 论道（聊天子界面） ── */
+.chat-room {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.42s var(--ease-silk, ease), transform 0.42s var(--ease-silk, ease), visibility 0.42s;
+}
+
+.chat-room.open {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.chat-room-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 920px;
+}
+
+.chat-room-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-size: 1.05rem;
+  color: var(--text-primary, #f5f0e6);
+  background: rgba(20, 25, 18, 0.85);
+  border: 1px solid rgba(201, 176, 138, 0.24);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-silk, ease);
+}
+
+.chat-room-back:hover {
+  border-color: rgba(196, 90, 74, 0.55);
+  transform: translateX(-3px);
+}
+
+.chat-room-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--text-paper, #e8e3da);
+}
+
+.chat-room-hint {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: rgba(232, 227, 218, 0.42);
+}
+
+.chat-room .chat-area {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── 4. 六品丹药配色 ── */
+:root {
+  --al-r1: #7e9c8e;
+  --al-r2: #4f9c92;
+  --al-r3: #5a8bb0;
+  --al-r4: #8a6cae;
+  --al-r5: #c9a227;
+  --al-r6: #d4553f;
+}
+
+/* ── 5. 炼丹炉 ── */
+.alchemy {
+  position: relative;
+  margin-top: 34px;
+  padding: clamp(20px, 3vw, 32px);
+  background: linear-gradient(160deg, rgba(20, 25, 18, 0.82), rgba(11, 14, 10, 0.88));
+  border: 1px solid rgba(201, 176, 138, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.alchemy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(196, 90, 74, 0.09), transparent 70%);
+  pointer-events: none;
+}
+
+.alchemy-head { position: relative; text-align: center; margin-bottom: 24px; }
+.alchemy-eyebrow { font-family: var(--font-display, 'Cinzel', serif); font-size: 0.6rem; letter-spacing: 0.46em; color: rgba(201, 176, 138, 0.75); }
+.alchemy-title { margin-top: 10px; font-family: var(--font-serif); font-size: clamp(1.5rem, 4.6vw, 2.1rem); letter-spacing: 0.24em; color: var(--text-paper, #e8e3da); text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5); }
+.alchemy-desc { margin-top: 10px; font-size: 0.76rem; letter-spacing: 0.12em; line-height: 1.9; color: rgba(232, 227, 218, 0.5); }
+
+.alchemy-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(18px, 3vw, 36px); align-items: center; }
+
+.furnace { position: relative; height: 250px; display: flex; align-items: flex-end; justify-content: center; }
+.furnace-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 134px;
+  height: 122px;
+  border-radius: 50% 50% 42% 42% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 18%, rgba(88, 100, 82, 0.95), rgba(24, 30, 22, 0.98) 62%, rgba(12, 16, 11, 1));
+  border: 1px solid rgba(201, 176, 138, 0.3);
+  box-shadow: inset 0 -14px 30px rgba(0, 0, 0, 0.6), 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+.furnace-rune { font-family: var(--font-serif); font-size: 2rem; color: rgba(233, 200, 150, 0.9); text-shadow: 0 0 20px rgba(196, 90, 74, 0.6); animation: runePulse 3s ease-in-out infinite; }
+@keyframes runePulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.07); } }
+
+.furnace-lid {
+  position: absolute;
+  top: 36px;
+  z-index: 3;
+  width: 158px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(62, 72, 58, 0.98), rgba(22, 28, 20, 1));
+  border: 1px solid rgba(201, 176, 138, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  transform-origin: 88% 120%;
+  transition: transform 0.5s var(--ease-silk, ease), top 0.5s var(--ease-silk, ease);
+}
+
+.furnace-flame {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  width: 124px;
+  height: 78px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 198, 88, 0.9), rgba(214, 96, 52, 0.5) 46%, transparent 74%);
+  filter: blur(2px);
+  animation: flameDance 1.7s ease-in-out infinite;
+}
+@keyframes flameDance {
+  0%, 100% { transform: scaleY(1) scaleX(1); opacity: 0.85; }
+  50% { transform: scaleY(1.16) scaleX(0.94); opacity: 1; }
+}
+
+.furnace-beam {
+  position: absolute;
+  bottom: 96px;
+  left: 50%;
+  z-index: 0;
+  width: 74px;
+  height: 10px;
+  margin-left: -37px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 226, 150, 0.95), rgba(212, 85, 63, 0.35) 55%, transparent 78%);
+  opacity: 0;
+  transform: translateY(0) scaleY(1);
+}
+
+.furnace-sparks { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.furnace-spark {
+  position: absolute;
+  left: 50%;
+  bottom: 90px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 214, 130, 0.95);
+  opacity: 0;
+  animation: sparkUp linear forwards;
+}
+@keyframes sparkUp {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate3d(var(--spark-x, 0px), var(--spark-y, -140px), 0) scale(0.2); opacity: 0; }
+}
+
+/* 开炉状态 */
+.alchemy.casting .furnace-lid { transform: translate(-16px, -34px) rotate(-28deg); }
+.alchemy.casting .furnace-beam { opacity: 1; animation: beamRise 1.25s var(--ease-silk, ease) forwards; }
+@keyframes beamRise {
+  0% { transform: translateY(0) scaleY(1); opacity: 0.2; }
+  35% { opacity: 1; }
+  100% { transform: translateY(-190px) scaleY(9); opacity: 0; }
+}
+
+.alchemy-controls { display: flex; flex-direction: column; gap: 16px; }
+.alchemy-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.alchemy-stat { padding: 12px 10px; text-align: center; background: rgba(0, 0, 0, 0.26); border: 1px solid rgba(236, 229, 216, 0.08); border-radius: 14px; }
+.alchemy-stat b { display: block; font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-primary, #f5f0e6); }
+.alchemy-stat span { display: block; margin-top: 5px; font-size: 0.66rem; letter-spacing: 0.16em; color: rgba(232, 227, 218, 0.48); }
+
+.alchemy-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.alchemy-btn {
+  position: relative;
+  padding: 14px 12px;
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
+  letter-spacing: 0.2em;
+  color: #f6f1e6;
+  border-radius: 14px;
+  border: 1px solid rgba(201, 176, 138, 0.3);
+  background: linear-gradient(140deg, rgba(34, 40, 30, 0.95), rgba(18, 22, 16, 0.95));
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.32s var(--ease-silk, ease), box-shadow 0.32s ease, border-color 0.32s ease;
+}
+.alchemy-btn-single:hover { transform: translateY(-3px); border-color: rgba(201, 176, 138, 0.6); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45); }
+.alchemy-btn-ten { background: linear-gradient(140deg, rgba(196, 90, 74, 0.95), rgba(126, 46, 38, 0.95)); border-color: rgba(255, 200, 170, 0.4); }
+.alchemy-btn-ten:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(196, 90, 74, 0.35); }
+.alchemy-btn:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+
+.alchemy-pity-bar { height: 6px; border-radius: 999px; background: rgba(0, 0, 0, 0.36); overflow: hidden; }
+.alchemy-pity-bar i { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--al-r3), var(--al-r5), var(--al-r6)); transition: width 0.5s var(--ease-silk, ease); }
+.alchemy-pity-text { font-size: 0.68rem; letter-spacing: 0.14em; color: rgba(232, 227, 218, 0.45); text-align: center; }
+
+/* ── 6. 抽卡结果 ── */
+.alchemy-result { position: relative; margin-top: 24px; }
+.alchemy-result:empty { display: none; }
+
+.alchemy-result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.alchemy-result-title { font-family: var(--font-serif); font-size: 0.9rem; letter-spacing: 0.22em; color: rgba(232, 227, 218, 0.8); }
+.alchemy-result-sub { font-size: 0.68rem; letter-spacing: 0.16em; color: rgba(232, 227, 218, 0.45); }
+
+.alchemy-cards { display: grid; gap: 12px; }
+.alchemy-cards-single { grid-template-columns: minmax(0, 1fr); max-width: 320px; margin: 0 auto; }
+.alchemy-cards-ten { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.alchemy-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 132px;
+  padding: 16px 10px;
+  background: rgba(10, 13, 9, 0.88);
+  border: 1px solid var(--al-color, rgba(201, 176, 138, 0.3));
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scale(0.9) rotateY(50deg);
+  animation: cardReveal 0.62s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) forwards;
+}
+
+@keyframes cardReveal {
+  to { opacity: 1; transform: translateY(0) scale(1) rotateY(0deg); }
+}
+
+.alchemy-card-rank {
+  position: relative;
+  z-index: 2;
+  padding: 3px 10px;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: var(--al-color, #e8e3da);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--al-color, rgba(201, 176, 138, 0.4));
+  border-radius: 999px;
+}
+
+.alchemy-card-name {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  letter-spacing: 0.12em;
+  color: var(--text-primary, #f5f0e6);
+  text-align: center;
+}
+
+.alchemy-card-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse 70% 46% at 50% 0%, var(--al-glow, rgba(201, 176, 138, 0.14)), transparent 72%);
+  pointer-events: none;
+}
+
+.alchemy-card--r5 { box-shadow: 0 12px 40px rgba(201, 162, 39, 0.3), inset 0 0 0 1px rgba(201, 162, 39, 0.28); }
+.alchemy-card--r6 {
+  border-width: 1.5px;
+  animation: cardReveal 0.62s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) forwards, legendaryGlow 2.4s ease-in-out infinite 0.7s;
+}
+.alchemy-card--r6::before {
+  content: '';
+  position: absolute;
+  inset: -45%;
+  z-index: 0;
+  background: conic-gradient(from 0deg, transparent, rgba(212, 85, 63, 0.34), transparent 32%);
+  animation: spinGlow 3.6s linear infinite;
+}
+.alchemy-card--r6 .alchemy-card-name { color: #ffe7cd; }
+
+@keyframes legendaryGlow {
+  0%, 100% { box-shadow: 0 12px 40px rgba(212, 85, 63, 0.3); }
+  50% { box-shadow: 0 16px 62px rgba(212, 85, 63, 0.65), 0 0 40px rgba(255, 180, 120, 0.28); }
+}
+
+@keyframes spinGlow {
+  to { transform: rotate(360deg); }
+}
+
+/* 震动与闪光 */
+.alchemy.shake { animation: alchemyShake 0.52s ease-in-out; }
+@keyframes alchemyShake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-5px, 2px, 0); }
+  40% { transform: translate3d(5px, -2px, 0); }
+  60% { transform: translate3d(-3px, 1px, 0); }
+  80% { transform: translate3d(2px, 0, 0); }
+}
+
+.alchemy-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 90000;
+  background: radial-gradient(circle at 50% 58%, rgba(255, 240, 200, 0.8), rgba(255, 176, 120, 0.32) 42%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+.alchemy-flash.fire { animation: flashBurst 0.95s ease-out; }
+@keyframes flashBurst {
+  0% { opacity: 0; }
+  14% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── 7. 丹方图鉴 ── */
+.alchemy-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
+.alchemy-legend-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 11px 12px;
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(236, 229, 216, 0.07);
+  border-radius: 12px;
+  border-left: 2px solid var(--al-color, #7e9c8e);
+}
+.alchemy-legend-name { font-size: 0.74rem; letter-spacing: 0.12em; color: var(--al-color, #e8e3da); }
+.alchemy-legend-rate { font-size: 0.62rem; letter-spacing: 0.1em; color: rgba(232, 227, 218, 0.4); }
+.alchemy-legend-count { font-size: 0.7rem; letter-spacing: 0.08em; color: rgba(232, 227, 218, 0.66); }
+
+/* ── 8. 丹录 ── */
+.alchemy-history { margin-top: 24px; }
+.alchemy-history-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.alchemy-history-head h4 { font-family: var(--font-serif); font-size: 0.92rem; font-weight: 500; letter-spacing: 0.24em; color: rgba(232, 227, 218, 0.82); }
+.alchemy-clear { padding: 6px 14px; font-size: 0.68rem; letter-spacing: 0.14em; color: rgba(232, 227, 218, 0.6); background: transparent; border: 1px solid rgba(236, 229, 216, 0.14); border-radius: 999px; cursor: pointer; transition: all 0.3s ease; }
+.alchemy-clear:hover { color: #f5f0e6; border-color: rgba(196, 90, 74, 0.5); }
+.alchemy-history-list { list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 240px; margin-top: 12px; overflow-y: auto; scrollbar-width: thin; }
+.alchemy-history-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; font-size: 0.72rem; border-radius: 10px; background: rgba(0, 0, 0, 0.22); border-left: 2px solid var(--al-color, #7e9c8e); }
+.alchemy-history-name { color: rgba(232, 227, 218, 0.78); letter-spacing: 0.06em; }
+.alchemy-history-time { flex-shrink: 0; font-size: 0.66rem; letter-spacing: 0.08em; color: rgba(232, 227, 218, 0.36); }
+.alchemy-history-empty { padding: 14px; text-align: center; font-size: 0.72rem; color: rgba(232, 227, 218, 0.4); }
+
+/* ── 9. 响应式与降级 ── */
+@media (max-width: 760px) {
+  .alchemy-stage { grid-template-columns: minmax(0, 1fr); }
+  .furnace { height: 208px; }
+  .alchemy-cards-ten { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .alchemy-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .alchemy-card { min-height: 112px; padding: 12px 8px; }
+  .alchemy-card-name { font-size: 0.86rem; }
+}
+
+@media (max-width: 460px) {
+  .alchemy-cards-ten { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hub-enter { padding: 16px; gap: 12px; }
+  .hub-enter-icon { width: 40px; height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-enter-glow,
+  .furnace-flame,
+  .furnace-rune,
+  .alchemy-card--r6::before { animation: none !important; }
+  .alchemy-card { opacity: 1; transform: none; animation: none !important; }
+  .furnace-spark,
+  .alchemy-flash { display: none !important; }
+  .chat-room { transition: none; }
+}
