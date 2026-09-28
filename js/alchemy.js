@@ -377,7 +377,7 @@
   }
 
   function rollRarity() {
-    if (state.pity >= PITY_MAX) return RARITY_BY_ID.r6;
+    if (state.pity + 1 >= PITY_MAX) return RARITY_BY_ID.r6;
     const r = Math.random();
     let acc = 0;
     for (let i = 0; i < RARITIES.length; i += 1) {
