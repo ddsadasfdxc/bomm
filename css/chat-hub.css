@@ -538,3 +538,187 @@
   .alchemy-flash { display: none !important; }
   .chat-room { transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   10. 炼丹特效增强（V2）
+   仅使用 transform / opacity / 渐变，无 backdrop-filter。
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 音效开关 ── */
+.alchemy-sfx {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.86rem;
+  line-height: 1;
+  color: rgba(232, 227, 218, 0.85);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 176, 138, 0.24);
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.3s var(--ease-silk, ease), border-color 0.3s ease, opacity 0.3s ease;
+}
+.alchemy-sfx:hover { border-color: rgba(196, 90, 74, 0.55); transform: scale(1.06); }
+.alchemy-sfx[aria-pressed="false"] { opacity: 0.45; }
+
+/* ── 炉体常驻地脉光晕 ── */
+.furnace::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 230px;
+  height: 74px;
+  margin-left: -115px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(214, 96, 52, 0.24), transparent 70%);
+  pointer-events: none;
+}
+
+/* ── 开鼎能量环（casting 时扩散） ── */
+.furnace::after {
+  content: '';
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin-left: -60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 214, 130, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+.alchemy.casting .furnace::after { animation: ringOut 1.15s var(--ease-silk, ease) forwards; }
+@keyframes ringOut {
+  0% { transform: scale(0.35); opacity: 0.9; }
+  100% { transform: scale(2.7); opacity: 0; }
+}
+
+/* ── 炉体脉冲 ── */
+.alchemy.casting .furnace-body { animation: bodyPulse 0.95s ease-out; }
+@keyframes bodyPulse {
+  0%, 100% { transform: none; box-shadow: inset 0 -14px 30px rgba(0, 0, 0, 0.6), 0 18px 40px rgba(0, 0, 0, 0.5); }
+  42% { transform: scale(1.07); box-shadow: inset 0 -14px 30px rgba(0, 0, 0, 0.6), 0 0 52px rgba(255, 190, 110, 0.6); }
+}
+
+/* ── 炉火咆哮 ── */
+.alchemy.casting .furnace-flame { animation: flameRoar 1s ease-out; }
+@keyframes flameRoar {
+  0% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
+  45% { transform: scaleY(2) scaleX(1.18); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
+}
+
+/* ── 符文与标题在开鼎时更有神 ── */
+.alchemy.casting .furnace-rune { animation: runePulse 0.5s ease-in-out infinite; }
+.alchemy.casting .alchemy-title { text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 32px rgba(255, 196, 120, 0.6); }
+
+/* ── 开鼎冲击波 ── */
+.alchemy-shockwave {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  z-index: 5;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 226, 150, 0.75);
+  pointer-events: none;
+  animation: shockOut 0.95s ease-out forwards;
+}
+@keyframes shockOut {
+  0% { transform: scale(0.3); opacity: 0.95; }
+  100% { transform: scale(9); opacity: 0; }
+}
+
+/* ── 仙品金环涟漪（全屏） ── */
+.alchemy-ring--gold {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 90001;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 206, 120, 0.85);
+  box-shadow: 0 0 46px rgba(255, 196, 120, 0.7);
+  pointer-events: none;
+  animation: goldRing 1.15s ease-out forwards;
+}
+@keyframes goldRing {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(26); opacity: 0; }
+}
+
+/* ── 余烬粒子 ── */
+.furnace-spark--ember {
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle, rgba(255, 190, 110, 0.95), rgba(214, 96, 52, 0.6));
+}
+
+/* ── 开炉按钮态 ── */
+.alchemy-btn.is-casting { box-shadow: 0 0 30px rgba(255, 170, 90, 0.5); }
+
+/* ── 结果区按最高品级泛光 ── */
+.alchemy-result[data-best="r4"]::before,
+.alchemy-result[data-best="r5"]::before,
+.alchemy-result[data-best="r6"]::before {
+  content: '';
+  position: absolute;
+  inset: -20px -10px auto;
+  height: 190px;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--al-glow, rgba(201, 176, 138, 0.2)), transparent 70%);
+  pointer-events: none;
+}
+.alchemy-result-head,
+.alchemy-cards { position: relative; z-index: 1; }
+
+/* ── 卡片扫光（上品及以上） ── */
+.alchemy-card--r4::after,
+.alchemy-card--r5::after,
+.alchemy-card--r6::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.55) 50%, transparent 68%);
+  transform: translateX(-140%);
+  animation: cardSweep 1.1s ease-out 0.4s forwards;
+  pointer-events: none;
+}
+@keyframes cardSweep { to { transform: translateX(140%); } }
+
+/* ── 极品金环（与仙品错开速度） ── */
+.alchemy-card--r5::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: 0;
+  background: conic-gradient(from 0deg, transparent, rgba(201, 162, 39, 0.32), transparent 30%);
+  animation: spinGlow 4.2s linear infinite;
+}
+
+/* ── 降级 ── */
+@media (prefers-reduced-motion: reduce) {
+  .alchemy.casting .furnace::after,
+  .alchemy.casting .furnace-body,
+  .alchemy.casting .furnace-flame,
+  .alchemy.casting .furnace-rune,
+  .alchemy-shockwave,
+  .alchemy-ring--gold,
+  .alchemy-card--r4::after,
+  .alchemy-card--r5::after,
+  .alchemy-card--r6::after,
+  .alchemy-card--r5::before { animation: none !important; }
+}
