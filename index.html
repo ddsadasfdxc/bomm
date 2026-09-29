@@ -13,8 +13,8 @@
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
-      </style>  <script type="module" crossorigin src="./assets/index-GX4zVtfW.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BG_xIhGQ.css">
+      </style>  <script type="module" crossorigin src="./assets/index-MuqqwXIB.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DQNIlcMi.css">
 </head>
 <body>
   <div id="bg-image" aria-hidden="true"></div>
@@ -294,10 +294,7 @@
           </div>
           <p class="fr-finale-line">六段姻缘，六个名字，都留在了长生路上。</p>
           <p class="fr-finale-line fr-finale-line--main">仙途无尽，情字难全。</p>
-          <div class="fr-finale-actions">
-            <button class="fr-btn" type="button" data-fr-top>回到卷首 ↑</button>
-            <button class="fr-btn" type="button" data-fr-target="code-quotes">继续漂流 ↓</button>
-          </div>
+
         </footer>
       </section>
 
@@ -562,7 +559,7 @@
 
           <div class="alchemy-stage">
             <div class="furnace" id="furnace" aria-hidden="true">
-              <div class="furnace-beam"></div>
+              <div class="ritual-orbit"><span>乾 · 坤 · 离 · 坎 · 巽 · 震 · 艮 · 兑</span></div><div class="furnace-beam"></div>
               <div class="furnace-lid"></div>
               <div class="furnace-body"><span class="furnace-rune">丹</span></div>
               <div class="furnace-flame"></div>
@@ -570,14 +567,17 @@
             </div>
 
             <div class="alchemy-controls">
+              <div class="spirit-wallet"><span>今日灵石 <b id="spiritBalance">—</b></span><small>本设备每日 1000 · 北京时间零点重置</small></div>
+              <details class="spirit-admin"><summary>站长通行令</summary><form id="spiritForm"><label for="spiritCode">解锁码</label><input id="spiritCode" type="password" maxlength="32" autocomplete="off"><button type="submit">解锁</button><button type="button" id="spiritExit">退出无限</button></form></details>
+              <p id="spiritStatus" class="spirit-status" role="status">正在连接灵石账本…</p>
               <div class="alchemy-stats">
                 <div class="alchemy-stat"><b id="alchemyTotal">0</b><span>累计炼丹</span></div>
                 <div class="alchemy-stat"><b id="alchemyBest">—</b><span>最高品级</span></div>
                 <div class="alchemy-stat"><b id="alchemyPity">0</b><span>仙品保底</span></div>
               </div>
               <div class="alchemy-buttons">
-                <button class="alchemy-btn alchemy-btn-single" id="alchemySingle" type="button">单抽 · 一炉</button>
-                <button class="alchemy-btn alchemy-btn-ten" id="alchemyTen" type="button">十连 · 开鼎</button>
+                <button class="alchemy-btn alchemy-btn-single" id="alchemySingle" type="button">单抽 · 10 灵石</button>
+                <button class="alchemy-btn alchemy-btn-ten" id="alchemyTen" type="button">十连 · 100 灵石</button>
               </div>
               <div class="alchemy-pity-bar"><i id="alchemyPityFill"></i></div>
               <p class="alchemy-pity-text" id="alchemyPityText">仙品保底进度 0 / 90</p>
