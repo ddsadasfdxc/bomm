@@ -23,6 +23,22 @@ export function loadBackgroundImage(container) {
   function buildProxyUrl() {
     return `${API}/api/proxy-image?type=${type}&_=${Date.now()}`;
   }
+  function buildDirectUrl() {
+    return `https://api.yppp.net/${type}.php?_=${Date.now()}`;
+  }
+  async function fetchImage(url, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      if (!blob.type.startsWith('image/') || blob.size < 1024) throw new Error('invalid image response');
+      return blob;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  }
 
   function adoptNewImage(blob) {
     if (disposed) return;
@@ -60,13 +76,22 @@ export function loadBackgroundImage(container) {
     if (disposed) return;
     const proxyUrl = buildProxyUrl();
     try {
-      const res = await fetch(proxyUrl);
-      if (!res.ok) throw new Error('fetch failed');
-      const blob = await res.blob();
+      // Worker is preferred because it normalizes CORS, but it must never block
+      // the visible background when the Worker or its upstream route stalls.
+      let blob;
+      try {
+        blob = await fetchImage(proxyUrl, 6000);
+      } catch (proxyError) {
+        console.warn('Background proxy unavailable, using direct API:', proxyError);
+        blob = await fetchImage(buildDirectUrl(), 12000);
+      }
+      container.classList.remove('fallback');
       adoptNewImage(blob);
     } catch (e) {
-      console.warn('Background image load failed:', proxyUrl, e);
-      container.classList.add('fallback');
+      console.warn('Background image load failed on both routes:', e);
+      // Keep the previous successful image during a rotation failure. The
+      // fallback is only needed when no image has ever been adopted.
+      if (!currentUrl) container.classList.add('fallback');
     }
   }
 
