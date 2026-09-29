@@ -1,3 +1,5 @@
+import { alchemyRoute } from './alchemy.js';
+export { SpiritLedger } from './alchemy.js';
 const ADMIN_PASSWORD = 'admin';
 
 const CORS_HEADERS = {
@@ -239,6 +241,7 @@ export default {
     }
 
     const url = new URL(request.url);
+    if (url.pathname === '/api/alchemy') return alchemyRoute(request, env);
     const kv = env.WENRUO_KV;
 
     if (url.pathname === '/api/health') {

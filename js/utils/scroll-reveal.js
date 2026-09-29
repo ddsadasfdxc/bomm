@@ -18,6 +18,7 @@ export function initScrollReveal() {
 export function initTilt() {
   if (window.matchMedia('(pointer: coarse)').matches) return;
   document.querySelectorAll('.tilt-card, .section-card, .note-card, .path-item').forEach(card => {
+    if (card.closest('#exploreGrid')) return;
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;

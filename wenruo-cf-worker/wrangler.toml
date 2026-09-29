@@ -9,3 +9,11 @@ id = "5159aa9a69cc43bba6ad04b91a1a4cac"
 
 [vars]
 GENERAL_STORE_EMAIL = "carglekasemeier602@gmail.com"
+
+[[durable_objects.bindings]]
+name = "SPIRIT_LEDGER"
+class_name = "SpiritLedger"
+
+[[migrations]]
+tag = "spirit-ledger-v1"
+new_sqlite_classes = ["SpiritLedger"]

@@ -1,0 +1,37 @@
+/* 丹炉与牌匣：墨松、旧金、朱砂、纸白。静态纹理，不使用动态模糊。 */
+:root { --atelier-pine:#203c37; --atelier-gold:#cfb987; --atelier-ember:#c87560; --atelier-paper:#ede5d3; --atelier-ink:#12231f; }
+.deck-toolbar {max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 24px;color:var(--atelier-gold);font-size:12px;letter-spacing:.1em}
+.deck-toolbar button,.spirit-admin button {border:1px solid #cfb98755;background:#203c37;color:var(--atelier-paper);padding:10px 15px;border-radius:8px;cursor:pointer;min-height:44px}
+#exploreGrid.poker-deck {display:flex;align-items:center;gap:0;padding:62px 32px 60px;overflow-x:auto;overflow-y:hidden;max-width:1080px;min-height:410px;isolation:isolate;scrollbar-width:thin;scrollbar-color:#cfb98766 transparent;overscroll-behavior-x:contain;perspective:1500px}
+#exploreGrid.poker-deck .note-card {flex:0 0 238px;width:238px;min-height:290px;padding:48px 24px 34px 60px;border-radius:13px;border:1px solid #cfb98788;background:linear-gradient(140deg,#314b40,#172d29 70%);box-shadow:-10px 8px 20px #0007,inset 0 0 0 4px #12231f,inset 0 0 0 5px #cfb98740,2px 3px 0 #9a8e70,4px 5px 0 #26372f;transform:rotate(var(--card-angle));transform-origin:50% 90%;opacity:1;animation:none;transition:transform .55s cubic-bezier(.2,.8,.2,1),margin .55s cubic-bezier(.2,.8,.2,1),box-shadow .4s;z-index:calc(1 + var(--card-index));filter:none;touch-action:pan-x pan-y}
+#exploreGrid.poker-deck .note-card + .note-card {margin-left:-178px}
+#exploreGrid.poker-deck .note-card::before {inset:0;opacity:.22;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.5' d='M0 0h160v160H0z'/%3E%3C/svg%3E");pointer-events:none}
+#exploreGrid.poker-deck .note-card::after {content:attr(data-suit);inset:14px auto auto 18px;width:auto;height:auto;border:0;font:24px Georgia;color:var(--atelier-gold);transform:none}
+#exploreGrid.poker-deck .note-card:nth-child(3n + 2) {background:linear-gradient(140deg,#4a3837,#2d2529 70%)}
+#exploreGrid.poker-deck .note-card:nth-child(3n) {background:linear-gradient(140deg,#364255,#202c3b 70%)}
+#exploreGrid .deck-spine {position:absolute;left:19px;top:58px;writing-mode:vertical-rl;letter-spacing:.24em;font:16px var(--font-serif);color:var(--atelier-paper)}
+#exploreGrid .deck-enter {position:absolute;bottom:24px;right:20px;font-size:11px;color:var(--atelier-gold);opacity:0;transition:opacity .3s}
+#exploreGrid.poker-deck .note-card.is-drawn {transform:translateY(-24px) rotate(0) scale(1.025);z-index:30;box-shadow:0 28px 38px #0009,inset 0 0 0 4px #12231f,inset 0 0 0 5px #cfb98788,3px 4px 0 #9a8e70;margin-right:180px}
+#exploreGrid .is-drawn .deck-enter {opacity:1}
+#exploreGrid.poker-deck.is-spread {gap:20px}
+#exploreGrid.poker-deck.is-spread .note-card {margin-left:0;margin-right:0}
+#exploreGrid.poker-deck .note-card:focus-visible {outline:2px solid var(--atelier-paper);outline-offset:5px}
+#exploreGrid .note-card h3 {color:var(--atelier-paper);font-family:var(--font-serif);font-size:22px;line-height:1.5}
+#exploreGrid .note-card p {color:#dbd4c3b8;line-height:1.8;font-size:12px}
+#exploreGrid .note-card-icon {font-size:36px;margin-bottom:14px}
+.spirit-wallet {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-block:1px solid #cfb98733;padding:14px 0;color:var(--atelier-gold)}
+.spirit-wallet b {font:30px 'Cinzel',serif;margin-left:12px;color:var(--atelier-paper);font-variant-numeric:tabular-nums}
+.spirit-wallet small,.spirit-status {color:#c8cabb;font-size:11px;line-height:1.7}
+.spirit-admin {color:var(--atelier-gold);font-size:12px}
+.spirit-admin summary {cursor:pointer;padding:8px 0}
+.spirit-admin form {display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:12px}
+.spirit-admin input {width:110px;min-height:42px;border:1px solid #cfb98766;border-radius:6px;background:#12231f;color:#ede5d3;padding:8px}
+.ritual-orbit {position:absolute;inset:-12px;border:1px solid #cfb98755;border-radius:50%;transform:rotateX(60deg);pointer-events:none;box-shadow:0 0 0 10px #cfb98709,0 0 0 12px #cfb98733}
+.ritual-orbit span {position:absolute;inset:12px;text-align:center;border:1px dashed #cfb98766;border-radius:50%;font-size:11px;letter-spacing:.5em;color:#cfb987}
+.alchemy.casting .ritual-orbit {animation:ritual-turn 1.25s cubic-bezier(.5,0,.2,1) both}
+@keyframes ritual-turn {0%{transform:rotateX(60deg) rotate(0);opacity:.3}60%{transform:rotateX(35deg) rotate(150deg) scale(1.15);opacity:1}100%{transform:rotateX(60deg) rotate(360deg);opacity:.5}}
+.alchemy .alchemy-card {animation:seal-reveal .7s cubic-bezier(.2,.7,.2,1) both;backface-visibility:hidden;transform-origin:50% 90%;box-shadow:0 8px 16px #0005,inset 0 0 0 3px #ffffff08}
+@keyframes seal-reveal {0%{opacity:0;transform:perspective(700px) translateY(32px) rotateY(-85deg) scale(.85)}65%{opacity:1;transform:perspective(700px) translateY(-6px) rotateY(8deg) scale(1.03)}100%{opacity:1;transform:perspective(700px) translateY(0) rotateY(0) scale(1)}}
+.alchemy .alchemy-card--r6 {border-color:#efc887;box-shadow:0 0 24px #d39d4450,inset 0 0 18px #d39d4420}
+@media(max-width:600px){.deck-toolbar {padding-inline:12px;letter-spacing:0}#exploreGrid.poker-deck {padding-inline:18px;min-height:390px}#exploreGrid.poker-deck .note-card {flex-basis:220px;width:220px}#exploreGrid.poker-deck .note-card + .note-card {margin-left:-162px}#exploreGrid.poker-deck.is-spread .note-card {margin-left:0}.spirit-wallet b{font-size:26px}}
+@media(prefers-reduced-motion:reduce){#exploreGrid.poker-deck .note-card,.alchemy .alchemy-card,.alchemy .ritual-orbit{animation:none!important;transition:none!important}.alchemy .furnace * {animation:none!important}.alchemy.shake{animation:none!important}}

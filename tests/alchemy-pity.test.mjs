@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const src=fs.readFileSync('js/alchemy.js','utf8');
+const code=src.slice(src.indexOf('  function rollRarity()'),src.indexOf('  async function handleDraw'));
+const context=vm.createContext({state:{total:0,pity:85,counts:{r1:0,r2:0,r3:0,r4:0,r5:0,r6:0},history:[]},PITY_MAX:90,HISTORY_LIMIT:60,GUARANTEE_ID:'r3',RARITIES:[{id:'r1',rate:1},{id:'r3',rate:0},{id:'r6',rate:0}],rankIndex:id=>Number(id.slice(1)),Date,Math});
+vm.runInContext('const RARITY_BY_ID=Object.fromEntries(RARITIES.map(x=>[x.id,x]));'+code,context);
+const ids=vm.runInContext('performDraw(10).map(x=>x.id)',context);
+assert.equal(ids[4],'r6');assert.equal(ids.filter(x=>x==='r6').length,1);assert.equal(context.state.pity,5);
+context.state.pity=0;const second=vm.runInContext('performDraw(10).map(x=>x.id)',context);assert.equal(second[9],'r3');
+console.log('PASS ten-draw crossing 90th pity, immediate reset, ten-draw minimum');

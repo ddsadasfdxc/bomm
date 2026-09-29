@@ -1,3 +1,4 @@
+import { spiritWallet } from './spirit-wallet.js';
 /* alchemy.js — 超爽炼丹炉（V2：特效增强 + Web Audio 合成音效）
    六品丹药 · 单抽 / 十连 · localStorage 持久化 · 零音频资源依赖
    特效策略：只用 transform / opacity / 渐变，无 backdrop-filter。
@@ -296,7 +297,7 @@
       card.className = 'alchemy-card alchemy-card--' + item.id;
       card.style.setProperty('--al-color', item.color);
       card.style.setProperty('--al-glow', item.glow);
-      card.style.animationDelay = (i * 0.07).toFixed(2) + 's';
+      card.style.animationDelay = (i * 0.095).toFixed(2) + 's';
       card.innerHTML = '<span class="alchemy-card-glow"></span>'
         + '<span class="alchemy-card-rank">' + item.rank + '</span>'
         + '<span class="alchemy-card-name">' + item.name + '</span>';
@@ -388,28 +389,27 @@
   }
   function performDraw(count) {
     const results = [];
-    for (let i = 0; i < count; i += 1) {
-      results.push(rollRarity());
-    }
-    if (count > 1) {
-      const minRank = rankIndex(GUARANTEE_ID);
-      const hasGood = results.some((item) => rankIndex(item.id) >= minRank);
-      if (!hasGood) results[count - 1] = RARITY_BY_ID[GUARANTEE_ID];
-    }
     const now = Date.now();
-    results.forEach((item) => {
+    for (let i = 0; i < count; i += 1) {
+      let item = rollRarity();
+      if (count === 10 && i === 9 && rankIndex(item.id) < rankIndex(GUARANTEE_ID)
+          && !results.some(r => rankIndex(r.id) >= rankIndex(GUARANTEE_ID))) item = RARITY_BY_ID[GUARANTEE_ID];
+      results.push(item);
       state.total += 1;
-      state.counts[item.id] = (state.counts[item.id] || 0) + 1;
+      state.counts[item.id] += 1;
       state.history.unshift({ id: item.id, ts: now });
-      if (item.id === 'r6') state.pity = 0;
-      else state.pity = Math.min(PITY_MAX, state.pity + 1);
-    });
+      state.pity = item.id === 'r6' ? 0 : state.pity + 1;
+    }
     if (state.history.length > HISTORY_LIMIT) state.history.length = HISTORY_LIMIT;
     return results;
   }
-  function handleDraw(count) {
+  async function handleDraw(count) {
     if (busy) return;
     setBusy(true);
+    // Unlock audio during the user gesture, before awaiting the ledger.
+    ac();
+    try { await spiritWallet.spend(count); }
+    catch (err) { setBusy(false); return; }
     const isTen = count === 10;
     const btn = isTen ? els.ten : els.single;
 
@@ -423,6 +423,7 @@
     }
 
     window.setTimeout(() => {
+      try {
       const results = performDraw(count);
       saveState();
       const best = renderResult(results, isTen);
@@ -431,12 +432,13 @@
       renderHistory();
 
       if (best) {
+        if (isTen) sfxTenSweep(best.id);
         sfxResult(best.id);
         if (best.id === 'r5') fireFlash();
         if (best.id === 'r6') { fireFlash(); goldRing(); spawnSparks('ten'); }
       }
-      setBusy(false);
-    }, isTen ? 900 : 700);
+      } finally { setBusy(false); }
+    }, reduceMotion ? 80 : (isTen ? 1250 : 950));
   }
 
   if (els.single) els.single.addEventListener('click', () => handleDraw(1));
