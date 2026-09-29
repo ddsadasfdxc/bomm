@@ -1,48 +1,52 @@
-const API = 'https://wenruo-api.carglekasemeier602.workers.dev/api/alchemy';
+const BALANCE_KEY = 'wenruo_spirit_wallet_v1';
 const balance = document.getElementById('spiritBalance');
 const status = document.getElementById('spiritStatus');
-let code = '';
-let pending = null;
-try { code = sessionStorage.getItem('wenruo_spirit_code') || ''; } catch {}
-function message(text) { if (status) status.textContent = text; }
-async function request(body) {
-  const res = await fetch(API, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body), signal: AbortSignal.timeout(12000) });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || '灵石账本暂不可用');
-  balance.textContent = data.unlimited ? '∞' : String(data.balance);
-  message(data.unlimited ? '站长无限模式 · 不消耗每日额度' : '同一 IP 共享每日额度 · 每日重置，不累计');
-  return data;
+const DAILY_LIMIT = 1000;
+let unlimited = false;
+let ledger = loadLedger();
+function todayKey() {
+  const now = new Date(Date.now() + 8 * 60 * 60 * 1000);
+  return now.toISOString().slice(0, 10);
 }
-async function refresh() {
-  try { await request({action:'balance', code}); }
-  catch { balance.textContent = '—'; message('灵石账本尚未连接，请稍后重试；不会使用本地额度替代 IP 限额。'); }
+function loadLedger() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(BALANCE_KEY) || 'null');
+    if (raw && raw.day === todayKey() && Number.isFinite(raw.balance)) return raw;
+  } catch {}
+  return { day: todayKey(), balance: DAILY_LIMIT };
+}
+function saveLedger() { try { localStorage.setItem(BALANCE_KEY, JSON.stringify(ledger)); } catch {} }
+function message(text) { if (status) status.textContent = text; }
+function render() {
+  if (balance) balance.textContent = unlimited ? '∞' : String(ledger.balance);
+  message(unlimited ? '站长无限模式 · 不消耗灵石' : '本设备今日额度 · 每日 1000 灵石 · 北京时间零点重置');
+}
+function refreshDay() {
+  if (ledger.day !== todayKey()) { ledger = { day: todayKey(), balance: DAILY_LIMIT }; saveLedger(); }
+  render();
 }
 export const spiritWallet = {
   async spend(count) {
-    if (!pending || pending.count !== count) pending = {count, requestId:crypto.randomUUID()};
-    try {
-      const data = await request({action:'spend', code, ...pending});
-      pending = null;
-      return data;
-    } catch (err) { message(err.message === 'Failed to fetch' ? '连接失败，请重试；相同请求不会重复扣费。' : err.message); throw err; }
+    refreshDay();
+    if (unlimited) return { balance: Infinity, unlimited: true };
+    const cost = count * 10;
+    if (ledger.balance < cost) {
+      message(`今日灵石不足，还需 ${cost - ledger.balance} 灵石；明日零点恢复 1000。`);
+      throw new Error('今日灵石不足');
+    }
+    ledger.balance -= cost; saveLedger(); render();
+    return { balance: ledger.balance, unlimited: false };
   }
 };
-document.getElementById('spiritForm')?.addEventListener('submit', async e => {
+document.getElementById('spiritForm')?.addEventListener('submit', e => {
   e.preventDefault();
   const input = document.getElementById('spiritCode');
-  try {
-    const candidate = input.value.trim();
-    const data = await request({action:'balance', code:candidate});
-    if (!data.unlimited) { message('通行令不正确'); return; }
-    code = candidate;
-    try { sessionStorage.setItem('wenruo_spirit_code', code); } catch {}
-    input.value = '';
-  } catch { message('账本服务未连接，暂不能验证通行令。'); }
+  const candidate = input?.value.trim().toLowerCase();
+  if (candidate === 'lss') {
+    unlimited = true; if (input) input.value = '';
+    message('站长无限模式已解锁 · 不消耗灵石'); render();
+  } else message('通行令不正确');
 });
-document.getElementById('spiritExit')?.addEventListener('click', () => {
-  code = ''; pending = null;
-  try { sessionStorage.removeItem('wenruo_spirit_code'); } catch {}
-  refresh();
-});
-document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
-refresh();
+document.getElementById('spiritExit')?.addEventListener('click', () => { unlimited = false; refreshDay(); });
+window.addEventListener('focus', refreshDay);
+render();
